@@ -1,79 +1,78 @@
 <template>
-  <v-app id="inspire">
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-    >
-      <v-list dense>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-action>
-            <v-icon>mdi-email</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Contact</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-app-bar
-      app
-      color="indigo"
-      dark
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
-    </v-app-bar>
-
-    <v-main>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
+    <v-app>
+        <v-navigation-drawer
+            v-model="drawer"
+            app
         >
-          <v-col class="text-center">
-            <v-tooltip left>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  :href="source"
-                  icon
-                  large
-                  target="_blank"
-                  v-on="on"
-                >
-                  <v-icon large>mdi-code-tags</v-icon>
-                </v-btn>
-              </template>
-              <span>Source</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-    <v-footer
-      color="indigo"
-      app
-    >
-      <span class="white--text">&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
-  </v-app>
+            <v-list v-if="this.$store.state.account.isLoggedIn">
+                <v-list-item link @click.native="this.$router.push('/')">
+                    <v-list-item-action>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Home</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link @click.native="this.$router.push('/Users')">
+                    <v-list-item-action>
+                        <v-icon>mdi-user</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Users</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+            <v-list v-else>
+                <v-list-item link @click.native="this.$router.push('/Login')">
+                    <v-list-item-action>
+                        <v-icon>mdi-login</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Login</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+        </v-navigation-drawer>
+
+        <v-app-bar
+            app
+            color="primary"
+        >
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-toolbar-title>Vircadia</v-toolbar-title>
+        </v-app-bar>
+        <!-- <div id="nav">
+            <router-link to="/">Home</router-link> |
+            <router-link to="/login">Login</router-link> |
+        </div> -->
+        <router-view/>
+
+        <v-footer
+            color="primary"
+            app
+        >
+            <span class="white--text">Apollo Dashboard v0.0.1a - Vircadia Metaverse Services</span>
+            <v-spacer></v-spacer>
+            <span class="white--text">Connected to <b>{{ v_state.config.metaverseServer }} {{ v_state.config.metaverseServerVersion }}</b></span>
+        </v-footer>
+    </v-app>
+
 </template>
 
 <script>
 export default {
-    props: {
-        source: String
+    name: 'App',
+    components: {
+    },
+    methods: {
+        retrieveMetaverseConfig: function (metaverseURL) {
+        }
+    },
+    created: function () {
+        var v_state = this.$store.state
+        if (v_state.config.metaverseServer) {
+            this.retrieveMetaverseConfig(v_state.config.metaverseServer)
+        }
     },
     data: () => ({
         drawer: null

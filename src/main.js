@@ -8,6 +8,15 @@ import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
 
+// ROUTER CONTROLS
+
+router.beforeEach((to, from, next) => {
+    if (to.name !== 'Login' && !store.state.account.isLoggedIn) next({ name: 'Login' })
+    else next()
+})
+
+// END ROUTER CONTROLS
+
 new Vue({
     router,
     store,

@@ -1,4 +1,4 @@
-# modi-dashboard
+# apollo-dashboard
 
 ## Project setup
 ```
