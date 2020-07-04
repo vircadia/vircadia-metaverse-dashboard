@@ -53,7 +53,7 @@
         >
             <span class="white--text">Apollo Dashboard v0.0.1a - Vircadia Metaverse Services</span>
             <v-spacer></v-spacer>
-            <span class="white--text">Connected to <b>{{ v_state.config.metaverseServer }} {{ v_state.config.metaverseServerVersion }}</b></span>
+            <span class="white--text">Connected to <b>{{ this.$store.state.config.metaverseServer }} {{ this.$store.state.config.metaverseServerVersion }}</b></span>
         </v-footer>
     </v-app>
 
@@ -66,12 +66,22 @@ export default {
     },
     methods: {
         retrieveMetaverseConfig: function (metaverseURL) {
+            window.$.ajax({
+                type: 'GET',
+                url: metaverseURL + '/api/metaverse_info'
+            })
+                .done(function (result) {
+                    console.info('success', JSON.stringify(result))
+                })
+                .fail(function (result) {
+                    console.info('error', JSON.stringify(result))
+                })
         }
     },
     created: function () {
-        var v_state = this.$store.state
-        if (v_state.config.metaverseServer) {
-            this.retrieveMetaverseConfig(v_state.config.metaverseServer)
+        var store = this.$store.state
+        if (store.config.metaverseServer) {
+            this.retrieveMetaverseConfig(store.config.metaverseServer)
         }
     },
     data: () => ({
