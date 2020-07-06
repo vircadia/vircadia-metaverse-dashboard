@@ -95,8 +95,8 @@ export default {
     }),
     created: function () {
         // Bootstrap initial variables, pre-fill them, etc.
-        if (this.$store.state.config.metaverseServer) {
-            this.metaverseServer = this.$store.state.config.metaverseServer
+        if (this.$store.state.metaverseConfig.server) {
+            this.metaverseServer = this.$store.state.metaverseConfig.server;
         }
     }
 }

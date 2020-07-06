@@ -8,7 +8,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 window.$ = window.jQuery = require('jquery')
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 // ROUTER CONTROLS
 

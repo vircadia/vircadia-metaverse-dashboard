@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-navigation-drawer
-            v-model="drawer"
+            v-model="mainMenu"
             app
         >
             <v-list v-if="this.$store.state.account.isLoggedIn">
@@ -38,13 +38,14 @@
             app
             color="primary"
         >
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
             <v-toolbar-title>Vircadia</v-toolbar-title>
         </v-app-bar>
-        <!-- <div id="nav">
-            <router-link to="/">Home</router-link> |
-            <router-link to="/login">Login</router-link> |
-        </div> -->
+
+        <transition name="fade" mode="out-in">
+            <component @hideDialog="dialog.show = false" v-if="dialog.show" v-bind:is="dialog.which"></component>
+        </transition>
+
         <router-view/>
 
         <v-footer
@@ -53,39 +54,74 @@
         >
             <span class="white--text">Apollo Dashboard v0.0.1a - Vircadia Metaverse Services</span>
             <v-spacer></v-spacer>
-            <span class="white--text">Connected to <b>{{ this.$store.state.config.metaverseServer }} {{ this.$store.state.config.metaverseServerVersion }}</b></span>
+            <span class="white--text">Connected to <b>{{ this.$store.state.metaverseConfig.server }} {{ this.$store.state.metaverseConfig.serverVersion }}</b></span>
         </v-footer>
     </v-app>
 
 </template>
 
 <script>
+var vue_this;
+
+import ErrorOccurred from './components/dialogs/ErrorOccurred'
+
 export default {
     name: 'App',
     components: {
+        // Dialogs
+        ErrorOccurred
     },
     methods: {
+        // Dialog Handling
+        openDialog: function (which, shouldShow) {
+            // We want to reset the element first.
+            this.dialog.which = '';
+            this.dialog.show = false;
+
+            this.dialog.which = which;
+            this.dialog.show = shouldShow;
+        },
+        closeDialog: function () {
+            this.dialog.which = '';
+            this.dialog.show = false;
+        },
+        // Metaverse Bootstrapping
         retrieveMetaverseConfig: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + '/api/metaverse_info'
             })
                 .done(function (result) {
-                    console.info('success', JSON.stringify(result))
                 })
                 .fail(function (result) {
-                    console.info('error', JSON.stringify(result))
+                    console.info('error', JSON.stringify(result));
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to Retrieve Metaverse Information',
+                            code: '1',
+                            full: 'We were unable to retrieve the metaverse information for ' + metaverseURL
+                        }
+                    });
+                    vue_this.openDialog('ErrorOccurred', true);
                 })
         }
     },
     created: function () {
-        var store = this.$store.state
-        if (store.config.metaverseServer) {
-            this.retrieveMetaverseConfig(store.config.metaverseServer)
+        vue_this = this;
+        var store = this.$store.state;
+        var metaverseServer = store.metaverseConfig.server;
+
+        if (metaverseServer) {
+            this.retrieveMetaverseConfig(metaverseServer);
         }
     },
     data: () => ({
-        drawer: null
+        mainMenu: null,
+        dialog: {
+            show: false,
+            which: ''
+        }
     })
 }
 </script>

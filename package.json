@@ -54,7 +54,9 @@
                 "error",
                 4
             ],
-            "camelcase": "off"
+            "camelcase": "off",
+            "semi": "off",
+            "import/first": "off"
         }
     },
     "browserslist": [
