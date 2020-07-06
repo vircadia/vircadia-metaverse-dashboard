@@ -4,7 +4,7 @@
             v-model="mainMenu"
             app
         >
-            <v-list v-if="this.$store.state.account.isLoggedIn">
+            <v-list v-if="$store.state.account.isLoggedIn">
                 <v-list-item link @click.native="this.$router.push('/')">
                     <v-list-item-action>
                         <v-icon>mdi-home</v-icon>
@@ -39,7 +39,7 @@
             color="primary"
         >
             <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
-            <v-toolbar-title>Vircadia</v-toolbar-title>
+            <v-toolbar-title>{{ $store.state.metaverseConfig.nickname }}</v-toolbar-title>
         </v-app-bar>
 
         <transition name="fade" mode="out-in">
@@ -54,7 +54,8 @@
         >
             <span class="white--text">Apollo Dashboard v0.0.1a - Vircadia Metaverse Services</span>
             <v-spacer></v-spacer>
-            <span class="white--text">Connected to <b>{{ this.$store.state.metaverseConfig.server }} {{ this.$store.state.metaverseConfig.serverVersion }}</b></span>
+            <span class="white--text">Metaverse Server: <b>{{ $store.state.metaverseConfig.server }}</b></span>
+            <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion }}</span>
         </v-footer>
     </v-app>
 
@@ -62,6 +63,8 @@
 
 <script>
 var vue_this;
+var store;
+var metaverseServer;
 
 import ErrorOccurred from './components/dialogs/ErrorOccurred'
 
@@ -92,6 +95,16 @@ export default {
                 url: metaverseURL + '/api/metaverse_info'
             })
                 .done(function (result) {
+                    vue_this.$store.commit('mutate', {
+                        property: 'metaverseConfig',
+                        with: {
+                            name: result.metaverse_name,
+                            nickname: result.metaverse_nick_name,
+                            server: result.metaverse_url,
+                            iceServer: result.ice_server_url,
+                            serverVersion: result.metaverse_server_version
+                        }
+                    });
                 })
                 .fail(function (result) {
                     console.info('error', JSON.stringify(result));
@@ -109,8 +122,8 @@ export default {
     },
     created: function () {
         vue_this = this;
-        var store = this.$store.state;
-        var metaverseServer = store.metaverseConfig.server;
+        store = this.$store.state;
+        metaverseServer = store.metaverseConfig.server;
 
         if (metaverseServer) {
             this.retrieveMetaverseConfig(metaverseServer);

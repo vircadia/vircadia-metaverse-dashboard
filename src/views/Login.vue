@@ -48,7 +48,7 @@
                                         prepend-icon="mdi-lock"
                                         type="password"
                                     ></v-text-field>
-                                    <v-expansion-panels>
+                                    <v-expansion-panels v-if="false">
                                         <v-expansion-panel>
                                             <v-expansion-panel-header disable-icon-rotate>
                                                 Advanced
