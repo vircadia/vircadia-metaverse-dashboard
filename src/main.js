@@ -12,8 +12,8 @@ Vue.config.productionTip = false;
 
 // GLOBAL CONSTANTS
 
-const globalConsts = { 
-    SAFETY_BEFORE_SESSION_TIMEOUT = 21600; // If a token has 6 or less hours left on its life, refresh it.
+const globalConsts = {
+    SAFETY_BEFORE_SESSION_TIMEOUT: 21600 // If a token has 6 or less hours left on its life, refresh it.
 }
 
 // END GLOBAL CONSTANTS
@@ -36,16 +36,16 @@ router.beforeEach((to, from, next) => {
             // If the session has expired... Attempt to refresh it.
             window.$.ajax({
                 type: 'POST',
-                url: store.metaverseConfig.server + '/oauth/token',
+                url: store.state.metaverseConfig.server + '/oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'refresh_token',
                     scope: 'owner',
-                    refresh_token: store.account.refreshToken
+                    refresh_token: store.state.account.refreshToken
                 }
             })
                 .done(function (result) {
-                    vue_this.$store.commit('mutate', {
+                    store.commit('mutate', {
                         update: true,
                         property: 'account',
                         with: {

@@ -88,15 +88,11 @@ export default {
         // Save the state of the session to storage for retrieval if the user leaves and comes back.
         updateAccountSession: {
             handler: function (newVal) {
-                localStorage.setItem('isLoggedIn', newVal.isLoggedIn);
-                localStorage.setItem('isAdmin', newVal.isAdmin);
-                localStorage.setItem('username', newVal.username);
-                localStorage.setItem('accessToken', newVal.accessToken);
-                localStorage.setItem('tokenType', newVal.tokenType);
-                localStorage.setItem('createdAt', newVal.createdAt);
-                localStorage.setItem('expiresIn', newVal.expiresIn);
-                localStorage.setItem('refreshToken', newVal.refreshToken);
-                localStorage.setItem('scope', newVal.scope);
+                for (var item in newVal) {
+                    if (newVal[item] !== null) {
+                        localStorage.setItem(item, newVal[item]);
+                    }
+                }
             },
             deep: true
         }
@@ -154,20 +150,27 @@ export default {
         // If the store has not yet been initialized
         if (store.firstLoad === true) {
             store.account.isLoggedIn = localStorage.getItem('isLoggedIn');
-            store.account.isAdmin = localStorage.setItem('isAdmin');
-            store.account.username = localStorage.setItem('username');
-            store.account.accessToken = localStorage.setItem('accessToken');
-            store.account.tokenType = localStorage.setItem('tokenType');
-            store.account.createdAt = localStorage.setItem('createdAt');
-            store.account.expiresIn = localStorage.setItem('expiresIn');
-            store.account.refreshToken = localStorage.setItem('refreshToken');
-            store.account.scope = localStorage.setItem('scope');
+            store.account.isAdmin = localStorage.getItem('isAdmin');
+            store.account.username = localStorage.getItem('username');
+            store.account.accessToken = localStorage.getItem('accessToken');
+            store.account.tokenType = localStorage.getItem('tokenType');
+            store.account.createdAt = localStorage.getItem('createdAt');
+            store.account.expiresIn = localStorage.getItem('expiresIn');
+            store.account.refreshToken = localStorage.getItem('refreshToken');
+            store.account.scope = localStorage.getItem('scope');
+
+            for (var item in store.account) {
+                var storedItem = localStorage.getItem(item);
+                if (localStorage.getItem(storedItem) !== null) {
+                    store.account[item] = storedItem;
+                }
+            }
         }
 
         if (metaverseServer) {
             this.retrieveMetaverseConfig(metaverseServer);
         }
-        
+
         store.firstLoad = false;
     },
     data: () => ({
