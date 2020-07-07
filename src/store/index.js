@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        firstLoad: true, // We set this to false via App.vue once the store has been loaded for this browsing session.
         metaverseConfig: { // Prefilled with initial values
             name: '',
             nickname: '',
@@ -18,13 +19,29 @@ export default new Vuex.Store({
             full: ''
         },
         account: {
-            isLoggedIn: false,
-            type: 'user' // Can be 'user' or 'admin'
+            isLoggedIn: null, // bool
+            isAdmin: null, // bool
+            username: null,
+            // Token data
+            accessToken: null,
+            tokenType: null,
+            createdAt: null, // int
+            expiresIn: null, // int
+            refreshToken: null,
+            scope: null
         }
     },
     mutations: {
         mutate (state, payload) {
-            state[payload.property] = payload.with;
+            if (!payload.update) {
+                state[payload.property] = payload.with;
+            } else {
+                for (var item in payload.with) {
+                    if (Object.prototype.hasOwnProperty.call(state[payload.property], item)) {
+                        state[payload.property][item] = payload.with[item];
+                    }
+                }
+            }
             console.info('Payload:', payload.property, 'with:', payload.with, 'state is now:', this.state);
         }
     },

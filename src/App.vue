@@ -79,6 +79,28 @@ export default {
         // Dialogs
         ErrorOccurred
     },
+    computed: {
+        updateAccountSession () {
+            return this.$store.state.account;
+        }
+    },
+    watch: {
+        // Save the state of the session to storage for retrieval if the user leaves and comes back.
+        updateAccountSession: {
+            handler: function (newVal) {
+                localStorage.setItem('isLoggedIn', newVal.isLoggedIn);
+                localStorage.setItem('isAdmin', newVal.isAdmin);
+                localStorage.setItem('username', newVal.username);
+                localStorage.setItem('accessToken', newVal.accessToken);
+                localStorage.setItem('tokenType', newVal.tokenType);
+                localStorage.setItem('createdAt', newVal.createdAt);
+                localStorage.setItem('expiresIn', newVal.expiresIn);
+                localStorage.setItem('refreshToken', newVal.refreshToken);
+                localStorage.setItem('scope', newVal.scope);
+            },
+            deep: true
+        }
+    },
     methods: {
         // Dialog Handling
         openDialog: function (which, shouldShow) {
@@ -129,9 +151,24 @@ export default {
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
 
+        // If the store has not yet been initialized
+        if (store.firstLoad === true) {
+            store.account.isLoggedIn = localStorage.getItem('isLoggedIn');
+            store.account.isAdmin = localStorage.setItem('isAdmin');
+            store.account.username = localStorage.setItem('username');
+            store.account.accessToken = localStorage.setItem('accessToken');
+            store.account.tokenType = localStorage.setItem('tokenType');
+            store.account.createdAt = localStorage.setItem('createdAt');
+            store.account.expiresIn = localStorage.setItem('expiresIn');
+            store.account.refreshToken = localStorage.setItem('refreshToken');
+            store.account.scope = localStorage.setItem('scope');
+        }
+
         if (metaverseServer) {
             this.retrieveMetaverseConfig(metaverseServer);
         }
+        
+        store.firstLoad = false;
     },
     data: () => ({
         mainMenu: null,

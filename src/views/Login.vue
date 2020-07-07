@@ -106,14 +106,29 @@ export default {
             window.$.ajax({
                 type: 'POST',
                 url: vue_this.metaverseServer + '/oauth/token',
+                contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'password',
-                    username: this.login,
-                    password: this.password
+                    scope: 'owner', // as opposed to 'domain', we're asking for a user token
+                    username: vue_this.login,
+                    password: vue_this.password
                 }
             })
                 .done(function (result) {
-                    console.info(result);
+                    vue_this.$store.commit('mutate', {
+                        update: true,
+                        property: 'account',
+                        with: {
+                            isLoggedIn: true,
+                            username: vue_this.login,
+                            accessToken: result.access_token,
+                            tokenType: result.token_type,
+                            createdAt: result.created_at,
+                            expiresIn: result.expires_in,
+                            refreshToken: result.refresh_token,
+                            scope: result.scope
+                        }
+                    });
                 })
                 .fail(function (result) {
                     vue_this.$store.commit('mutate', {
