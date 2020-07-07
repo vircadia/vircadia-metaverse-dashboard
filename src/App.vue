@@ -62,9 +62,14 @@
 </template>
 
 <script>
+import { EventBus } from './plugins/eventBus.js';
 var vue_this;
 var store;
 var metaverseServer;
+
+EventBus.$on('open-dialog', data => {
+    vue_this.openDialog(data.which, data.shouldShow);
+});
 
 import ErrorOccurred from './components/dialogs/ErrorOccurred'
 
@@ -107,7 +112,6 @@ export default {
                     });
                 })
                 .fail(function (result) {
-                    console.info('error', JSON.stringify(result));
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
