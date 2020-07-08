@@ -48,16 +48,23 @@ Vue.mixin({
 // STORE FUNCTIONS
 
 function initStore () {
-    for (var item in store.account) {
-        var storedItem = localStorage.getItem(item);
-        console.info('storedItem', storedItem)
-        if (storedItem !== null) {
-            store.commit('mutate', {
-                property: store.account[item],
-                with: storedItem
-            });
-        }
+    var storedItems = {
+        isLoggedIn: localStorage.getItem('isLoggedIn'),
+        isAdmin: localStorage.getItem('isAdmin'),
+        username: localStorage.getItem('username'),
+        // Token data
+        accessToken: localStorage.getItem('accessToken'),
+        tokenType: localStorage.getItem('tokenType'),
+        createdAt: localStorage.getItem('createdAt'),
+        expiresIn: localStorage.getItem('expiresIn'),
+        refreshToken: localStorage.getItem('refreshToken'),
+        scope: localStorage.getItem('scope')
     }
+
+    store.commit('mutate', {
+        property: 'account',
+        with: storedItems
+    });
 
     store.commit('mutate', {
         property: 'initialized',
@@ -73,7 +80,8 @@ router.beforeEach((to, from, next) => {
     console.info('Attempting to navigate to:', to)
 
     // If the store has not yet been initialized...
-    if (store.initialized === false) {
+    console.info('store.initialized', store.state.initialized);
+    if (store.state.initialized === false) {
         initStore();
     }
 
