@@ -16,14 +16,29 @@ Vue.use(VueRouter)
 
 const routes = [
     {
+        path: '/login',
+        name: 'Login',
+        component: () => import('../views/Login.vue')
+    },
+    {
         path: '/',
         name: 'Home',
         component: Home
     },
     {
-        path: '/login',
-        name: 'Login',
-        component: () => import('../views/Login.vue')
+        path: '/people',
+        name: 'People',
+        component: () => import('../views/People.vue')
+    },
+    {
+        path: '/domain',
+        name: 'Domain',
+        component: () => import('../views/Domain.vue')
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('../views/Profile.vue')
     }
 ]
 

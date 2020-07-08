@@ -1,7 +1,7 @@
 <!--
-//  Home.vue
+//  Domain.vue
 //
-//  Created by Kalila L. on 2 Jul 2020.
+//  Created by Kalila L. on 8 Jul 2020.
 //  Copyright 2020 Vircadia and contributors.
 //
 //  Distributed under the Apache License, Version 2.0.
@@ -43,7 +43,7 @@
 
 <script>
 export default {
-    name: 'Home',
+    name: 'Domain',
     props: {
         source: String
     }

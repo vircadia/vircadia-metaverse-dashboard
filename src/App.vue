@@ -14,6 +14,7 @@
             v-model="mainMenu"
             app
         >
+
             <v-list v-if="$store.state.account.isLoggedIn">
                 <v-list-item link @click.native="$router.push('/')">
                     <v-list-item-action>
@@ -23,15 +24,32 @@
                         <v-list-item-title>Home</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item link @click.native="$router.push('/Users')">
+                <v-list-item link @click.native="$router.push('/people')">
                     <v-list-item-action>
-                        <v-icon>mdi-user</v-icon>
+                        <v-icon>mdi-account-group</v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
-                        <v-list-item-title>Users</v-list-item-title>
+                        <v-list-item-title>People</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link @click.native="$router.push('/domain')">
+                    <v-list-item-action>
+                        <v-icon>mdi-earth</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Domain</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link @click.native="$router.push('/profile')">
+                    <v-list-item-action>
+                        <v-icon>mdi-face-profile</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Profile</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
+
             <v-list v-else>
                 <v-list-item link @click.native="$router.push('/login')">
                     <v-list-item-action>
@@ -42,6 +60,7 @@
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
+
         </v-navigation-drawer>
 
         <v-app-bar
