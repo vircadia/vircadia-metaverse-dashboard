@@ -15,7 +15,7 @@
             app
         >
             <v-list v-if="$store.state.account.isLoggedIn">
-                <v-list-item link @click.native="this.$router.push('/')">
+                <v-list-item link @click.native="$router.push('/')">
                     <v-list-item-action>
                         <v-icon>mdi-home</v-icon>
                     </v-list-item-action>
@@ -23,7 +23,7 @@
                         <v-list-item-title>Home</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item link @click.native="this.$router.push('/Users')">
+                <v-list-item link @click.native="$router.push('/Users')">
                     <v-list-item-action>
                         <v-icon>mdi-user</v-icon>
                     </v-list-item-action>
@@ -33,7 +33,7 @@
                 </v-list-item>
             </v-list>
             <v-list v-else>
-                <v-list-item link @click.native="this.$router.push('/Login')">
+                <v-list-item link @click.native="$router.push('/login')">
                     <v-list-item-action>
                         <v-icon>mdi-login</v-icon>
                     </v-list-item-action>
@@ -157,31 +157,9 @@ export default {
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
 
-        // If the store has not yet been initialized
-        if (store.firstLoad === true) {
-            store.account.isLoggedIn = localStorage.getItem('isLoggedIn');
-            store.account.isAdmin = localStorage.getItem('isAdmin');
-            store.account.username = localStorage.getItem('username');
-            store.account.accessToken = localStorage.getItem('accessToken');
-            store.account.tokenType = localStorage.getItem('tokenType');
-            store.account.createdAt = localStorage.getItem('createdAt');
-            store.account.expiresIn = localStorage.getItem('expiresIn');
-            store.account.refreshToken = localStorage.getItem('refreshToken');
-            store.account.scope = localStorage.getItem('scope');
-
-            for (var item in store.account) {
-                var storedItem = localStorage.getItem(item);
-                if (localStorage.getItem(storedItem) !== null) {
-                    store.account[item] = storedItem;
-                }
-            }
-        }
-
         if (metaverseServer) {
             this.retrieveMetaverseConfig(metaverseServer);
         }
-
-        store.firstLoad = false;
     },
     data: () => ({
         mainMenu: null,

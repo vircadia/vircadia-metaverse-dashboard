@@ -15,7 +15,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        firstLoad: true, // We set this to false via App.vue once the store has been loaded for this browsing session.
+        globalConsts: {
+            SAFETY_BEFORE_SESSION_TIMEOUT: 21600 // If a token has 6 or less hours left on its life, refresh it.
+        },
+        initialized: false,
         metaverseConfig: { // Prefilled with initial values
             name: '',
             nickname: '',

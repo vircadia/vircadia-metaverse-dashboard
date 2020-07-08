@@ -129,6 +129,8 @@ export default {
                             scope: result.scope
                         }
                     });
+                    console.info('Login successful, routing to home.');
+                    vue_this.$router.push('/Home');
                 })
                 .fail(function (result) {
                     vue_this.$store.commit('mutate', {

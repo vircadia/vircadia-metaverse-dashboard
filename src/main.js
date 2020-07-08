@@ -20,37 +20,88 @@ window.$ = window.jQuery = require('jquery')
 
 Vue.config.productionTip = false;
 
-// GLOBAL CONSTANTS
+// GLOBAL FUNCTIONS
 
-const globalConsts = {
-    SAFETY_BEFORE_SESSION_TIMEOUT: 21600 // If a token has 6 or less hours left on its life, refresh it.
+function checkNeedsRefresh () {
+    var currentTimestamp = Math.floor(new Date().getTime() / 1000); // in seconds
+    var sessionExpirationTime = store.state.account.createdAt + store.state.account.expiresIn;
+
+    console.info('currentTimestamp', currentTimestamp)
+    console.info('sessionExpirationTime', sessionExpirationTime)
+
+    if (currentTimestamp > sessionExpirationTime ||
+        (currentTimestamp - store.state.globalConsts.SAFETY_BEFORE_SESSION_TIMEOUT) > sessionExpirationTime) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-// END GLOBAL CONSTANTS
+Vue.mixin({
+    methods: {
+        checkNeedsRefresh: checkNeedsRefresh
+    }
+})
+
+// END GLOBAL FUNCTIONS
+
+// STORE FUNCTIONS
+
+function initStore () {
+    for (var item in store.account) {
+        var storedItem = localStorage.getItem(item);
+        console.info('storedItem', storedItem)
+        if (storedItem !== null) {
+            store.commit('mutate', {
+                property: store.account[item],
+                with: storedItem
+            });
+        }
+    }
+
+    store.commit('mutate', {
+        property: 'initialized',
+        with: true
+    });
+}
+
+// END STORE FUNCTIONS
 
 // ROUTER CONTROLS
 
 router.beforeEach((to, from, next) => {
+    console.info('Attempting to navigate to:', to)
+
+    // If the store has not yet been initialized...
+    if (store.initialized === false) {
+        initStore();
+    }
+
     if (to.name !== 'Login' && store.state.account.isLoggedIn === false) {
+        console.info('Attempting to access a page while logged out, routing to login.');
         next({ name: 'Login' });
     } else if (to.name === 'Login' && store.state.account.isLoggedIn === true) {
         // The user should log out first before trying to access the login page.
+        console.info('Attemping to access login before logging out, re-routing to home.');
         next({ name: 'Home' });
-    } else {
-        // Verify the user's session is still active.
-        var currentTimestamp = Math.floor(new Date().getTime() / 1000); // in seconds
-        var sessionTimeLeft = store.state.account.createdAt + store.state.account.expiresIn;
+    } else if (to.name === 'Login' && store.state.account.isLoggedIn === false) {
+        console.info('Attempting to access login while logged out, routing to login.');
+        next();
+    } else { // For any other case...
+        // Verify the user's session is still active. If it is not, it will redirect them to login.
+        console.info('Checking if a token refresh is needed.');
 
-        if (currentTimestamp > sessionTimeLeft ||
-            (currentTimestamp - globalConsts.SAFETY_BEFORE_SESSION_TIMEOUT) > sessionTimeLeft) {
+        if (checkNeedsRefresh()) {
             // If the session has expired... Attempt to refresh it.
+            console.info('Token refresh needed. Attempting to refresh token.');
+
             window.$.ajax({
                 type: 'POST',
                 url: store.state.metaverseConfig.server + '/oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'refresh_token',
-                    scope: 'owner',
+                    scope: store.state.account.scope,
                     refresh_token: store.state.account.refreshToken
                 }
             })
@@ -68,14 +119,18 @@ router.beforeEach((to, from, next) => {
                             scope: result.scope
                         }
                     });
+                    console.info('Token refresh successful, routing to', to)
+                    next();
                 })
                 .fail(function (result) {
                     // If this fails for any reason, the user must log back in.
+                    console.info('Refresh failed, re-routing to login.');
                     store.state.account.isLoggedIn = false;
                     next({ name: 'Login' });
                 })
         } else {
             // Good to go, send them on their way.
+            console.info('Refresh not needed, continuing route to', to);
             next();
         }
     }
@@ -84,7 +139,6 @@ router.beforeEach((to, from, next) => {
 // END ROUTER CONTROLS
 
 new Vue({
-    globalConsts,
     router,
     store,
     vuetify,
