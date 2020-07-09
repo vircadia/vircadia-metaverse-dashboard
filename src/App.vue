@@ -16,49 +16,21 @@
         >
 
             <v-list v-if="$store.state.account.isLoggedIn">
-                <v-list-item link @click.native="$router.push('/')">
-                    <v-list-item-action>
-                        <v-icon>mdi-home</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>Home</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click.native="$router.push('/people')">
-                    <v-list-item-action>
-                        <v-icon>mdi-account-group</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>People</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click.native="$router.push('/domain')">
-                    <v-list-item-action>
-                        <v-icon>mdi-earth</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>Domain</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item link @click.native="$router.push('/profile')">
-                    <v-list-item-action>
-                        <v-icon>mdi-face-profile</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>Profile</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
+                <v-list-item-group v-model="mainMenuModel" mandatory>
+                    <v-list-item
+                        v-for="(route, i) in getRoutes"
+                        :key="i"
+                        @click.native="$router.push(route.path)"
+                    >
+                        <v-list-item-icon>
+                            <v-icon v-text="route.icon"></v-icon>
+                        </v-list-item-icon>
 
-            <v-list v-else>
-                <v-list-item link @click.native="$router.push('/login')">
-                    <v-list-item-action>
-                        <v-icon>mdi-login</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title>Login</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
+                        <v-list-item-content>
+                            <v-list-item-title v-text="route.name"></v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
             </v-list>
 
         </v-navigation-drawer>
@@ -75,7 +47,9 @@
             <component @hideDialog="dialog.show = false" v-if="dialog.show" v-bind:is="dialog.which"></component>
         </transition>
 
-        <router-view/>
+        <transition name="fade" mode="out-in" hide-on-leave="true">
+            <router-view/>
+        </transition>
 
         <v-footer
             color="primary"
@@ -111,6 +85,21 @@ export default {
     computed: {
         updateAccountSession () {
             return this.$store.state.account;
+        },
+        getRoutes () {
+            var routes = this.$router.options.routes;
+
+            if (this.$store.state.account.isLoggedIn) {
+                routes = this.$router.options.routes.filter(
+                    r => r.name !== 'Login'
+                );
+            } else {
+                routes = this.$router.options.routes.filter(
+                    r => r.name === 'Login'
+                );
+            }
+
+            return routes;
         }
     },
     watch: {
@@ -182,6 +171,7 @@ export default {
     },
     data: () => ({
         mainMenu: null,
+        mainMenuModel: null,
         dialog: {
             show: false,
             which: ''

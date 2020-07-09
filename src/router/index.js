@@ -18,26 +18,31 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
+        icon: 'mdi-login',
         component: () => import('../views/Login.vue')
     },
     {
         path: '/',
         name: 'Home',
+        icon: 'mdi-home',
         component: Home
     },
     {
         path: '/people',
         name: 'People',
+        icon: 'mdi-account-group',
         component: () => import('../views/People.vue')
     },
     {
         path: '/domain',
         name: 'Domain',
+        icon: 'mdi-earth',
         component: () => import('../views/Domain.vue')
     },
     {
         path: '/profile',
         name: 'Profile',
+        icon: 'mdi-face-profile',
         component: () => import('../views/Profile.vue')
     }
 ]
