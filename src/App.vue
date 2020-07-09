@@ -38,9 +38,19 @@
         <v-app-bar
             app
             color="primary"
+            src="https://images4.alphacoders.com/862/thumb-1920-862984.png"
         >
             <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
-            <v-toolbar-title>{{ $store.state.metaverseConfig.nickname }}</v-toolbar-title>
+            <v-toolbar-title class="mr-4">
+                {{ $store.state.metaverseConfig.nickname }}
+            </v-toolbar-title>
+            <span v-if="$store.state.account.isLoggedIn">
+                Hello, {{ $store.state.account.username }}!
+            </span>
+            <v-spacer></v-spacer>
+            <v-btn icon>
+                <v-icon>mdi-export</v-icon>
+            </v-btn>
         </v-app-bar>
 
         <transition name="fade" mode="out-in">
