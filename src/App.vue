@@ -38,7 +38,7 @@
         <v-app-bar
             app
             color="primary"
-            src="https://images4.alphacoders.com/862/thumb-1920-862984.png"
+            src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
         >
             <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
             <v-toolbar-title class="mr-4">
