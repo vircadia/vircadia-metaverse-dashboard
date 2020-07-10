@@ -16,9 +16,18 @@ import vuetify from './plugins/vuetify'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
+// MAIN APPLICATION INITIALIZATION
+
 window.$ = window.jQuery = require('jquery')
+window.$.ajaxSetup({
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('x-vircadia-error-handle', 'badrequest');
+    }
+});
 
 Vue.config.productionTip = false;
+
+// END MAIN APPLICATION INITIALIZATION
 
 // GLOBAL FUNCTIONS
 

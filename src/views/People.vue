@@ -19,22 +19,7 @@
                 align="center"
                 justify="center"
             >
-                <v-col class="text-center">
-                    <v-tooltip left>
-                        <template v-slot:activator="{ on }">
-                                <v-btn
-                                    :href="source"
-                                    icon
-                                    large
-                                    target="_blank"
-                                    v-on="on"
-                                >
-                                    <v-icon large>mdi-code-tags</v-icon>
-                                </v-btn>
-                        </template>
-                        <span>Source</span>
-                    </v-tooltip>
-                </v-col>
+                <PeopleList></PeopleList>
             </v-row>
         </v-container>
     </v-main>
@@ -42,10 +27,16 @@
 </template>
 
 <script>
+
+import PeopleList from '../components/PeopleList'
+
 export default {
     name: 'People',
     props: {
         source: String
+    },
+    components: {
+        PeopleList
     }
 }
 </script>

@@ -158,6 +158,7 @@ export default {
                     });
                 })
                 .fail(function (result) {
+                    console.info('result:', result);
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {

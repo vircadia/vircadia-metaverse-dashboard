@@ -130,7 +130,7 @@ export default {
                         }
                     });
                     console.info('Login successful, routing to home.');
-                    vue_this.$router.push('/Home');
+                    vue_this.$router.push('/');
                 })
                 .fail(function (result) {
                     vue_this.$store.commit('mutate', {
