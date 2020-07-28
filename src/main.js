@@ -33,10 +33,11 @@ Vue.config.productionTip = false;
 
 function checkNeedsRefresh () {
     var currentTimestamp = Math.floor(new Date().getTime() / 1000); // in seconds
-    var sessionExpirationTime = store.state.account.createdAt + store.state.account.expiresIn;
+    var sessionExpirationTime = parseInt(store.state.account.createdAt) + parseInt(store.state.account.expiresIn);
 
-    console.info('currentTimestamp', currentTimestamp)
-    console.info('sessionExpirationTime', sessionExpirationTime)
+    // console.info('createdAt', Object.prototype.toString.call(store.state.account.createdAt), 'expiresIn', Object.prototype.toString.call(store.state.account.expiresIn))
+    // console.info('currentTimestamp', currentTimestamp, Object.prototype.toString.call(currentTimestamp))
+    // console.info('sessionExpirationTime', sessionExpirationTime, Object.prototype.toString.call(sessionExpirationTime))
 
     if (currentTimestamp > sessionExpirationTime ||
         (currentTimestamp - store.state.globalConsts.SAFETY_BEFORE_SESSION_TIMEOUT) > sessionExpirationTime) {
