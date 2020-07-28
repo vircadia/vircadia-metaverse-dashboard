@@ -121,7 +121,7 @@ export default {
             },
             { text: 'Account ID', value: 'accountId' },
             { text: 'Connection', value: 'connection' },
-            { text: 'Images', value: 'images' },
+            { text: 'Images', value: 'images', sortable: false },
             { text: 'Location', value: 'location' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
@@ -143,9 +143,9 @@ export default {
             accountId: 0,
             connection: null,
             images: {
-                'Hero': '../assets/231352681.png',
-                'Thumbnail': '../assets/231352681.png',
-                'Tiny': '../assets/231352681.png'
+                'Hero': '${publicPath}assets/231352681.png',
+                'Thumbnail': '${publicPath}assets/231352681.png',
+                'Tiny': '${publicPath}assets/231352681.png'
             },
             location: 'Unknown'
         }
