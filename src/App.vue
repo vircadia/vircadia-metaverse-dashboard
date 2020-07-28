@@ -44,8 +44,16 @@
             <v-toolbar-title class="mr-4">
                 {{ $store.state.metaverseConfig.nickname }}
             </v-toolbar-title>
-            <span v-if="$store.state.account.isLoggedIn">
+            <span v-if="$store.state.account.isLoggedIn" class="mr-4">
                 Hello, {{ $store.state.account.username }}!
+            </span>
+            <span v-if="this.$store.state.account.isAdmin" class="mt-5">
+                <v-switch
+                    v-model="useAsAdminStore"
+                    inset
+                    row
+                    label="Admin View"
+                ></v-switch>
             </span>
             <v-spacer></v-spacer>
             <v-btn icon>
@@ -110,6 +118,20 @@ export default {
             }
 
             return routes;
+        },
+        useAsAdminStore: {
+            get () {
+                return this.$store.state.account.useAsAdmin;
+            },
+            set (value) {
+                store.commit('mutate', {
+                    update: true,
+                    property: 'account',
+                    with: {
+                        useAsAdmin: value
+                    }
+                });
+            }
         }
     },
     watch: {
