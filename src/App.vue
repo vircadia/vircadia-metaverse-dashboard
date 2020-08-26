@@ -75,7 +75,7 @@
             <span class="white--text">Iamus Dashboard v0.0.1a - Vircadia Metaverse Services</span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse Server: <b>{{ $store.state.metaverseConfig.server }}</b></span>
-            <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion }}</span>
+            <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>
         </v-footer>
     </v-app>
 
