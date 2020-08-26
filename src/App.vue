@@ -14,7 +14,6 @@
             v-model="mainMenu"
             app
         >
-
             <v-list v-if="$store.state.account.isLoggedIn">
                 <v-list-item-group v-model="mainMenuModel" mandatory>
                     <v-list-item
@@ -73,7 +72,7 @@
             color="primary"
             app
         >
-            <span class="white--text">Apollo Dashboard v0.0.1a - Vircadia Metaverse Services</span>
+            <span class="white--text">Iamus Dashboard v0.0.1a - Vircadia Metaverse Services</span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse Server: <b>{{ $store.state.metaverseConfig.server }}</b></span>
             <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion }}</span>

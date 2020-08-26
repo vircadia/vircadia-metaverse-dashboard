@@ -1,4 +1,4 @@
-# apollo-dashboard
+# iamus-dashboard
 
 ## Project setup
 ```
