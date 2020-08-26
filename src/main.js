@@ -31,7 +31,7 @@ Vue.config.productionTip = false;
 
 // GLOBAL FUNCTIONS
 
-function checkNeedsRefresh () {
+function checkNeedsTokenRefresh () {
     var currentTimestamp = Math.floor(new Date().getTime() / 1000); // in seconds
     var sessionExpirationTime = parseInt(store.state.account.createdAt) + parseInt(store.state.account.expiresIn);
 
@@ -47,9 +47,26 @@ function checkNeedsRefresh () {
     }
 }
 
+function parseFromStorage (item) {
+    var itemToSendBack;
+    var retrievedItem = localStorage.getItem(item);
+    if (!retrievedItem || retrievedItem === 'undefined') {
+        itemToSendBack = undefined;
+    } else {
+        try {
+            itemToSendBack = JSON.parse(retrievedItem);
+        } catch (error) {
+            console.info('Error retrieving', item, 'from storage. Parsing error:', error);
+        }
+    }
+
+    return itemToSendBack;
+}
+
 Vue.mixin({
     methods: {
-        checkNeedsRefresh: checkNeedsRefresh
+        checkNeedsTokenRefresh: checkNeedsTokenRefresh,
+        parseFromStorage: parseFromStorage
     }
 })
 
@@ -59,16 +76,17 @@ Vue.mixin({
 
 function initStore () {
     var storedItems = {
-        isLoggedIn: localStorage.getItem('isLoggedIn'),
-        isAdmin: localStorage.getItem('isAdmin'),
-        username: localStorage.getItem('username'),
+        isLoggedIn: parseFromStorage('isLoggedIn'), // bool
+        isAdmin: parseFromStorage('isAdmin'), // bool
+        useAsAdmin: parseFromStorage('useAsAdmin'), // bool
+        username: localStorage.getItem('username'), // string
         // Token data
-        accessToken: localStorage.getItem('accessToken'),
-        tokenType: localStorage.getItem('tokenType'),
-        createdAt: localStorage.getItem('createdAt'),
-        expiresIn: localStorage.getItem('expiresIn'),
-        refreshToken: localStorage.getItem('refreshToken'),
-        scope: localStorage.getItem('scope')
+        accessToken: parseFromStorage('accessToken'), // int
+        tokenType: localStorage.getItem('tokenType'), // string
+        createdAt: parseFromStorage('createdAt'), // int
+        expiresIn: parseFromStorage('expiresIn'), // int
+        refreshToken: parseFromStorage('refreshToken'), // int
+        scope: localStorage.getItem('scope') // string
     }
 
     store.commit('mutate', {
@@ -87,7 +105,7 @@ function initStore () {
 // ROUTER CONTROLS
 
 router.beforeEach((to, from, next) => {
-    console.info('Attempting to navigate to:', to)
+    console.info('Attempting to navigate to:', to.name)
 
     // If the store has not yet been initialized...
     console.info('store.initialized', store.state.initialized);
@@ -95,21 +113,22 @@ router.beforeEach((to, from, next) => {
         initStore();
     }
 
-    if (to.name !== 'Login' && store.state.account.isLoggedIn === false) {
+    console.info('Is the user logged in?', store.state.account.isLoggedIn);
+
+    if (to.name !== 'Login' && !store.state.account.isLoggedIn) {
         console.info('Attempting to access a page while logged out, routing to login.');
         next({ name: 'Login' });
     } else if (to.name === 'Login' && store.state.account.isLoggedIn === true) {
         // The user should log out first before trying to access the login page.
         console.info('Attemping to access login before logging out, re-routing to home.');
         next({ name: 'Home' });
-    } else if (to.name === 'Login' && store.state.account.isLoggedIn === false) {
+    } else if (to.name === 'Login' && !store.state.account.isLoggedIn) {
         console.info('Attempting to access login while logged out, routing to login.');
         next();
     } else { // For any other case...
         // Verify the user's session is still active. If it is not, it will redirect them to login.
-        console.info('Checking if a token refresh is needed.');
-
-        if (checkNeedsRefresh()) {
+        console.info('All other routing cases... Checking if a token refresh is needed.');
+        if (checkNeedsTokenRefresh()) {
             // If the session has expired... Attempt to refresh it.
             console.info('Token refresh needed. Attempting to refresh token.');
 
@@ -143,12 +162,18 @@ router.beforeEach((to, from, next) => {
                 .fail(function (result) {
                     // If this fails for any reason, the user must log back in.
                     console.info('Refresh failed, re-routing to login.');
-                    store.state.account.isLoggedIn = false;
+                    store.commit('mutate', {
+                        update: true,
+                        property: 'account',
+                        with: {
+                            isLoggedIn: false
+                        }
+                    });
                     next({ name: 'Login' });
                 })
         } else {
             // Good to go, send them on their way.
-            console.info('Refresh not needed, continuing route to', to);
+            console.info('Refresh not needed, attempting to continue route to', to);
             next();
         }
     }

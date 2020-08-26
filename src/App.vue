@@ -55,7 +55,7 @@
                 ></v-switch>
             </span>
             <v-spacer></v-spacer>
-            <v-btn icon>
+            <v-btn icon @click="logout">
                 <v-icon>mdi-export</v-icon>
             </v-btn>
         </v-app-bar>
@@ -190,6 +190,19 @@ export default {
                     });
                     vue_this.openDialog('ErrorOccurred', true);
                 })
+        },
+        // Account Handling
+        logout: function () {
+            vue_this.$store.commit('mutate', {
+                update: true,
+                property: 'account',
+                with: {
+                    isLoggedIn: false,
+                    accessToken: null,
+                    refreshToken: null
+                }
+            });
+            this.$router.push('Login');
         }
     },
     created: function () {

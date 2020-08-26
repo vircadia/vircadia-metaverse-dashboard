@@ -32,17 +32,17 @@ export default new Vuex.Store({
             full: ''
         },
         account: {
-            isLoggedIn: null, // bool
-            isAdmin: true, // FIXME: defaulting to true for now since we have no way to retrieve this information cleanly.
+            isLoggedIn: false, // bool
+            isAdmin: true, // bool FIXME: defaulting to true for now since we have no way to retrieve this information cleanly.
             useAsAdmin: false, // bool
-            username: null,
+            username: null, // string
             // Token data
-            accessToken: null,
-            tokenType: null,
+            accessToken: null, // int
+            tokenType: null, // string
             createdAt: null, // int
             expiresIn: null, // int
-            refreshToken: null,
-            scope: null
+            refreshToken: null, // int
+            scope: null // string
         }
     },
     mutations: {
