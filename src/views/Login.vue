@@ -105,7 +105,7 @@ export default {
         sendLogin: function () {
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.metaverseServer + '/oauth/token',
+                url: vue_this.metaverseServer + 'oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'password',

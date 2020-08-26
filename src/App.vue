@@ -164,7 +164,7 @@ export default {
         retrieveMetaverseConfig: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + '/api/metaverse_info'
+                url: metaverseURL + 'api/metaverse_info'
             })
                 .done(function (result) {
                     vue_this.$store.commit('mutate', {

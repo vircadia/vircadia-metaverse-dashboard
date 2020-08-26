@@ -22,7 +22,7 @@ export default new Vuex.Store({
         metaverseConfig: { // Prefilled with initial values
             name: '',
             nickname: '',
-            server: 'https://metaverse.bluestuff.org:9400', // This needs to at least be pre-filled in order to get all other config information.
+            server: 'https://metaverse.bluestuff.org:9400/', // This needs to at least be pre-filled in order to get all other config information.
             iceServer: '',
             serverVersion: ''
         },
