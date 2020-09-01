@@ -103,6 +103,9 @@ export default {
         updateAccountSession () {
             return this.$store.state.account;
         },
+        updateAccessToken () {
+            return this.$store.state.account.accessToken;
+        },
         getRoutes () {
             var routes = this.$router.options.routes;
 
@@ -144,6 +147,17 @@ export default {
                 }
             },
             deep: true
+        },
+        updateAccessToken: {
+            handler: function (newVal) {
+                console.info('Setting new access token header...');
+                window.$.ajaxSetup({
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('x-vircadia-error-handle', 'badrequest');
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + this.$store.state.account.accessToken);
+                    }
+                });
+            }
         }
     },
     methods: {
@@ -179,7 +193,7 @@ export default {
                     });
                 })
                 .fail(function (result) {
-                    console.info('result:', result);
+                    console.info('Failed: ', result);
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {

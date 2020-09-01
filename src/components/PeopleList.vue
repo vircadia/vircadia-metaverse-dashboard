@@ -105,6 +105,8 @@
 </template>
 
 <script>
+var vue_this;
+
 export default {
     name: 'PeopleList',
     props: {
@@ -164,11 +166,50 @@ export default {
     },
 
     created () {
+        vue_this = this;
+        
         this.initialize()
     },
 
     methods: {
+        retrievePeopleList: function (metaverseURL) {
+            window.$.ajax({
+                type: 'GET',
+                url: metaverseURL + 'api/v1/users',
+                contentType: 'application/json',
+                data: {
+                    asAdmin: true
+                }
+            })
+                .done(function (result) {
+                    // vue_this.$store.commit('mutate', {
+                    //     property: 'metaverseConfig',
+                    //     with: {
+                    //         name: result.metaverse_name,
+                    //         nickname: result.metaverse_nick_name,
+                    //         server: result.metaverse_url,
+                    //         iceServer: result.ice_server_url,
+                    //         serverVersion: result.metaverse_server_version
+                    //     }
+                    // });
+                    console.info("RESULTS:", result);
+                })
+                .fail(function (result) {
+                    console.info('Failed: ', result);
+                    // vue_this.$store.commit('mutate', {
+                    //     property: 'error',
+                    //     with: {
+                    //         title: 'Failed to Retrieve Metaverse Information',
+                    //         code: '1',
+                    //         full: 'We were unable to retrieve the metaverse information for ' + metaverseURL
+                    //     }
+                    // });
+                    // vue_this.openDialog('ErrorOccurred', true);
+                })
+        },
         initialize () {
+            this.retrievePeopleList(this.$store.state.metaverseConfig.server);
+
             this.people = [
                 {
                     name: 'Kalila',

@@ -19,11 +19,15 @@ import '@mdi/font/css/materialdesignicons.css'
 // MAIN APPLICATION INITIALIZATION
 
 window.$ = window.jQuery = require('jquery')
-window.$.ajaxSetup({
-    beforeSend: function (xhr) {
-        xhr.setRequestHeader('x-vircadia-error-handle', 'badrequest');
-    }
-});
+
+function initializeAjax () {
+    window.$.ajaxSetup({
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('x-vircadia-error-handle', 'badrequest');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + store.state.account.accessToken);
+        }
+    });
+}
 
 Vue.config.productionTip = false;
 
@@ -81,11 +85,11 @@ function initStore () {
         useAsAdmin: parseFromStorage('useAsAdmin'), // bool
         username: localStorage.getItem('username'), // string
         // Token data
-        accessToken: parseFromStorage('accessToken'), // int
+        accessToken: localStorage.getItem('accessToken'), // string
+        refreshToken: localStorage.getItem('refreshToken'), // string
         tokenType: localStorage.getItem('tokenType'), // string
         createdAt: parseFromStorage('createdAt'), // int
         expiresIn: parseFromStorage('expiresIn'), // int
-        refreshToken: parseFromStorage('refreshToken'), // int
         scope: localStorage.getItem('scope') // string
     }
 
@@ -111,6 +115,7 @@ router.beforeEach((to, from, next) => {
     console.info('store.initialized', store.state.initialized);
     if (store.state.initialized === false) {
         initStore();
+        initializeAjax();
     }
 
     console.info('Is the user logged in?', store.state.account.isLoggedIn);

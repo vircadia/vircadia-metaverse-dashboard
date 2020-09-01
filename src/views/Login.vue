@@ -129,16 +129,18 @@ export default {
                             scope: result.scope
                         }
                     });
+                    console.info('RESULT:', result);
                     console.info('Login successful, routing to home.');
                     vue_this.$router.push('/');
                 })
                 .fail(function (result) {
+                    console.info('RESULT ON ERROR:', result);
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to Login',
+                            title: 'Failed to log in to ' + vue_this.metaverseServer,
                             code: '2',
-                            full: 'We were unable to log you in to ' + vue_this.metaverseServer
+                            full: result.error
                         }
                     });
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });

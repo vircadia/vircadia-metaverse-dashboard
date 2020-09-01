@@ -37,11 +37,11 @@ export default new Vuex.Store({
             useAsAdmin: false, // bool
             username: null, // string
             // Token data
-            accessToken: null, // int
+            accessToken: null, // string
+            refreshToken: null, // string
             tokenType: null, // string
             createdAt: null, // int
             expiresIn: null, // int
-            refreshToken: null, // int
             scope: null // string
         }
     },
