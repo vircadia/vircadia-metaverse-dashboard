@@ -16,7 +16,7 @@
     <v-data-table
         :headers="headers"
         :items="people"
-        sort-by="calories"
+        sort-by="user"
         class="elevation-1"
     >
         <template v-slot:top>
@@ -36,6 +36,7 @@
                         class="mb-2"
                         v-bind="attrs"
                         v-on="on"
+                        :disabled="true"
                     >
                         New User
                     </v-btn>
@@ -77,18 +78,20 @@
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
-            <!-- <v-icon
+            <v-icon
                 small
                 class="mr-2"
                 @click="editUser(item)"
+                :disabled="!$store.state.account.isAdmin"
             >
                 mdi-pencil
-            </v-icon> -->
+            </v-icon>
             <v-icon
                 small
                 @click="deleteUser(item)"
+                :disabled="!$store.state.account.isAdmin"
             >
-                mdi-delete
+                mdi-nuke
             </v-icon>
         </template>
         <template v-slot:item.images="{ item }">
@@ -118,13 +121,14 @@ export default {
             {
                 text: 'User',
                 align: 'start',
-                sortable: false,
+                sortable: true,
                 value: 'name',
             },
             { text: 'Account ID', value: 'accountId' },
             { text: 'Connection', value: 'connection' },
             { text: 'Images', value: 'images', sortable: false },
             { text: 'Location', value: 'location' },
+            { text: 'Online', value: 'online' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         people: [],
@@ -172,13 +176,13 @@ export default {
     },
 
     methods: {
-        retrievePeopleList: function (metaverseURL) {
+        retrieveAccountList: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + 'api/v1/users',
+                url: metaverseURL + 'api/v1/accounts',
                 contentType: 'application/json',
                 data: {
-                    asAdmin: true
+                    asAdmin: vue_this.$store.state.account.useAsAdmin
                 }
             })
                 .done(function (result) {
@@ -208,7 +212,7 @@ export default {
                 })
         },
         initialize () {
-            this.retrievePeopleList(this.$store.state.metaverseConfig.server);
+            this.retrieveAccountList(this.$store.state.metaverseConfig.server);
 
             this.people = [
                 {
@@ -220,18 +224,8 @@ export default {
                         'Thumbnail': '../assets/231352681.png',
                         'Tiny': '../assets/231352681.png'
                     },
-                    location: 421
-                },
-                {
-                    name: 'MrBlue',
-                    accountId: 420,
-                    connection: true,
-                    images: {
-                        'Hero': '../assets/231352681.png',
-                        'Thumbnail': '../assets/231352681.png',
-                        'Tiny': '../assets/231352681.png'
-                    },
-                    location: 420
+                    location: "The Hub",
+                    online: true
                 }
             ]
         },

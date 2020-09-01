@@ -126,7 +126,7 @@ export default {
                 return this.$store.state.account.useAsAdmin;
             },
             set (value) {
-                store.commit('mutate', {
+                this.$store.commit('mutate', {
                     update: true,
                     property: 'account',
                     with: {
@@ -154,7 +154,7 @@ export default {
                 window.$.ajaxSetup({
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('x-vircadia-error-handle', 'badrequest');
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + this.$store.state.account.accessToken);
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + vue_this.$store.state.account.accessToken);
                     }
                 });
             }

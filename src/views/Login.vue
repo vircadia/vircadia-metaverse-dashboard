@@ -115,20 +115,25 @@ export default {
                 }
             })
                 .done(function (result) {
+                    var checkIsAdmin = result.account_roles.includes('admin');
+
                     vue_this.$store.commit('mutate', {
                         update: true,
                         property: 'account',
                         with: {
                             isLoggedIn: true,
+                            isAdmin: checkIsAdmin,
                             username: vue_this.login,
+                            accountRoles: result.account_roles,
                             accessToken: result.access_token,
+                            refreshToken: result.refresh_token,
                             tokenType: result.token_type,
                             createdAt: result.created_at,
                             expiresIn: result.expires_in,
-                            refreshToken: result.refresh_token,
                             scope: result.scope
                         }
                     });
+
                     console.info('RESULT:', result);
                     console.info('Login successful, routing to home.');
                     vue_this.$router.push('/');
@@ -143,6 +148,7 @@ export default {
                             full: result.error
                         }
                     });
+
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         }

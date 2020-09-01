@@ -33,9 +33,10 @@ export default new Vuex.Store({
         },
         account: {
             isLoggedIn: false, // bool
-            isAdmin: true, // bool FIXME: defaulting to true for now since we have no way to retrieve this information cleanly.
+            isAdmin: false, // bool
             useAsAdmin: false, // bool
             username: null, // string
+            accountRoles: null, // array
             // Token data
             accessToken: null, // string
             refreshToken: null, // string
