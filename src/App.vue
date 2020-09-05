@@ -158,6 +158,11 @@ export default {
                     }
                 });
             }
+        },
+        useAsAdminStore: {
+            handler: function (newVal) {
+                location.reload();
+            }
         }
     },
     methods: {
