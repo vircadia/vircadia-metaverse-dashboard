@@ -33,11 +33,12 @@
             </v-list>
 
         </v-navigation-drawer>
-
+        <!-- src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" -->
         <v-app-bar
             app
+            prominent
             color="primary"
-            src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+            src="/assets/waifu_bg.jpg"
         >
             <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
             <v-toolbar-title class="mr-4">
@@ -217,6 +218,7 @@ export default {
                 property: 'account',
                 with: {
                     isLoggedIn: false,
+                    isAdmin: false,
                     accessToken: null,
                     refreshToken: null
                 }

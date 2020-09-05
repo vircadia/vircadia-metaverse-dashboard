@@ -1,4 +1,4 @@
-<!--
+attemptLogin<!--
 //  Login.vue
 //
 //  Created by Kalila L. on 2 July 2020.
@@ -30,52 +30,124 @@
                                 dark
                                 flat
                             >
-                                <v-toolbar-title>Login</v-toolbar-title>
+                                <v-toolbar-title>Metaverse</v-toolbar-title>
                             </v-toolbar>
-                            <v-card-text>
-                                <v-form>
-                                    <v-text-field
-                                        label="Login"
-                                        name="login"
-                                        v-model="login"
-                                        prepend-icon="mdi-account"
-                                        type="text"
-                                    ></v-text-field>
+                            <v-tabs
+                                v-model="currentTab"
+                                grow
+                            >
+                                <v-tab>
+                                    <v-icon left>mdi-account</v-icon>
+                                    Login
+                                </v-tab>
+                                <v-tab>
+                                    <v-icon left>mdi-account-plus</v-icon>
+                                    Register
+                                </v-tab>
+                            </v-tabs>
+                            <v-tabs-items
+                                v-model="currentTab"
+                            >
+                                <v-tab-item>
+                                    <v-card-text>
+                                        <v-form
+                                            ref="loginForm"
+                                        >
+                                            <v-text-field
+                                                label="Login"
+                                                name="login"
+                                                v-model="login"
+                                                prepend-icon="mdi-account"
+                                                type="text"
+                                                :rules="loginRules"
+                                            ></v-text-field>
 
-                                    <v-text-field
-                                        id="password"
-                                        label="Password"
-                                        name="password"
-                                        v-model="password"
-                                        prepend-icon="mdi-lock"
-                                        type="password"
-                                    ></v-text-field>
-                                    <v-expansion-panels v-if="false">
-                                        <v-expansion-panel>
-                                            <v-expansion-panel-header disable-icon-rotate>
-                                                Advanced
-                                                <template v-slot:actions>
-                                                    <v-icon color="error">mdi-web</v-icon>
-                                                </template>
-                                            </v-expansion-panel-header>
-                                            <v-expansion-panel-content>
-                                                <v-text-field
-                                                    id="metaverseServer"
-                                                    label="Metaverse Server"
-                                                    name="metaverseServer"
-                                                    v-model="metaverseServer"
-                                                    prepend-icon="mdi-web"
-                                                    type="text"
-                                                ></v-text-field>
-                                            </v-expansion-panel-content>
-                                        </v-expansion-panel>
-                                    </v-expansion-panels>
-                                </v-form>
-                            </v-card-text>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn @click="sendLogin" color="primary">Login</v-btn>
-                            </v-card-actions>
+                                            <v-text-field
+                                                id="password"
+                                                label="Password"
+                                                name="password"
+                                                v-model="password"
+                                                prepend-icon="mdi-lock"
+                                                type="password"
+                                                :rules="passwordRules"
+                                            ></v-text-field>
+                                            <v-expansion-panels v-if="false">
+                                                <v-expansion-panel>
+                                                    <v-expansion-panel-header disable-icon-rotate>
+                                                        Advanced
+                                                        <template v-slot:actions>
+                                                            <v-icon color="error">mdi-web</v-icon>
+                                                        </template>
+                                                    </v-expansion-panel-header>
+                                                    <v-expansion-panel-content>
+                                                        <v-text-field
+                                                            id="metaverseServer"
+                                                            label="Metaverse Server"
+                                                            name="metaverseServer"
+                                                            v-model="metaverseServer"
+                                                            prepend-icon="mdi-web"
+                                                            type="text"
+                                                        ></v-text-field>
+                                                    </v-expansion-panel-content>
+                                                </v-expansion-panel>
+                                            </v-expansion-panels>
+                                        </v-form>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn @click="attemptLogin" color="primary">Login</v-btn>
+                                    </v-card-actions>
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <v-card-text>
+                                        <v-form
+                                            ref="registrationForm"
+                                        >
+                                            <v-text-field
+                                                label="Username"
+                                                name="username"
+                                                v-model="username"
+                                                prepend-icon="mdi-account"
+                                                type="text"
+                                                :rules="usernameRules"
+                                            ></v-text-field>
+
+                                            <v-text-field
+                                                label="Email"
+                                                name="email"
+                                                v-model="email"
+                                                prepend-icon="mdi-email"
+                                                type="text"
+                                                :rules="emailRules"
+                                            ></v-text-field>
+
+                                            <v-text-field
+                                                id="password"
+                                                label="Password"
+                                                name="password"
+                                                v-model="password"
+                                                prepend-icon="mdi-lock"
+                                                type="password"
+                                                :rules="passwordRules"
+                                            ></v-text-field>
+
+                                            <v-text-field
+                                                id="confirmPassword"
+                                                label="Confirm Password"
+                                                name="confirmPassword"
+                                                v-model="confirmPassword"
+                                                prepend-icon="mdi-lock"
+                                                type="password"
+                                                :rules="confirmPasswordRules"
+                                            ></v-text-field>
+                                        </v-form>
+                                    </v-card-text>
+                                    <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn @click="attemptRegister" color="primary">Register</v-btn>
+                                    </v-card-actions>
+                                </v-tab-item>
+                            </v-tabs-items>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -95,14 +167,41 @@ export default {
     },
     data: () => ({
         login: '',
+        loginRules: [
+            v => !!v || 'A login is required.'
+        ],
+        // The password is shared by the login and register box for now for convenience.
         password: '',
+        passwordRules: [
+            v => !!v || 'A password is required.'
+        ],
+        // BEGIN REGISTER BOX
+        username: '',
+        usernameRules: [
+            v => !!v || 'A username is required.'
+        ],
+        email: '',
+        emailRules: [
+            v => !!v || 'An email is required.'
+        ],
+        confirmPassword: '',
+        confirmPasswordRules: [
+            v => !!v || 'You must confirm your password.',
+            function (v) {
+                return v === vue_this.password || 'Your password must match.'
+            }
+        ],
+        // END REGISTER BOX
+        currentTab: null,
         metaverseServer: ''
     }),
     methods: {
         sendEvent: function (command, data) {
             EventBus.$emit(command, data);
         },
-        sendLogin: function () {
+        attemptLogin: function () {
+            if (!this.$refs.loginForm.validate()) return;
+
             window.$.ajax({
                 type: 'POST',
                 url: vue_this.metaverseServer + 'oauth/token',
@@ -134,16 +233,47 @@ export default {
                         }
                     });
 
-                    console.info('RESULT:', result);
                     console.info('Login successful, routing to home.');
                     vue_this.$router.push('/');
                 })
                 .fail(function (result) {
-                    console.info('RESULT ON ERROR:', result);
+                    console.info('Failed to login:', result);
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
                             title: 'Failed to log in to ' + vue_this.metaverseServer,
+                            code: '2',
+                            full: result.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
+                })
+        },
+        attemptRegister: function () {
+            if (!this.$refs.registrationForm.validate()) return;
+
+            window.$.ajax({
+                type: 'POST',
+                url: vue_this.metaverseServer + 'api/v1/users',
+                contentType: 'application/json',
+                data: {
+                    'username': vue_this.username,
+                    'password': vue_this.confirmPassword,
+                    'email': vue_this.email
+                }
+            })
+                .done(function (result) {
+                    console.info('Registration successful.');
+                    this.$refs.registrationForm.reset();
+                    this.currentTab = 0; // Login is 0, Register is 1, and so on... if we add tabs.
+                })
+                .fail(function (result) {
+                    console.info('Failed to register:', result);
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to register for ' + vue_this.metaverseServer,
                             code: '2',
                             full: result.error
                         }
