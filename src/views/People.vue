@@ -9,21 +9,21 @@
 -->
 
 <template>
-<v-app id="inspire">
-    <v-main>
-        <v-container
-            class="fill-height"
-            fluid
-        >
-            <v-row
-                align="center"
-                justify="center"
+    <v-app id="inspire">
+        <v-main>
+            <v-container
+                class="fill-height"
+                fluid
             >
-                <PeopleList></PeopleList>
-            </v-row>
-        </v-container>
-    </v-main>
-</v-app>
+                <v-row
+                    align="center"
+                    justify="center"
+                >
+                    <PeopleList></PeopleList>
+                </v-row>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>
 
 <script>

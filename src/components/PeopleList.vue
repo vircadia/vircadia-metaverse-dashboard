@@ -106,7 +106,7 @@
         <template v-slot:item.images="{ item }">
             <v-avatar>
                 <img
-                    :src="item.images.Thumbnail"
+                    :src="item.images.thumbnail"
                 >
             </v-avatar>
         </template>
@@ -181,10 +181,14 @@ export default {
     created () {
         vue_this = this;
         
-        this.initialize()
+        this.initialize();
     },
 
     methods: {
+        initialize () {
+            this.retrieveAccountList(this.$store.state.metaverseConfig.server);
+        },
+
         retrieveAccountList: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
@@ -213,10 +217,6 @@ export default {
                 })
         },
         
-        initialize () {
-            this.retrieveAccountList(this.$store.state.metaverseConfig.server);
-        },
-        
         rowClicked (rowData) {
             this.userDialogShow = true;
             this.userDialog.username = rowData.username;
@@ -239,7 +239,7 @@ export default {
         deleteUser (userID, username) {
             confirm('Are you sure you want to delete ' + username + '?') && this.postDeleteAccount(userID);
         },
-        // END Inline Editing Dialogs
+        // END Inline Editing Functionality
         
         // BEGIN Handling requests to the API
         // THESE REQUESTS USE THE ACCOUNT API WHILE THE LIST IS USING THE USERS API

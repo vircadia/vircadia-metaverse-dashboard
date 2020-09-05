@@ -9,43 +9,34 @@
 -->
 
 <template>
-<v-app id="inspire">
-    <v-main>
-        <v-container
-            class="fill-height"
-            fluid
-        >
-            <v-row
-                align="center"
-                justify="center"
+    <v-app id="inspire">
+        <v-main>
+            <v-container
+                class="fill-height"
+                fluid
             >
-                <v-col class="text-center">
-                    <v-tooltip left>
-                        <template v-slot:activator="{ on }">
-                                <v-btn
-                                    :href="source"
-                                    icon
-                                    large
-                                    target="_blank"
-                                    v-on="on"
-                                >
-                                    <v-icon large>mdi-code-tags</v-icon>
-                                </v-btn>
-                        </template>
-                        <span>Source</span>
-                    </v-tooltip>
-                </v-col>
-            </v-row>
-        </v-container>
-    </v-main>
-</v-app>
+                <v-row
+                    align="center"
+                    justify="center"
+                >
+                    <DomainList></DomainList>
+                </v-row>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>
 
 <script>
+
+import DomainList from '../components/DomainList'
+
 export default {
     name: 'Domain',
     props: {
         source: String
+    },
+    components: {
+        DomainList
     }
 }
 </script>
