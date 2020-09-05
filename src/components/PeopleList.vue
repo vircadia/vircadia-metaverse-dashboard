@@ -18,6 +18,7 @@
         :items="people"
         sort-by="user"
         class="elevation-1"
+        @click:row="rowClicked"
     >
         <template v-slot:top>
             <v-toolbar flat>
@@ -29,7 +30,70 @@
                 ></v-divider>
                 <v-toolbar-title>Accounts</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
+                <!-- USER DATA DIALOG -->
+                <v-dialog
+                    v-model="userDialogShow"
+                    width="500"
+                    color="primary"
+                >
+                    <v-card>
+                        <v-card-title>
+                            {{ userDialog.username }}
+                        </v-card-title>
+                
+                    <v-card-text class="text-left">
+                        <v-list class="transparent">
+                            <v-list-item>
+                                <v-list-item-title>
+                                    Account ID
+                                </v-list-item-title>
+
+                                <v-list-item-subtitle class="text-right">
+                                    {{ userDialog.accountId }}
+                                </v-list-item-subtitle>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-title>
+                                    Status
+                                </v-list-item-title>
+
+                                <v-list-item-subtitle class="text-right">
+                                    {{ userDialog.status }}
+                                </v-list-item-subtitle>
+                            </v-list-item>
+                        </v-list>
+                        <v-expansion-panels>
+                            <v-expansion-panel>
+                                <v-expansion-panel-header>Location <b>{{ userDialog.locationData }}</b></v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                    <v-list class="transparent">
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Domain ID
+                                            </v-list-item-title>
+                                            <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
+                                            <!-- <v-list-item-subtitle class="text-right">
+                                                {{ userDialog.locationData.root.domain.id }}
+                                            </v-list-item-subtitle> -->
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Path
+                                            </v-list-item-title>
+            
+                                            <!-- <v-list-item-subtitle class="text-right">
+                                                {{ userDialog.locationData.path }}
+                                            </v-list-item-subtitle> -->
+                                        </v-list-item>
+                                    </v-list>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                    </v-card-text>
+                    
+                    </v-card>
+                </v-dialog>
+                <!-- <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
                             color="primary"
@@ -75,7 +139,7 @@
                         <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                     </v-card-actions>
                 </v-card>
-                </v-dialog>
+                </v-dialog> -->
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -105,6 +169,25 @@
         <!-- <template v-slot:no-data>
             <v-btn color="primary" @click="initialize">Reset</v-btn>
         </template> -->
+        <!-- EDIT DIALOGS -->
+        <template v-slot:item.username="{ item }">
+            <v-edit-dialog
+                @save=""
+                @cancel=""
+                @open=""
+                @close=""
+                :return-value.sync="item.username"
+            > {{ item.username }}
+                <template v-slot:input>
+                    <v-text-field
+                        v-model="item.username"
+                        label="Edit"
+                        single-line
+                        counter
+                    ></v-text-field>
+                </template>
+            </v-edit-dialog>
+        </template>
     </v-data-table>
 </template>
 
@@ -128,15 +211,21 @@ export default {
             { text: 'Account ID', value: 'accountId' },
             // { text: 'Connection', value: 'connection' },
             // { text: 'Images', value: 'images', sortable: false },
-            { text: 'Location', value: 'location' },
+            { text: 'Status', value: 'status' },
             // { text: 'Online', value: 'online' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        userDialogShow: false,
+        userDialog: {
+            username: '',
+            accountId: '',
+            locationData: null
+        },
         people: [],
         editedIndex: -1,
         editedUser: {
             name: '',
-            accountId: 0,
+            accountId: '',
             connection: null,
             images: {
                 'Hero': '',
@@ -147,7 +236,7 @@ export default {
         },
         defaultUser: {
             name: '',
-            accountId: 0,
+            accountId: '',
             connection: null,
             images: {
                 'Hero': '${publicPath}assets/231352681.png',
@@ -192,7 +281,7 @@ export default {
                         vue_this.people.push(
                             {
                                 username: item.username,
-                                location: isOnline,
+                                status: isOnline,
                                 locationData: item.location,
                                 accountId: item.accountId
                             }
@@ -203,8 +292,17 @@ export default {
                     console.info('Failed to retrieve account list: ', result);
                 })
         },
+        
         initialize () {
             this.retrieveAccountList(this.$store.state.metaverseConfig.server);
+        },
+        
+        rowClicked (rowData) {
+            this.userDialogShow = true;
+            this.userDialog.username = rowData.username;
+            this.userDialog.accountId = rowData.accountId;
+            this.userDialog.status = rowData.status;
+            this.userDialog.locationData = rowData.locationData;
         },
 
         // editUser (item) {
