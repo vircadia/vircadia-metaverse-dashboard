@@ -21,60 +21,61 @@
     >
         <template v-slot:top>
             <v-toolbar flat>
-            <v-toolbar-title>People</v-toolbar-title>
-            <v-divider
-                class="mx-4"
-                inset
-                vertical
-            ></v-divider>
-            <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                        color="primary"
-                        dark
-                        class="mb-2"
-                        v-bind="attrs"
-                        v-on="on"
-                        :disabled="true"
-                    >
-                        New User
-                    </v-btn>
-                </template>
-            <v-card>
-                <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
+                <v-toolbar-title>People</v-toolbar-title>
+                <v-divider
+                    class="mx-4"
+                    inset
+                    vertical
+                ></v-divider>
+                <v-toolbar-title>Accounts</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-dialog v-model="dialog" max-width="500px">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            color="primary"
+                            dark
+                            class="mb-2"
+                            v-bind="attrs"
+                            v-on="on"
+                            :disabled="true"
+                        >
+                            New User
+                        </v-btn>
+                    </template>
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                    </v-card-title>
 
-                <v-card-text>
-                    <v-container>
-                        <v-row>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field v-model="editedUser.name" label="Username"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field v-model="editedUser.accountId" label="Account ID"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-checkbox v-model="editedUser.connection" label="Connection"></v-checkbox>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field v-model="editedUser.images" label="Images"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field v-model="editedUser.location" label="Location"></v-text-field>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-                </v-card-text>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-text-field v-model="editedUser.name" label="Username"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-text-field v-model="editedUser.accountId" label="Account ID"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-checkbox v-model="editedUser.connection" label="Connection"></v-checkbox>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-text-field v-model="editedUser.images" label="Images"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                    <v-text-field v-model="editedUser.location" label="Location"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
 
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                </v-card-actions>
-            </v-card>
-            </v-dialog>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+                </v-dialog>
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
@@ -82,14 +83,14 @@
                 small
                 class="mr-2"
                 @click="editUser(item)"
-                :disabled="!$store.state.account.isAdmin"
+                :disabled="true"
             >
                 mdi-pencil
             </v-icon>
             <v-icon
                 small
                 @click="deleteUser(item)"
-                :disabled="!$store.state.account.isAdmin"
+                :disabled="true"
             >
                 mdi-nuke
             </v-icon>
@@ -119,16 +120,16 @@ export default {
         dialog: false,
         headers: [
             {
-                text: 'User',
+                text: 'Username',
                 align: 'start',
                 sortable: true,
-                value: 'name',
+                value: 'username',
             },
             { text: 'Account ID', value: 'accountId' },
-            { text: 'Connection', value: 'connection' },
-            { text: 'Images', value: 'images', sortable: false },
+            // { text: 'Connection', value: 'connection' },
+            // { text: 'Images', value: 'images', sortable: false },
             { text: 'Location', value: 'location' },
-            { text: 'Online', value: 'online' },
+            // { text: 'Online', value: 'online' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         people: [],
@@ -179,55 +180,31 @@ export default {
         retrieveAccountList: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + 'api/v1/accounts',
+                url: metaverseURL + 'api/v1/users',
                 contentType: 'application/json',
                 data: {
                     asAdmin: vue_this.$store.state.account.useAsAdmin
                 }
             })
                 .done(function (result) {
-                    // vue_this.$store.commit('mutate', {
-                    //     property: 'metaverseConfig',
-                    //     with: {
-                    //         name: result.metaverse_name,
-                    //         nickname: result.metaverse_nick_name,
-                    //         server: result.metaverse_url,
-                    //         iceServer: result.ice_server_url,
-                    //         serverVersion: result.metaverse_server_version
-                    //     }
-                    // });
-                    console.info("RESULTS:", result);
+                    result.data.users.forEach(function(item, index) {
+                        var isOnline = item.location.online ? 'Online' : 'Offline';
+                        vue_this.people.push(
+                            {
+                                username: item.username,
+                                location: isOnline,
+                                locationData: item.location,
+                                accountId: item.accountId
+                            }
+                        );
+                    });
                 })
                 .fail(function (result) {
-                    console.info('Failed: ', result);
-                    // vue_this.$store.commit('mutate', {
-                    //     property: 'error',
-                    //     with: {
-                    //         title: 'Failed to Retrieve Metaverse Information',
-                    //         code: '1',
-                    //         full: 'We were unable to retrieve the metaverse information for ' + metaverseURL
-                    //     }
-                    // });
-                    // vue_this.openDialog('ErrorOccurred', true);
+                    console.info('Failed to retrieve account list: ', result);
                 })
         },
         initialize () {
             this.retrieveAccountList(this.$store.state.metaverseConfig.server);
-
-            this.people = [
-                {
-                    name: 'Kalila',
-                    accountId: 421,
-                    connection: false,
-                    images: {
-                        'Hero': '../assets/231352681.png',
-                        'Thumbnail': '../assets/231352681.png',
-                        'Tiny': '../assets/231352681.png'
-                    },
-                    location: "The Hub",
-                    online: true
-                }
-            ]
         },
 
         // editUser (item) {
