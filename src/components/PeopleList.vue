@@ -28,7 +28,7 @@
                     inset
                     vertical
                 ></v-divider>
-                <v-toolbar-title>Accounts</v-toolbar-title>
+                <v-toolbar-title>Users</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <!-- USER DATA DIALOG -->
                 <v-dialog
@@ -41,120 +41,64 @@
                             {{ userDialog.username }}
                         </v-card-title>
                 
-                    <v-card-text class="text-left">
-                        <v-list class="transparent">
-                            <v-list-item>
-                                <v-list-item-title>
-                                    Account ID
-                                </v-list-item-title>
+                        <v-card-text class="text-left">
+                            <v-list class="transparent">
+                                <v-list-item>
+                                    <v-list-item-title>
+                                        Account ID
+                                    </v-list-item-title>
 
-                                <v-list-item-subtitle class="text-right">
-                                    {{ userDialog.accountId }}
-                                </v-list-item-subtitle>
-                            </v-list-item>
-                            <v-list-item>
-                                <v-list-item-title>
-                                    Status
-                                </v-list-item-title>
+                                    <v-list-item-subtitle class="text-right">
+                                        {{ userDialog.accountId }}
+                                    </v-list-item-subtitle>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-title>
+                                        Status
+                                    </v-list-item-title>
 
-                                <v-list-item-subtitle class="text-right">
-                                    {{ userDialog.status }}
-                                </v-list-item-subtitle>
-                            </v-list-item>
-                        </v-list>
-                        <v-expansion-panels>
-                            <v-expansion-panel>
-                                <v-expansion-panel-header>Location <b>{{ userDialog.locationData }}</b></v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                    <v-list class="transparent">
-                                        <v-list-item>
-                                            <v-list-item-title>
-                                                Domain ID
-                                            </v-list-item-title>
-                                            <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
-                                            <!-- <v-list-item-subtitle class="text-right">
-                                                {{ userDialog.locationData.root.domain.id }}
-                                            </v-list-item-subtitle> -->
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-title>
-                                                Path
-                                            </v-list-item-title>
-            
-                                            <!-- <v-list-item-subtitle class="text-right">
-                                                {{ userDialog.locationData.path }}
-                                            </v-list-item-subtitle> -->
-                                        </v-list-item>
-                                    </v-list>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                        </v-expansion-panels>
-                    </v-card-text>
-                    
+                                    <v-list-item-subtitle class="text-right">
+                                        {{ userDialog.status }}
+                                    </v-list-item-subtitle>
+                                </v-list-item>
+                            </v-list>
+                            <v-expansion-panels>
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header>Location <b>{{ userDialog.locationData }}</b></v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-list class="transparent">
+                                            <v-list-item>
+                                                <v-list-item-title>
+                                                    Domain ID
+                                                </v-list-item-title>
+                                                <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
+                                                <!-- <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.locationData.root.domain.id }}
+                                                </v-list-item-subtitle> -->
+                                            </v-list-item>
+                                            <v-list-item>
+                                                <v-list-item-title>
+                                                    Path
+                                                </v-list-item-title>
+                                                <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
+                                                <!-- <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.locationData.path }}
+                                                </v-list-item-subtitle> -->
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </v-card-text>
                     </v-card>
                 </v-dialog>
-                <!-- <v-dialog v-model="dialog" max-width="500px">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                            color="primary"
-                            dark
-                            class="mb-2"
-                            v-bind="attrs"
-                            v-on="on"
-                            :disabled="true"
-                        >
-                            New User
-                        </v-btn>
-                    </template>
-                <v-card>
-                    <v-card-title>
-                        <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-
-                    <v-card-text>
-                        <v-container>
-                            <v-row>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field v-model="editedUser.name" label="Username"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field v-model="editedUser.accountId" label="Account ID"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-checkbox v-model="editedUser.connection" label="Connection"></v-checkbox>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field v-model="editedUser.images" label="Images"></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="6" md="4">
-                                    <v-text-field v-model="editedUser.location" label="Location"></v-text-field>
-                                </v-col>
-                            </v-row>
-                        </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                        <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                    </v-card-actions>
-                </v-card>
-                </v-dialog> -->
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
             <v-icon
                 small
-                class="mr-2"
-                @click="editUser(item)"
-                :disabled="true"
-            >
-                mdi-pencil
-            </v-icon>
-            <v-icon
-                small
-                @click="deleteUser(item)"
-                :disabled="true"
+                @click="deleteUser(item.accountId, item.username)"
+                :disabled="!$store.state.account.useAsAdmin"
             >
                 mdi-nuke
             </v-icon>
@@ -172,9 +116,9 @@
         <!-- EDIT DIALOGS -->
         <template v-slot:item.username="{ item }">
             <v-edit-dialog
-                @save=""
+                @save="saveUsername(item.username)"
                 @cancel=""
-                @open=""
+                @open="beginEditingUsername(item.accountId)"
                 @close=""
                 :return-value.sync="item.username"
             > {{ item.username }}
@@ -184,6 +128,7 @@
                         label="Edit"
                         single-line
                         counter
+                        :disabled="!$store.state.account.useAsAdmin"
                     ></v-text-field>
                 </template>
             </v-edit-dialog>
@@ -221,42 +166,16 @@ export default {
             accountId: '',
             locationData: null
         },
+        // Editing User
+        editingUser: null,
+        // User List
         people: [],
-        editedIndex: -1,
-        editedUser: {
-            name: '',
-            accountId: '',
-            connection: null,
-            images: {
-                'Hero': '',
-                'Thumbnail': '',
-                'Tiny': ''
-            },
-            location: 'Unknown'
-        },
-        defaultUser: {
-            name: '',
-            accountId: '',
-            connection: null,
-            images: {
-                'Hero': '${publicPath}assets/231352681.png',
-                'Thumbnail': '${publicPath}assets/231352681.png',
-                'Tiny': '${publicPath}assets/231352681.png'
-            },
-            location: 'Unknown'
-        }
     }),
     
     computed: {
-        formTitle () {
-            return this.editedIndex === -1 ? 'New User' : 'Edit User'
-        },
     },
 
     watch: {
-        dialog (val) {
-            val || this.close()
-        },
     },
 
     created () {
@@ -272,10 +191,11 @@ export default {
                 url: metaverseURL + 'api/v1/users',
                 contentType: 'application/json',
                 data: {
-                    asAdmin: vue_this.$store.state.account.useAsAdmin
+                    'asAdmin': vue_this.$store.state.account.useAsAdmin
                 }
             })
                 .done(function (result) {
+                    vue_this.people = [];
                     result.data.users.forEach(function(item, index) {
                         var isOnline = item.location.online ? 'Online' : 'Offline';
                         vue_this.people.push(
@@ -304,34 +224,62 @@ export default {
             this.userDialog.status = rowData.status;
             this.userDialog.locationData = rowData.locationData;
         },
-
-        // editUser (item) {
-        //     this.editedIndex = this.people.indexOf(item)
-        //     this.editedUser = Object.assign({}, item)
-        //     this.dialog = true
-        // },
-
-        deleteUser (item) {
-            const index = this.people.indexOf(item)
-            confirm('Are you sure you want to delete this user?') && this.people.splice(index, 1)
+        
+        // BEGIN Inline Editing Functionality
+        beginEditingUsername (userID) {
+            this.editingUser = userID;
         },
-
-        close () {
-            this.dialog = false
-            this.$nextTick(() => {
-                this.editedUser = Object.assign({}, this.defaultUser)
-                this.editedIndex = -1
+        
+        saveUsername (newUsername) {
+            this.postUpdateAccount(this.editingUser, {
+                'username': newUsername,
             })
         },
-
-        save () {
-            if (this.editedIndex > -1) {
-                Object.assign(this.people[this.editedIndex], this.editedUser)
-            } else {
-                this.people.push(this.editedUser)
-            }
-            this.close()
+        
+        deleteUser (userID, username) {
+            confirm('Are you sure you want to delete ' + username + '?') && this.postDeleteAccount(userID);
         },
+        // END Inline Editing Dialogs
+        
+        // BEGIN Handling requests to the API
+        // THESE REQUESTS USE THE ACCOUNT API WHILE THE LIST IS USING THE USERS API
+        postUpdateAccount (userID, dataToUpdate) {
+            window.$.ajax({
+                type: 'POST',
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID,
+                contentType: 'application/json',
+                data: { 
+                    'asAdmin': vue_this.$store.state.account.useAsAdmin,
+                    'accounts': {
+                        dataToUpdate
+                    }
+                }
+            })
+                .done(function (result) {
+                    console.info('Successfully updated account:', userID);
+                    vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
+                })
+                .fail(function (result) {
+                    console.info('Failed to update account:', userID);
+                    vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
+                })
+        },
+        
+        postDeleteAccount (userID) {
+            window.$.ajax({
+                type: 'DELETE',
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID,
+            })
+                .done(function (result) {
+                    console.info('Successfully deleted account:', userID);
+                    vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
+                })
+                .fail(function (result) {
+                    console.info('Failed to delete account:', userID);
+                    vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
+                })
+        }
+        // END Handling requests to the API
     },
 }
 </script>
