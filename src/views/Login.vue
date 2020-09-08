@@ -243,7 +243,7 @@ export default {
                         with: {
                             title: 'Failed to log in to ' + vue_this.metaverseServer,
                             code: '2',
-                            full: result.error
+                            full: result.responseJSON.error
                         }
                     });
 
@@ -253,20 +253,24 @@ export default {
         attemptRegister: function () {
             if (!this.$refs.registrationForm.validate()) return;
 
-            window.$.ajax({
-                type: 'POST',
-                url: vue_this.metaverseServer + 'api/v1/users',
-                contentType: 'application/json',
-                data: {
+            var objectToPost = {
+                'user': {
                     'username': vue_this.username,
                     'password': vue_this.confirmPassword,
                     'email': vue_this.email
                 }
+            };
+
+            window.$.ajax({
+                type: 'POST',
+                url: vue_this.metaverseServer + 'api/v1/users',
+                contentType: 'application/json',
+                data: JSON.stringify(objectToPost)
             })
                 .done(function (result) {
                     console.info('Registration successful.');
-                    this.$refs.registrationForm.reset();
-                    this.currentTab = 0; // Login is 0, Register is 1, and so on... if we add tabs.
+                    vue_this.$refs.registrationForm.reset();
+                    vue_this.currentTab = 0; // Login is 0, Register is 1, and so on... if we add tabs.
                 })
                 .fail(function (result) {
                     console.info('Failed to register:', result);
@@ -275,7 +279,7 @@ export default {
                         with: {
                             title: 'Failed to register for ' + vue_this.metaverseServer,
                             code: '2',
-                            full: result.error
+                            full: result.responseJSON.error
                         }
                     });
 

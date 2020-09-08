@@ -212,12 +212,16 @@ export default {
         
         // BEGIN Handling requests to the API
         postUpdateDomain (domainID, dataToUpdate) {
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/domains/' + domainID,
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/domains/' + domainID + parameters,
                 contentType: 'application/json',
                 data: { 
-                    'asAdmin': vue_this.$store.state.account.useAsAdmin,
                     'domain': {
                         dataToUpdate
                     }
@@ -234,9 +238,14 @@ export default {
         },
         
         postDeleteDomain (domainID) {
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'DELETE',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + domainID,
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/domains/' + domainID + parameters,
             })
                 .done(function (result) {
                     console.info('Successfully deleted domain:', domainID);

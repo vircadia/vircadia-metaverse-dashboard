@@ -189,14 +189,41 @@ export default {
             this.retrieveAccountList(this.$store.state.metaverseConfig.server);
         },
 
+        rowClicked (rowData) {
+            this.userDialogShow = true;
+            this.userDialog.username = rowData.username;
+            this.userDialog.accountId = rowData.accountId;
+            this.userDialog.status = rowData.status;
+            this.userDialog.locationData = rowData.locationData;
+        },
+
+        // BEGIN Inline Editing Functionality
+        beginEditingUsername (userID) {
+            this.editingUser = userID;
+        },
+
+        saveUsername (newUsername) {
+            this.postUpdateAccount(this.editingUser, {
+                'username': newUsername,
+            })
+        },
+
+        deleteUser (userID, username) {
+            confirm('Are you sure you want to delete ' + username + '?') && this.postDeleteAccount(userID);
+        },
+        // END Inline Editing Functionality
+
+        // BEGIN Handling requests to the API
+
         retrieveAccountList: function (metaverseURL) {
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + 'api/v1/users',
-                contentType: 'application/json',
-                data: {
-                    'asAdmin': vue_this.$store.state.account.useAsAdmin
-                }
+                url: metaverseURL + 'api/v1/users' + parameters
             })
                 .done(function (result) {
                     vue_this.people = [];
@@ -216,44 +243,25 @@ export default {
                     console.info('Failed to retrieve account list: ', result);
                 })
         },
-        
-        rowClicked (rowData) {
-            this.userDialogShow = true;
-            this.userDialog.username = rowData.username;
-            this.userDialog.accountId = rowData.accountId;
-            this.userDialog.status = rowData.status;
-            this.userDialog.locationData = rowData.locationData;
-        },
-        
-        // BEGIN Inline Editing Functionality
-        beginEditingUsername (userID) {
-            this.editingUser = userID;
-        },
-        
-        saveUsername (newUsername) {
-            this.postUpdateAccount(this.editingUser, {
-                'username': newUsername,
-            })
-        },
-        
-        deleteUser (userID, username) {
-            confirm('Are you sure you want to delete ' + username + '?') && this.postDeleteAccount(userID);
-        },
-        // END Inline Editing Functionality
-        
-        // BEGIN Handling requests to the API
+
         // THESE REQUESTS USE THE ACCOUNT API WHILE THE LIST IS USING THE USERS API
         postUpdateAccount (userID, dataToUpdate) {
+            var objectToPost = {
+                'accounts': {
+                    dataToUpdate
+                }
+            };
+            
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID,
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID + parameters,
                 contentType: 'application/json',
-                data: { 
-                    'asAdmin': vue_this.$store.state.account.useAsAdmin,
-                    'accounts': {
-                        dataToUpdate
-                    }
-                }
+                data: JSON.stringify(objectToPost)
             })
                 .done(function (result) {
                     console.info('Successfully updated account:', userID);
@@ -266,9 +274,14 @@ export default {
         },
         
         postDeleteAccount (userID) {
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'DELETE',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID,
+                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID + parameters,
             })
                 .done(function (result) {
                     console.info('Successfully deleted account:', userID);
