@@ -151,7 +151,7 @@ export default {
         retrieveDomainList: function (metaverseURL) {
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + 'api/v1/domains',
+                url: metaverseURL + '/api/v1/domains',
                 contentType: 'application/json',
                 data: {
                     'asAdmin': vue_this.$store.state.account.useAsAdmin

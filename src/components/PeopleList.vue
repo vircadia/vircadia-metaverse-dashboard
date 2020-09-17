@@ -223,7 +223,7 @@ export default {
 
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + 'api/v1/users' + parameters
+                url: metaverseURL + '/api/v1/users' + parameters
             })
                 .done(function (result) {
                     vue_this.people = [];

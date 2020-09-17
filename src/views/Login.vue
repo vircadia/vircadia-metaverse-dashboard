@@ -204,7 +204,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.metaverseServer + 'oauth/token',
+                url: vue_this.metaverseServer + '/oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'password',
@@ -263,7 +263,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.metaverseServer + 'api/v1/users',
+                url: vue_this.metaverseServer + '/api/v1/users',
                 contentType: 'application/json',
                 data: JSON.stringify(objectToPost)
             })

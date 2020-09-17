@@ -139,7 +139,7 @@ router.beforeEach((to, from, next) => {
 
             window.$.ajax({
                 type: 'POST',
-                url: store.state.metaverseConfig.server + 'oauth/token',
+                url: store.state.metaverseConfig.server + '/oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'refresh_token',
