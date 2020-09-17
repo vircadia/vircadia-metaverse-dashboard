@@ -64,27 +64,34 @@
                             </v-list>
                             <v-expansion-panels>
                                 <v-expansion-panel>
-                                    <v-expansion-panel-header>Location <b>{{ userDialog.locationData }}</b></v-expansion-panel-header>
+                                    <v-expansion-panel-header>Location</v-expansion-panel-header>
                                     <v-expansion-panel-content>
                                         <v-list class="transparent">
                                             <v-list-item>
-                                                <v-list-item-title>
+                                                <!-- <v-list-item-title>
                                                     Domain ID
                                                 </v-list-item-title>
-                                                <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
-                                                <!-- <v-list-item-subtitle class="text-right">
-                                                    {{ userDialog.locationData.root.domain.id }}
+                                                <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.location.root.domain.id }}
+                                                </v-list-item-subtitle>
+                                                <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.location.root.domain.name }}
                                                 </v-list-item-subtitle> -->
+                                                <v-list-item-title>
+                                                    Session ID
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.location_node_id }}
+                                                </v-list-item-subtitle>
                                             </v-list-item>
-                                            <v-list-item>
+                                            <!-- <v-list-item>
                                                 <v-list-item-title>
                                                     Path
                                                 </v-list-item-title>
-                                                <!-- FIXME: WE NEED TO MAKE THE DATA UNIFIED SO THAT THESE DON'T FAIL TO BE ACCESSED! -->
-                                                <!-- <v-list-item-subtitle class="text-right">
-                                                    {{ userDialog.locationData.path }}
-                                                </v-list-item-subtitle> -->
-                                            </v-list-item>
+                                                <v-list-item-subtitle class="text-right">
+                                                    {{ userDialog.location.path }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item> -->
                                         </v-list>
                                     </v-expansion-panel-content>
                                 </v-expansion-panel>
@@ -97,7 +104,7 @@
         <template v-slot:item.actions="{ item }">
             <v-icon
                 small
-                @click="deleteUser(item.accountId, item.username)"
+                v-on:click.stop="deleteUser(item.accountId, item.username)"
                 :disabled="!$store.state.account.useAsAdmin"
             >
                 mdi-nuke
@@ -164,7 +171,8 @@ export default {
         userDialog: {
             username: '',
             accountId: '',
-            locationData: null
+            status: '',
+            location_node_id: ''
         },
         // Editing User
         editingUser: null,
@@ -194,7 +202,8 @@ export default {
             this.userDialog.username = rowData.username;
             this.userDialog.accountId = rowData.accountId;
             this.userDialog.status = rowData.status;
-            this.userDialog.locationData = rowData.locationData;
+            console.info("rowData", rowData);
+            this.userDialog.location_node_id = rowData.locationData.node_id;
         },
 
         // BEGIN Inline Editing Functionality
@@ -228,6 +237,7 @@ export default {
                 .done(function (result) {
                     vue_this.people = [];
                     result.data.users.forEach(function(item, index) {
+                        console.info("item.username", item.username, "item", item);
                         var isOnline = item.location.online ? 'Online' : 'Offline';
                         vue_this.people.push(
                             {
@@ -259,7 +269,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID + parameters,
+                url: vue_this.$store.state.metaverseConfig.server + '/api/v1/account/' + userID + parameters,
                 contentType: 'application/json',
                 data: JSON.stringify(objectToPost)
             })
@@ -281,7 +291,7 @@ export default {
 
             window.$.ajax({
                 type: 'DELETE',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/account/' + userID + parameters,
+                url: vue_this.$store.state.metaverseConfig.server + '/api/v1/account/' + userID + parameters,
             })
                 .done(function (result) {
                     console.info('Successfully deleted account:', userID);
