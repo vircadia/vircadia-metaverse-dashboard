@@ -13,71 +13,93 @@
 </script>
 
 <template>
-    <v-form
-        ref="profileForm"
-    >
-        <v-text-field
-            label="Username"
-            name="username"
-            v-model="username"
-            prepend-icon="mdi-rename-box"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('username', this.username)"
-            type="text"
-            :rules="usernameRules"
-        ></v-text-field>
+    <v-form>
+        <v-form
+            ref="username"
+        >
+            <v-text-field
+                label="Username"
+                name="username"
+                v-model="username"
+                prepend-icon="mdi-rename-box"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('username', username)"
+                type="text"
+                :rules="usernameRules"
+            ></v-text-field>
+        </v-form>
         
-        <v-text-field
-            label="Email"
-            name="email"
-            v-model="email"
-            prepend-icon="mdi-email"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('email', email)"
-            type="text"
-            :rules="emailRules"
-        ></v-text-field>
+        <v-form
+            ref="email"
+        >
+            <v-text-field
+                label="Email"
+                name="email"
+                v-model="email"
+                prepend-icon="mdi-email"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('email', email)"
+                type="text"
+                :rules="emailRules"
+            ></v-text-field>
+        </v-form>
         
-        <v-text-field
-            label="Hero Image"
-            name="images_hero"
-            v-model="images_hero"
-            prepend-icon="mdi-image-size-select-actual"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('images_hero', images_hero)"
-            type="text"
-        ></v-text-field>
+        <v-form
+            ref="images_hero"
+        >
+            <v-text-field
+                label="Hero Image"
+                name="images_hero"
+                v-model="images_hero"
+                prepend-icon="mdi-image-size-select-actual"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('images_hero', images_hero)"
+                type="text"
+            ></v-text-field>
+        </v-form>
 
-        <v-text-field
-            label="Tiny Image"
-            name="images_tiny"
-            v-model="images_tiny"
-            prepend-icon="mdi-image-size-select-large"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('images_tiny', images_tiny)"
-            type="text"
-        ></v-text-field>
+        <v-form
+            ref="images_tiny"
+        >
+            <v-text-field
+                label="Tiny Image"
+                name="images_tiny"
+                v-model="images_tiny"
+                prepend-icon="mdi-image-size-select-large"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('images_tiny', images_tiny)"
+                type="text"
+            ></v-text-field>
+        </v-form>
         
-        <v-text-field
-            label="Thumbnail Image"
-            name="images_thumbnail"
-            v-model="images_thumbnail"
-            prepend-icon="mdi-image-size-select-small"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
-            type="text"
-        ></v-text-field>
+        <v-form
+            ref="images_thumbnail"
+        >
+            <v-text-field
+                label="Thumbnail Image"
+                name="images_thumbnail"
+                v-model="images_thumbnail"
+                prepend-icon="mdi-image-size-select-small"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
+                type="text"
+            ></v-text-field>
+        </v-form>
         
-        <v-text-field
-            label="Public Key"
-            name="publicKey"
-            v-model="publicKey"
-            prepend-icon="mdi-account-key"
-            append-icon="mdi-send-circle"
-            @click:append="postUpdateAccount('public_key', publicKey)"
-            type="text"
-            :rules="publicKeyRules"
-        ></v-text-field>
+        <v-form
+            ref="publicKey"
+        >
+            <v-text-field
+                label="Public Key"
+                name="publicKey"
+                v-model="publicKey"
+                prepend-icon="mdi-account-key"
+                append-icon="mdi-send-circle"
+                @click:append="postUpdateAccount('public_key', publicKey)"
+                type="text"
+                :rules="publicKeyRules"
+            ></v-text-field>
+        </v-form>
 
         <!-- <v-text-field
             label="Password"
@@ -131,6 +153,44 @@
                     </v-list>
                 </v-expansion-panel-content>
             </v-expansion-panel>
+            <v-expansion-panel>
+                <v-expansion-panel-header disable-icon-rotate>
+                    Change Password
+                    <template v-slot:actions>
+                        <v-icon color="error">mdi-lock-reset</v-icon>
+                    </template>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                    <v-form
+                        ref="password"
+                    >
+                        <v-list class="transparent">
+                            <v-list-item>
+                                <v-text-field
+                                    label="Password"
+                                    name="password"
+                                    v-model="password"
+                                    prepend-icon="mdi-form-textbox-password"
+                                    type="password"
+                                    :rules="passwordRules"
+                                ></v-text-field>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-text-field
+                                    label="Confirm Password"
+                                    name="confirmPassword"
+                                    v-model="confirmPassword"
+                                    prepend-icon="mdi-form-textbox-password"
+                                    append-icon="mdi-send-circle"
+                                    @click:append="postUpdateAccount('password', confirmPassword)"
+                                    type="password"
+                                    :rules="confirmPasswordRules"
+                                ></v-text-field>
+                            </v-list-item>
+                        </v-list>
+                    </v-form>
+                </v-expansion-panel-content>
+            </v-expansion-panel>
         </v-expansion-panels>
     </v-form>
 </template>
@@ -177,6 +237,17 @@ export default {
         publicKeyRules: [
             v => !!v || 'A public key is required.'
         ],
+        password: '',
+        passwordRules: [
+            v => !!v || 'A password is required.'
+        ],
+        confirmPassword: '',
+        confirmPasswordRules: [
+            v => !!v || 'You must confirm your password.',
+            function (v) {
+                return v === vue_this.password || 'Your password must match.'
+            }
+        ],
         // These are not meant to be changed, but rather displayed.
         accountId: '',
         roles: '',
@@ -205,6 +276,14 @@ export default {
             })
                 .done(function (result) {
                     vue_this.username = result.data.account.username;
+                    // If the username was updated, we'll also update that in our dashboard.
+                    vue_this.$store.commit('mutate', {
+                        update: true,
+                        property: 'account',
+                        with: {
+                            username: vue_this.username,
+                        }
+                    });
                     vue_this.email = result.data.account.email;
                     vue_this.publicKey = result.data.account.public_key;
                     vue_this.accountId = result.data.account.accountId;
@@ -239,6 +318,8 @@ export default {
         },
         
         postUpdateAccount (fieldToUpdate, dataToUpdate) {
+            if (!this.$refs[fieldToUpdate].validate()) return;
+            
             var objectToPost = {
                 'set': dataToUpdate
             };
