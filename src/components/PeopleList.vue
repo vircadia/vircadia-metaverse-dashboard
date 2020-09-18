@@ -105,7 +105,7 @@
             <v-icon
                 small
                 v-on:click.stop="deleteUser(item.accountId, item.username)"
-                :disabled="!$store.state.account.useAsAdmin"
+                :disabled="!canEditUser"
             >
                 mdi-nuke
             </v-icon>
@@ -145,6 +145,8 @@
 
 <script>
 var vue_this;
+var store;
+var metaverseServer;
 
 export default {
     name: 'PeopleList',
@@ -188,6 +190,8 @@ export default {
 
     created () {
         vue_this = this;
+        store = this.$store.state;
+        metaverseServer = this.$store.state.metaverseConfig.server;
         
         this.initialize();
     },
@@ -203,6 +207,10 @@ export default {
             this.userDialog.accountId = rowData.accountId;
             this.userDialog.status = rowData.status;
             this.userDialog.location_node_id = rowData.locationData.node_id;
+        },
+        
+        canEditUser: function () {
+            return store.account.useAsAdmin;
         },
 
         // BEGIN Inline Editing Functionality

@@ -136,8 +136,8 @@
         <template v-slot:item.actions="{ item }">
             <v-icon
                 small
-                @click="deleteDomain(item.domainID, item.placeName)"
-                :disabled="!$store.state.account.useAsAdmin"
+                v-on:click.stop="deleteDomain(item.domainID, item.placeName)"
+                :disabled="!canEditDomain(item.sponsorAccountId)"
             >
                 mdi-nuke
             </v-icon>
@@ -176,7 +176,10 @@
 </template>
 
 <script>
+import { EventBus } from '../plugins/eventBus.js';
 var vue_this;
+var store;
+var metaverseServer;
 
 export default {
     name: 'DomainList',
@@ -223,18 +226,23 @@ export default {
 
     created () {
         vue_this = this;
+        store = this.$store.state;
+        metaverseServer = store.metaverseConfig.server;
         
         this.initialize();
+    },
+    
+    computed: {
     },
 
     methods: {
         initialize () {
-            this.retrieveDomainList(this.$store.state.metaverseConfig.server);
+            this.retrieveDomainList(metaverseServer);
         },
 
         retrieveDomainList: function (metaverseURL) {
             var parameters = window.$.param({
-                "asAdmin": vue_this.$store.state.account.useAsAdmin
+                "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
 
@@ -289,6 +297,10 @@ export default {
             // this.domainDialog.meta = rowData.meta;
         },
         
+        canEditDomain: function (domainOwningID) {
+            return store.account.useAsAdmin || store.account.accountId === domainOwningID;
+        },
+        
         // BEGIN Inline Editing Functionality
         beginEditingDomain (domainID) {
             this.editingDomain = domainID;
@@ -308,13 +320,13 @@ export default {
         // BEGIN Handling requests to the API
         postUpdateDomain (domainID, dataToUpdate) {
             var parameters = window.$.param({
-                "asAdmin": vue_this.$store.state.account.useAsAdmin
+                "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/domains/' + domainID + parameters,
+                url: metaverseServer + 'api/v1/domains/' + domainID + parameters,
                 contentType: 'application/json',
                 data: { 
                     'domain': {
@@ -324,31 +336,31 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully updated domain:', domainID);
-                    vue_this.retrieveDomainList(vue_this.$store.state.metaverseConfig.server);
+                    vue_this.retrieveDomainList(metaverseServer);
                 })
                 .fail(function (result) {
                     console.info('Failed to update domain:', domainID);
-                    vue_this.retrieveDomainList(vue_this.$store.state.metaverseConfig.server);
+                    vue_this.retrieveDomainList(metaverseServer);
                 })
         },
         
         postDeleteDomain (domainID) {
             var parameters = window.$.param({
-                "asAdmin": vue_this.$store.state.account.useAsAdmin
+                "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
 
             window.$.ajax({
                 type: 'DELETE',
-                url: vue_this.$store.state.metaverseConfig.server + 'api/v1/domains/' + domainID + parameters,
+                url: metaverseServer + 'api/v1/domains/' + domainID + parameters,
             })
                 .done(function (result) {
                     console.info('Successfully deleted domain:', domainID);
-                    vue_this.retrieveDomainList(vue_this.$store.state.metaverseConfig.server);
+                    vue_this.retrieveDomainList(metaverseServer);
                 })
                 .fail(function (result) {
                     console.info('Failed to delete domain:', domainID);
-                    vue_this.retrieveDomainList(vue_this.$store.state.metaverseConfig.server);
+                    vue_this.retrieveDomainList(metaverseServer);
                 })
         }
         // END Handling requests to the API
