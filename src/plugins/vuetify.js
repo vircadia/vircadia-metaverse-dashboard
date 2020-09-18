@@ -29,7 +29,7 @@ export default new Vuetify({
                 warning: '#FFC107'
             },
             dark: {
-                primary: colors.blueGrey.darken3
+                primary: colors.purple.darken3
             }
         }
     }

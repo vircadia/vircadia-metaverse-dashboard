@@ -36,9 +36,8 @@
         <!-- src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" -->
         <v-app-bar
             app
-            prominent
             color="primary"
-            src="/assets/waifu_bg.jpg"
+            src="/assets/1920_bar.png"
         >
             <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
             <v-toolbar-title class="mr-4">
@@ -73,9 +72,9 @@
             color="primary"
             app
         >
-            <span class="white--text">Iamus Dashboard v0.0.1a - Vircadia Metaverse Services</span>
+            <span class="white--text">Iamus Dashboard v0.0.1a - Vircadia</span>
             <v-spacer></v-spacer>
-            <span class="white--text">Metaverse Server: <b>{{ $store.state.metaverseConfig.server }}</b></span>
+            <span class="white--text">Metaverse: <b>{{ $store.state.metaverseConfig.server }}</b></span>
             <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>
         </v-footer>
     </v-app>
@@ -231,7 +230,10 @@ export default {
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
 
-        if (metaverseServer) {
+        var params = new URLSearchParams(window.location.search);
+        if (params.has('metaverse')) {
+            this.retrieveMetaverseConfig(params.get('metaverse'));
+        } else {
             this.retrieveMetaverseConfig(metaverseServer);
         }
     },
