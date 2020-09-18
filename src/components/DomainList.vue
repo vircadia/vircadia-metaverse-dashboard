@@ -43,13 +43,89 @@
                         <v-card-text class="text-left">
                             <v-list class="transparent">
                                 <v-list-item>
-                                    <v-list-item-title>
-                                        Domain ID
-                                    </v-list-item-title>
-
-                                    <v-list-item-subtitle class="text-right">
-                                        {{ domainDialog.domainID }}
-                                    </v-list-item-subtitle>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Place Name
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.placeName }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Users
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.users }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Ice Server
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.iceServer }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Domain ID
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.domainID }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Owner Account ID
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.sponsorAccountId }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Protocol
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.protocol }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Version
+                                        </v-list-item-title>
+                                        <v-list-item-subtitle>
+                                            {{ domainDialog.version }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-expansion-panels>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-header disable-icon-rotate>
+                                                Public Key
+                                                <template v-slot:actions>
+                                                    <v-icon color="primary">mdi-information-variant</v-icon>
+                                                </template>
+                                            </v-expansion-panel-header>
+                                            <v-expansion-panel-content>
+                                                {{ domainDialog.publicKey }}
+                                            </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
                                 </v-list-item>
                             </v-list>
                         </v-card-text>
@@ -116,14 +192,22 @@ export default {
                 sortable: true,
                 value: 'placeName',
             },
-            { text: 'Domain ID', value: 'domainID' },
+            { text: 'Protocol', value: 'protocol' },
+            { text: 'Version', value: 'version' },
             { text: 'Users', value: 'users' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         domainDialogShow: false,
         domainDialog: {
             placeName: '',
-            domainID: ''
+            users: '',
+            domainID: '',
+            version: '',
+            protocol: '',
+            publicKey: '',
+            iceServer: '',
+            sponsorAccountId: '',
+            networkingMode: ''
         },
         // Editing Domain
         editingDomain: null,
@@ -149,22 +233,30 @@ export default {
         },
 
         retrieveDomainList: function (metaverseURL) {
+            var parameters = window.$.param({
+                "asAdmin": vue_this.$store.state.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + '/api/v1/domains',
+                url: metaverseURL + '/api/v1/domains' + parameters,
                 contentType: 'application/json',
-                data: {
-                    'asAdmin': vue_this.$store.state.account.useAsAdmin
-                }
             })
                 .done(function (result) {
                     vue_this.domains = [];
                     result.data.domains.forEach(function(item, index) {
                         vue_this.domains.push(
                             {
-                                placeName: item.place_name,
+                                placeName: item.name,
                                 domainID: item.domainId,
-                                users: item.total_users
+                                users: item.total_users,
+                                protocol: item.protocol_version,
+                                publicKey: item.public_key,
+                                version: item.version,
+                                iceServer: item.ice_server_address,
+                                sponsorAccountId: item.sponsor_accountid,
+                                networkingMode: item.networking_mode
                             }
                         );
                     });
@@ -178,9 +270,12 @@ export default {
             this.domainDialogShow = true;
             this.domainDialog.placeName = rowData.placeName;
             this.domainDialog.domainID = rowData.domainID;
-            // this.domainDialog.version = rowData.version;
-            // this.domainDialog.protocol = rowData.protocol;
-            // this.domainDialog.networkAddress = rowData.networkAddress;
+            this.domainDialog.version = rowData.version;
+            this.domainDialog.protocol = rowData.protocol;
+            this.domainDialog.publicKey = rowData.publicKey;
+            this.domainDialog.iceServer = rowData.iceServer;
+            this.domainDialog.sponsorAccountId = rowData.sponsorAccountId;
+            this.domainDialog.networkingMode = rowData.networkingMode;
             // this.domainDialog.restricted = rowData.restricted;
             // this.domainDialog.capacity = rowData.capacity;
             // this.domainDialog.description = rowData.description;

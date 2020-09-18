@@ -97,7 +97,7 @@
                     {{ accountId }}
                     {{ roles }}
                     {{ when_account_created }}
-            </v-expansion-panel-content>
+                </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
     </v-form>

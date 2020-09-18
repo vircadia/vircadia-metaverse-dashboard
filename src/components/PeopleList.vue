@@ -202,7 +202,6 @@ export default {
             this.userDialog.username = rowData.username;
             this.userDialog.accountId = rowData.accountId;
             this.userDialog.status = rowData.status;
-            console.info("rowData", rowData);
             this.userDialog.location_node_id = rowData.locationData.node_id;
         },
 
@@ -237,7 +236,6 @@ export default {
                 .done(function (result) {
                     vue_this.people = [];
                     result.data.users.forEach(function(item, index) {
-                        console.info("item.username", item.username, "item", item);
                         var isOnline = item.location.online ? 'Online' : 'Offline';
                         vue_this.people.push(
                             {
