@@ -192,8 +192,7 @@ export default {
             }
         ],
         // END REGISTER BOX
-        currentTab: null,
-        metaverseServer: ''
+        currentTab: null
     }),
     methods: {
         sendEvent: function (command, data) {
@@ -204,7 +203,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.metaverseServer + '/oauth/token',
+                url: vue_this.$store.state.metaverseConfig.server + '/oauth/token',
                 contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
                 data: {
                     grant_type: 'password',
@@ -224,6 +223,7 @@ export default {
                             isAdmin: checkIsAdmin,
                             username: vue_this.login,
                             accountRoles: result.account_roles,
+                            accountId: result.account_id,
                             accessToken: result.access_token,
                             refreshToken: result.refresh_token,
                             tokenType: result.token_type,
@@ -241,7 +241,7 @@ export default {
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to log in to ' + vue_this.metaverseServer,
+                            title: 'Failed to log in to ' + vue_this.$store.state.metaverseConfig.server,
                             code: '2',
                             full: result.responseJSON.error
                         }
@@ -263,7 +263,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: vue_this.metaverseServer + '/api/v1/users',
+                url: vue_this.$store.state.metaverseConfig.server + '/api/v1/users',
                 contentType: 'application/json',
                 data: JSON.stringify(objectToPost)
             })
@@ -277,7 +277,7 @@ export default {
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to register for ' + vue_this.metaverseServer,
+                            title: 'Failed to register for ' + vue_this.$store.state.metaverseConfig.server,
                             code: '2',
                             full: result.responseJSON.error
                         }
@@ -289,11 +289,6 @@ export default {
     },
     created: function () {
         vue_this = this;
-
-        // Bootstrap initial variables, pre-fill them, etc.
-        if (this.$store.state.metaverseConfig.server) {
-            this.metaverseServer = this.$store.state.metaverseConfig.server;
-        }
     }
 }
 </script>

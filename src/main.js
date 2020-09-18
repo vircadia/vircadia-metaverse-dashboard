@@ -84,6 +84,7 @@ function initStore () {
         isAdmin: parseFromStorage('isAdmin'), // bool
         useAsAdmin: parseFromStorage('useAsAdmin'), // bool
         username: localStorage.getItem('username'), // string
+        accountId: localStorage.getItem('accountId'), // string
         // Token data
         accessToken: localStorage.getItem('accessToken'), // string
         refreshToken: localStorage.getItem('refreshToken'), // string

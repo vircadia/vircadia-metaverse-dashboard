@@ -21,6 +21,8 @@
             name="username"
             v-model="username"
             prepend-icon="mdi-rename-box"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('username', this.username)"
             type="text"
             :rules="usernameRules"
         ></v-text-field>
@@ -30,17 +32,10 @@
             name="email"
             v-model="email"
             prepend-icon="mdi-email"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('email', email)"
             type="text"
             :rules="emailRules"
-        ></v-text-field>
-        
-        <v-text-field
-            label="Account Settings"
-            name="account_settings"
-            v-model="account_settings"
-            prepend-icon="mdi-account"
-            type="text"
-            :rules="account_settingsRules"
         ></v-text-field>
         
         <v-text-field
@@ -48,6 +43,8 @@
             name="images_hero"
             v-model="images_hero"
             prepend-icon="mdi-image-size-select-actual"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('images_hero', images_hero)"
             type="text"
         ></v-text-field>
 
@@ -56,6 +53,8 @@
             name="images_tiny"
             v-model="images_tiny"
             prepend-icon="mdi-image-size-select-large"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('images_tiny', images_tiny)"
             type="text"
         ></v-text-field>
         
@@ -64,16 +63,20 @@
             name="images_thumbnail"
             v-model="images_thumbnail"
             prepend-icon="mdi-image-size-select-small"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
             type="text"
         ></v-text-field>
         
         <v-text-field
             label="Public Key"
-            name="public_key"
-            v-model="public_key"
+            name="publicKey"
+            v-model="publicKey"
             prepend-icon="mdi-account-key"
+            append-icon="mdi-send-circle"
+            @click:append="postUpdateAccount('public_key', publicKey)"
             type="text"
-            :rules="public_keyRules"
+            :rules="publicKeyRules"
         ></v-text-field>
 
         <!-- <v-text-field
@@ -94,9 +97,38 @@
                     </template>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                    {{ accountId }}
-                    {{ roles }}
-                    {{ when_account_created }}
+                    <v-list class="transparent">
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    Account ID
+                                </v-list-item-title>
+                                <v-list-item-subtitle>
+                                    {{ accountId }}
+                                </v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    Roles
+                                </v-list-item-title>
+                                <v-list-item-subtitle>
+                                    {{ roles }}
+                                </v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    Account Creation Date
+                                </v-list-item-title>
+                                <v-list-item-subtitle>
+                                    {{ whenAccountCreated }}
+                                </v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list>
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -104,7 +136,10 @@
 </template>
 
 <script>
+import { EventBus } from '../plugins/eventBus.js';
 var vue_this;
+var store;
+var metaverseServer;
 
 export default {
     name: 'ProfileComponent',
@@ -131,10 +166,6 @@ export default {
         emailRules: [
             v => !!v || 'An email is required.'
         ],
-        account_settings: '',
-        account_settingsRules: [
-            v => !!v || 'Account settings are required.'
-        ],
         images_hero: '',
         images_tiny: '',
         images_thumbnail: '',
@@ -142,29 +173,115 @@ export default {
         // availabilityRules: [
         //     v => !!v || 'Availability is required.'
         // ],
-        public_key: '',
-        public_keyRules: [
+        publicKey: '',
+        publicKeyRules: [
             v => !!v || 'A public key is required.'
         ],
         // These are not meant to be changed, but rather displayed.
         accountId: '',
         roles: '',
-        when_account_created: '',
-        // Misc.
-        metaverseServer: ''
+        whenAccountCreated: '',
     }),
     methods: {
         sendEvent: function (command, data) {
             EventBus.$emit(command, data);
-        }
+        },
+        
+        initialize () {
+            this.retrieveAccount(store.account.accountId);
+        },
+        
+        // BEGIN handling requests to the API
+        
+        retrieveAccount: function (userID) {
+            var parameters = window.$.param({
+                "asAdmin": store.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
+            window.$.ajax({
+                type: 'GET',
+                url: metaverseServer + '/api/v1/account/' + userID + parameters
+            })
+                .done(function (result) {
+                    vue_this.username = result.data.account.username;
+                    vue_this.email = result.data.account.email;
+                    vue_this.publicKey = result.data.account.public_key;
+                    vue_this.accountId = result.data.account.accountId;
+                    vue_this.roles = result.data.account.roles;
+                    vue_this.whenAccountCreated = result.data.account.when_account_created;
+                    
+                    if (result.data.account.images.hero) {
+                        vue_this.images_hero = result.data.account.images.hero;
+                    }
+                    
+                    if (result.data.account.images.tiny) {
+                        vue_this.images_tiny = result.data.account.images.tiny;
+                    }
+                    
+                    if (result.data.account.images.thumbnail) {
+                        vue_this.images_thumbnail = result.data.account.images.thumbnail;
+                    }
+                })
+                .fail(function (result) {
+                    console.info('Failed to retrieve account: ', result);
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to retrieve account ' + userID,
+                            code: '2',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
+                })
+        },
+        
+        postUpdateAccount (fieldToUpdate, dataToUpdate) {
+            var objectToPost = {
+                'set': dataToUpdate
+            };
+            
+            var parameters = window.$.param({
+                "asAdmin": store.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
+            window.$.ajax({
+                type: 'POST',
+                url: metaverseServer + '/api/v1/account/' + store.account.accountId + '/field/' + fieldToUpdate + parameters,
+                contentType: 'application/json',
+                data: JSON.stringify(objectToPost)
+            })
+                .done(function (result) {
+                    console.info('Successfully updated account:', store.account.accountId);
+                    vue_this.retrieveAccount(store.account.accountId);
+                })
+                .fail(function (result) {
+                    console.info('Failed to update account:', store.account.accountId);
+
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to update account ' + store.account.username,
+                            code: '3',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
+                    vue_this.retrieveAccount(store.account.accountId);
+                })
+        },
+        
     },
     created: function () {
         vue_this = this;
-
-        // Bootstrap initial variables, pre-fill them, etc.
-        if (this.$store.state.metaverseConfig.server) {
-            this.metaverseServer = this.$store.state.metaverseConfig.server;
-        }
+        store = this.$store.state;
+        metaverseServer = this.$store.state.metaverseConfig.server;
+        
+        this.initialize();
     }
 }
 </script>

@@ -38,6 +38,7 @@ export default new Vuex.Store({
             useAsAdmin: false, // bool
             username: null, // string
             accountRoles: null, // array
+            accountId: null, // string
             // Token data
             accessToken: null, // string
             refreshToken: null, // string
