@@ -1,5 +1,9 @@
 # iamus-dashboard
 
+## deployment
+
+A consideration for deployment is that this is an SPA (single page application) and therefore will require a simple server-side [configuration](https://router.vuejs.org/guide/essentials/history-mode.html) change in the case of a page refresh.
+
 ## Project setup
 ```
 npm install
