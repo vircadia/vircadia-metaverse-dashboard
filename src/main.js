@@ -85,6 +85,7 @@ function initStore () {
         useAsAdmin: parseFromStorage('useAsAdmin'), // bool
         username: localStorage.getItem('username'), // string
         accountId: localStorage.getItem('accountId'), // string
+        metaverseServer: localStorage.getItem('metaverseServer'), // string
         // Token data
         accessToken: localStorage.getItem('accessToken'), // string
         refreshToken: localStorage.getItem('refreshToken'), // string

@@ -224,6 +224,7 @@ export default {
                             username: vue_this.login,
                             accountRoles: result.account_roles,
                             accountId: result.account_id,
+                            metaverseServer: vue_this.$store.state.metaverseConfig.server,
                             accessToken: result.access_token,
                             refreshToken: result.refresh_token,
                             tokenType: result.token_type,

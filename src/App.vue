@@ -72,7 +72,7 @@
             color="primary"
             app
         >
-            <span class="white--text">Iamus Dashboard v0.0.1a - Vircadia</span>
+            <span class="white--text">Iamus Dashboard v0.0.1b | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse: <b>{{ $store.state.metaverseConfig.server }}</b></span>
             <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>
@@ -105,6 +105,9 @@ export default {
         },
         updateAccessToken () {
             return this.$store.state.account.accessToken;
+        },
+        metaverseServerChanged () {
+            return this.$store.state.metaverseConfig.server;
         },
         getRoutes () {
             var routes = this.$router.options.routes;
@@ -149,7 +152,7 @@ export default {
             deep: true
         },
         updateAccessToken: {
-            handler: function (newVal) {
+            handler: function () {
                 console.info('Setting new access token header...');
                 window.$.ajaxSetup({
                     beforeSend: function (xhr) {
@@ -160,8 +163,15 @@ export default {
             }
         },
         useAsAdminStore: {
-            handler: function (newVal) {
+            handler: function () {
                 location.reload();
+            }
+        },
+        metaverseServerChanged: {
+            handler: function (newMetaverseServer) {
+                if (newMetaverseServer !== store.account.metaverseServer) {
+                    this.logout();
+                }
             }
         }
     },

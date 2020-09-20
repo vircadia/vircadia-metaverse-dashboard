@@ -39,6 +39,7 @@ export default new Vuex.Store({
             username: null, // string
             accountRoles: null, // array
             accountId: null, // string
+            metaverseServer: null, // string
             // Token data
             accessToken: null, // string
             refreshToken: null, // string
