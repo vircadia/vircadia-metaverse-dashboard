@@ -134,13 +134,21 @@
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
-            <v-icon
-                small
-                v-on:click.stop="deleteDomain(item.domainID, item.placeName)"
-                :disabled="!canEditDomain(item.sponsorAccountId)"
-            >
-                mdi-nuke
-            </v-icon>
+            <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                        small
+                        color="red"
+                        v-on:click.stop="deleteDomain(item.domainID, item.placeName)"
+                        v-bind="attrs"
+                        v-on="on"
+                        :disabled="!canEditDomain(item.sponsorAccountId)"
+                    >
+                        mdi-delete-alert
+                    </v-icon>
+                </template>
+                <span>Delete Domain</span>
+            </v-tooltip>
         </template>
         <template v-slot:item.images="{ item }">
             <v-avatar>

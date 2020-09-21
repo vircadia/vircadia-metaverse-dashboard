@@ -102,13 +102,21 @@
             </v-toolbar>
         </template>
         <template v-slot:item.actions="{ item }">
-            <v-icon
-                small
-                v-on:click.stop="deleteUser(item.accountId, item.username)"
-                :disabled="!canEditUser"
-            >
-                mdi-nuke
-            </v-icon>
+            <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                        small
+                        color="red"
+                        v-on:click.stop="deleteUser(item.accountId, item.username)"
+                        v-bind="attrs"
+                        v-on="on"
+                        :disabled="!canEditUser"
+                    >
+                        mdi-delete-alert
+                    </v-icon>
+                </template>
+                <span>Delete User</span>
+            </v-tooltip>
         </template>
         <template v-slot:item.images="{ item }">
             <v-avatar>
