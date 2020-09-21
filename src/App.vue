@@ -55,9 +55,20 @@
                 ></v-switch>
             </span>
             <v-spacer></v-spacer>
-            <v-btn icon @click="logout">
-                <v-icon>mdi-export</v-icon>
-            </v-btn>
+            <v-tooltip left>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                        icon
+                        @click="logout"
+                        v-bind="attrs"
+                        v-on="on"
+                        v-show="isLoggedIn"
+                    >
+                        <v-icon>mdi-export</v-icon>
+                    </v-btn>
+                </template>
+                <span>Logout</span>
+            </v-tooltip>
         </v-app-bar>
 
         <transition name="fade" mode="out-in">
@@ -137,6 +148,9 @@ export default {
                     }
                 });
             }
+        },
+        isLoggedIn () {
+            return this.$store.state.account.isLoggedIn;
         }
     },
     watch: {
