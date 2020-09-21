@@ -26,6 +26,7 @@
                 @click:append="postUpdateAccount('username', username)"
                 type="text"
                 :rules="usernameRules"
+                color="input"
             ></v-text-field>
         </v-form>
         
@@ -41,6 +42,7 @@
                 @click:append="postUpdateAccount('email', email)"
                 type="text"
                 :rules="emailRules"
+                color="input"
             ></v-text-field>
         </v-form>
         
@@ -51,10 +53,12 @@
                 label="Hero Image"
                 name="images_hero"
                 v-model="images_hero"
+                placeholder="Large Sized Image URL"
                 prepend-icon="mdi-image-size-select-actual"
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_hero', images_hero)"
                 type="text"
+                color="input"
             ></v-text-field>
         </v-form>
 
@@ -65,10 +69,12 @@
                 label="Tiny Image"
                 name="images_tiny"
                 v-model="images_tiny"
+                placeholder="Medium Sized Image URL"
                 prepend-icon="mdi-image-size-select-large"
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_tiny', images_tiny)"
                 type="text"
+                color="input"
             ></v-text-field>
         </v-form>
         
@@ -79,10 +85,12 @@
                 label="Thumbnail Image"
                 name="images_thumbnail"
                 v-model="images_thumbnail"
+                placeholder="Thumbnail Sized Image URL"
                 prepend-icon="mdi-image-size-select-small"
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
                 type="text"
+                color="input"
             ></v-text-field>
         </v-form>
         
@@ -99,17 +107,9 @@
                 @click:append="postUpdateAccount('public_key', publicKey)"
                 type="text"
                 :rules="publicKeyRules"
+                color="input"
             ></v-textarea>
         </v-form>
-
-        <!-- <v-text-field
-            label="Password"
-            name="password"
-            v-model="password"
-            prepend-icon="mdi-lock"
-            type="password"
-            :rules="passwordRules"
-        ></v-text-field> -->
 
         <v-expansion-panels>
             <v-expansion-panel>
@@ -174,6 +174,7 @@
                                     prepend-icon="mdi-form-textbox-password"
                                     type="password"
                                     :rules="passwordRules"
+                                    color="input"
                                 ></v-text-field>
                             </v-list-item>
                             <v-list-item>
@@ -186,6 +187,7 @@
                                     @click:append="postUpdateAccount('password', confirmPassword)"
                                     type="password"
                                     :rules="confirmPasswordRules"
+                                    color="input"
                                 ></v-text-field>
                             </v-list-item>
                         </v-list>
