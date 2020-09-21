@@ -22,7 +22,7 @@
                 name="username"
                 v-model="username"
                 prepend-icon="mdi-rename-box"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('username', username)"
                 type="text"
                 :rules="usernameRules"
@@ -37,7 +37,7 @@
                 name="email"
                 v-model="email"
                 prepend-icon="mdi-email"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('email', email)"
                 type="text"
                 :rules="emailRules"
@@ -52,7 +52,7 @@
                 name="images_hero"
                 v-model="images_hero"
                 prepend-icon="mdi-image-size-select-actual"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_hero', images_hero)"
                 type="text"
             ></v-text-field>
@@ -66,7 +66,7 @@
                 name="images_tiny"
                 v-model="images_tiny"
                 prepend-icon="mdi-image-size-select-large"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_tiny', images_tiny)"
                 type="text"
             ></v-text-field>
@@ -80,7 +80,7 @@
                 name="images_thumbnail"
                 v-model="images_thumbnail"
                 prepend-icon="mdi-image-size-select-small"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
                 type="text"
             ></v-text-field>
@@ -88,17 +88,18 @@
         
         <v-form
             ref="publicKey"
+            v-show="false"
         >
-            <v-text-field
+            <v-textarea
                 label="Public Key"
                 name="publicKey"
                 v-model="publicKey"
                 prepend-icon="mdi-account-key"
-                append-icon="mdi-send-circle"
+                append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('public_key', publicKey)"
                 type="text"
                 :rules="publicKeyRules"
-            ></v-text-field>
+            ></v-textarea>
         </v-form>
 
         <!-- <v-text-field
@@ -181,7 +182,7 @@
                                     name="confirmPassword"
                                     v-model="confirmPassword"
                                     prepend-icon="mdi-form-textbox-password"
-                                    append-icon="mdi-send-circle"
+                                    append-icon="mdi-content-save-outline"
                                     @click:append="postUpdateAccount('password', confirmPassword)"
                                     type="password"
                                     :rules="confirmPasswordRules"
@@ -192,6 +193,26 @@
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
+        
+        <v-snackbar
+            v-model="updateSnackbarSuccessShow"
+            :timeout="updateSnackbarSuccessTimeout"
+            color="success"
+        >
+            {{ updateSnackbarSuccessText }}
+    
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    color="white"
+                    text
+                    v-bind="attrs"
+                    @click="updateSnackbarSuccessShow = false"
+                >
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
+        
     </v-form>
 </template>
 
@@ -252,6 +273,10 @@ export default {
         accountId: '',
         roles: '',
         whenAccountCreated: '',
+        // Snackbar Functionality
+        updateSnackbarSuccessShow: false,
+        updateSnackbarSuccessText: 'Successfully updated profile.',
+        updateSnackbarSuccessTimeout: 6000
     }),
     methods: {
         sendEvent: function (command, data) {
@@ -337,6 +362,7 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully updated account:', store.account.accountId);
+                    vue_this.updateSnackbarSuccessShow = true;
                     vue_this.retrieveAccount(store.account.accountId);
                 })
                 .fail(function (result) {
