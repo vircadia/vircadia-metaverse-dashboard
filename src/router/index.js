@@ -34,6 +34,12 @@ const routes = [
         component: () => import('../views/People.vue')
     },
     {
+        path: '/places',
+        name: 'Places',
+        icon: 'mdi-map-marker-multiple-outline',
+        component: () => import('../views/Places.vue')
+    },
+    {
         path: '/domain',
         name: 'Domain',
         icon: 'mdi-earth',
@@ -42,7 +48,7 @@ const routes = [
     {
         path: '/profile',
         name: 'Profile',
-        icon: 'mdi-face-profile',
+        icon: 'mdi-account-circle',
         component: () => import('../views/Profile.vue')
     }
 ]
