@@ -129,7 +129,7 @@
             <v-btn color="primary" @click="initialize">Reset</v-btn>
         </template> -->
         <!-- EDIT DIALOGS -->
-        <template v-slot:item.username="{ item }">
+        <!-- <template v-slot:item.username="{ item }">
             <v-edit-dialog
                 @save="saveUsername(item.username)"
                 @cancel=""
@@ -147,7 +147,7 @@
                     ></v-text-field>
                 </template>
             </v-edit-dialog>
-        </template>
+        </template> -->
     </v-data-table>
 </template>
 

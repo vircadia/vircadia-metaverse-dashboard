@@ -19,7 +19,11 @@
                     align="center"
                     justify="center"
                 >
-                    <ProfileComponent></ProfileComponent>
+                    <v-col
+                        cols="4"
+                    >
+                        <ProfileComponent></ProfileComponent>
+                    </v-col>
                 </v-row>
             </v-container>
         </v-main>
