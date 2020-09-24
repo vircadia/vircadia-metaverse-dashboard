@@ -161,7 +161,7 @@
             <v-btn color="primary" @click="initialize">Reset</v-btn>
         </template> -->
         <!-- EDIT DIALOGS -->
-        <template v-slot:item.placeName="{ item }">
+        <!-- <template v-slot:item.placeName="{ item }">
             <v-edit-dialog
                 @save="savePlaceName(item.placeName)"
                 @cancel=""
@@ -179,7 +179,7 @@
                     ></v-text-field>
                 </template>
             </v-edit-dialog>
-        </template>
+        </template> -->
     </v-data-table>
 </template>
 
@@ -248,40 +248,6 @@ export default {
             this.retrieveDomainList(metaverseServer);
         },
 
-        retrieveDomainList: function (metaverseURL) {
-            var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
-            });
-            parameters = "?" + parameters;
-
-            window.$.ajax({
-                type: 'GET',
-                url: metaverseURL + '/api/v1/domains' + parameters,
-                contentType: 'application/json',
-            })
-                .done(function (result) {
-                    vue_this.domains = [];
-                    result.data.domains.forEach(function(item, index) {
-                        vue_this.domains.push(
-                            {
-                                placeName: item.name,
-                                domainID: item.domainId,
-                                users: item.total_users,
-                                protocol: item.protocol_version,
-                                publicKey: item.public_key,
-                                version: item.version,
-                                iceServer: item.ice_server_address,
-                                sponsorAccountId: item.sponsor_accountid,
-                                networkingMode: item.networking_mode
-                            }
-                        );
-                    });
-                })
-                .fail(function (result) {
-                    console.info('Failed to retrieve domain list: ', result);
-                })
-        },
-        
         rowClicked (rowData) {
             this.domainDialogShow = true;
             this.domainDialog.placeName = rowData.placeName;
@@ -326,6 +292,51 @@ export default {
         // END Inline Editing Functionality
         
         // BEGIN Handling requests to the API
+        retrieveDomainList: function (metaverseURL) {
+            var parameters = window.$.param({
+                "asAdmin": store.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+
+            window.$.ajax({
+                type: 'GET',
+                url: metaverseURL + '/api/v1/domains' + parameters,
+                contentType: 'application/json',
+            })
+                .done(function (result) {
+                    vue_this.domains = [];
+                    result.data.domains.forEach(function(item, index) {
+                        vue_this.domains.push(
+                            {
+                                placeName: item.name,
+                                domainID: item.domainId,
+                                users: item.total_users,
+                                protocol: item.protocol_version,
+                                publicKey: item.public_key,
+                                version: item.version,
+                                iceServer: item.ice_server_address,
+                                sponsorAccountId: item.sponsor_account_id,
+                                networkingMode: item.networking_mode
+                            }
+                        );
+                    });
+                })
+                .fail(function (result) {
+                    console.info('Failed to retrieve domain list: ', result);
+                    
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to retrieve domain list.',
+                            code: '2',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
+                })
+        },
+        
         postUpdateDomain (domainID, dataToUpdate) {
             var parameters = window.$.param({
                 "asAdmin": store.account.useAsAdmin
@@ -334,7 +345,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: metaverseServer + 'api/v1/domains/' + domainID + parameters,
+                url: metaverseServer + '/api/v1/domains/' + domainID + parameters,
                 contentType: 'application/json',
                 data: { 
                     'domain': {
@@ -348,6 +359,17 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to update domain:', domainID);
+                    
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to update domain:' + domainID,
+                            code: '3',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrieveDomainList(metaverseServer);
                 })
         },
@@ -360,7 +382,7 @@ export default {
 
             window.$.ajax({
                 type: 'DELETE',
-                url: metaverseServer + 'api/v1/domains/' + domainID + parameters,
+                url: metaverseServer + '/api/v1/domains/' + domainID + parameters,
             })
                 .done(function (result) {
                     console.info('Successfully deleted domain:', domainID);
@@ -368,6 +390,17 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to delete domain:', domainID);
+                    
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to delete domain:' + domainID,
+                            code: '3',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrieveDomainList(metaverseServer);
                 })
         }
