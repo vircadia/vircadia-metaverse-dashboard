@@ -187,6 +187,13 @@ export default {
                     this.logout();
                 }
             }
+        },
+        isLoggedIn: {
+            handler: function () {
+                if (this.awaitingRouteOnLogin) {
+                    this.$router.push(this.routeOnLogin);
+                }
+            }
         }
     },
     methods: {
@@ -255,10 +262,20 @@ export default {
         metaverseServer = store.metaverseConfig.server;
 
         var params = new URLSearchParams(window.location.search);
+
         if (params.has('metaverse')) {
             this.retrieveMetaverseConfig(params.get('metaverse'));
         } else {
             this.retrieveMetaverseConfig(metaverseServer);
+        }
+
+        if (params.has('page')) {
+            if (this.isLoggedIn) {
+                this.$router.push(params.get('page'));
+            } else {
+                this.awaitingRouteOnLogin = true;
+                this.routeOnLogin = params.get('page');
+            }
         }
     },
     data: () => ({
@@ -267,7 +284,9 @@ export default {
         dialog: {
             show: false,
             which: ''
-        }
+        },
+        awaitingRouteOnLogin: false,
+        routeOnLogin: ''
     })
 }
 </script>
