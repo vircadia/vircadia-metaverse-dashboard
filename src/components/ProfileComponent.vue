@@ -14,6 +14,11 @@
 
 <template>
     <v-form>
+        <div 
+            class="subtitle-1 mb-10"
+        >
+            You can make changes to your account by changing the fields below. Press the save icon on the right of a field to save it.
+        </div>
         <v-form
             ref="username"
         >
@@ -26,6 +31,7 @@
                 @click:append="postUpdateAccount('username', username)"
                 type="text"
                 :rules="usernameRules"
+                :loading="usernameLoading"
                 color="input"
             ></v-text-field>
         </v-form>
@@ -42,6 +48,7 @@
                 @click:append="postUpdateAccount('email', email)"
                 type="text"
                 :rules="emailRules"
+                :loading="emailLoading"
                 color="input"
             ></v-text-field>
         </v-form>
@@ -58,6 +65,7 @@
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_hero', images_hero)"
                 type="text"
+                :loading="images_heroLoading"
                 color="input"
             ></v-text-field>
         </v-form>
@@ -74,6 +82,7 @@
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_tiny', images_tiny)"
                 type="text"
+                :loading="images_tinyLoading"
                 color="input"
             ></v-text-field>
         </v-form>
@@ -90,6 +99,7 @@
                 append-icon="mdi-content-save-outline"
                 @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
                 type="text"
+                :loading="images_thumbnailLoading"
                 color="input"
             ></v-text-field>
         </v-form>
@@ -137,7 +147,7 @@
                                     Roles
                                 </v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ roles }}
+                                    {{ roles.join(', ') }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
@@ -174,6 +184,7 @@
                                     prepend-icon="mdi-form-textbox-password"
                                     type="password"
                                     :rules="passwordRules"
+                                    :loading="passwordLoading"
                                     color="input"
                                 ></v-text-field>
                             </v-list-item>
@@ -187,6 +198,7 @@
                                     @click:append="postUpdateAccount('password', confirmPassword)"
                                     type="password"
                                     :rules="confirmPasswordRules"
+                                    :loading="confirmPasswordLoading"
                                     color="input"
                                 ></v-text-field>
                             </v-list-item>
@@ -234,6 +246,7 @@ export default {
         usernameRules: [
             v => !!v || 'A username is required.'
         ],
+        usernameLoading: false,
         // password: '',
         // passwordRules: [
         //     v => !!v || 'A password is required.'
@@ -249,9 +262,13 @@ export default {
         emailRules: [
             v => !!v || 'An email is required.'
         ],
+        emailLoading: false,
         images_hero: '',
+        images_heroLoading: false,
         images_tiny: '',
+        images_tinyLoading: false,
         images_thumbnail: '',
+        images_thumbnailLoading: false,
         // availability: '',
         // availabilityRules: [
         //     v => !!v || 'Availability is required.'
@@ -264,6 +281,7 @@ export default {
         passwordRules: [
             v => !!v || 'A password is required.'
         ],
+        passwordLoading: false,
         confirmPassword: '',
         confirmPasswordRules: [
             v => !!v || 'You must confirm your password.',
@@ -271,9 +289,10 @@ export default {
                 return v === vue_this.password || 'Your password must match.'
             }
         ],
+        confirmPasswordLoading: false,
         // These are not meant to be changed, but rather displayed.
         accountId: '',
-        roles: '',
+        roles: [],
         whenAccountCreated: '',
         // Snackbar Functionality
         updateSnackbarSuccessShow: false,
@@ -355,7 +374,8 @@ export default {
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
-
+            
+            this[fieldToUpdate + 'Loading'] = true;
             window.$.ajax({
                 type: 'POST',
                 url: metaverseServer + '/api/v1/account/' + store.account.accountId + '/field/' + fieldToUpdate + parameters,
@@ -364,11 +384,13 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully updated account:', store.account.accountId);
+                    vue_this[fieldToUpdate + 'Loading'] = false;
                     vue_this.updateSnackbarSuccessShow = true;
                     vue_this.retrieveAccount(store.account.accountId);
                 })
                 .fail(function (result) {
                     console.info('Failed to update account:', store.account.accountId);
+                    vue_this[fieldToUpdate + 'Loading'] = false;
 
                     vue_this.$store.commit('mutate', {
                         property: 'error',
