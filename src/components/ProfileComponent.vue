@@ -63,6 +63,7 @@
                 placeholder="Large Sized Image URL"
                 prepend-icon="mdi-image-size-select-actual"
                 append-icon="mdi-content-save-outline"
+                @click:prepend="previewImage('Hero Image Preview', images_hero)"
                 @click:append="postUpdateAccount('images_hero', images_hero)"
                 type="text"
                 :loading="images_heroLoading"
@@ -80,6 +81,7 @@
                 placeholder="Medium Sized Image URL"
                 prepend-icon="mdi-image-size-select-large"
                 append-icon="mdi-content-save-outline"
+                @click:prepend="previewImage('Tiny Image Preview', images_tiny)"
                 @click:append="postUpdateAccount('images_tiny', images_tiny)"
                 type="text"
                 :loading="images_tinyLoading"
@@ -97,6 +99,7 @@
                 placeholder="Thumbnail Sized Image URL"
                 prepend-icon="mdi-image-size-select-small"
                 append-icon="mdi-content-save-outline"
+                @click:prepend="previewImage('Thumbnail Preview', images_thumbnail)"
                 @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
                 type="text"
                 :loading="images_thumbnailLoading"
@@ -227,6 +230,24 @@
             </template>
         </v-snackbar>
         
+        <v-dialog
+            v-model="imagePreviewDialogShow"
+            width="500"
+            height="500"
+        >
+            <v-card>
+                <v-card-title class="headline">
+                    {{ imagePreviewDialogTitle }}
+                </v-card-title>
+                <v-card-text>
+                    <v-img 
+                        :src="imagePreviewDialogSource"
+                        contain
+                    ></v-img>
+                </v-card-text>
+
+            </v-card>
+        </v-dialog>
     </v-form>
 </template>
 
@@ -297,7 +318,11 @@ export default {
         // Snackbar Functionality
         updateSnackbarSuccessShow: false,
         updateSnackbarSuccessText: 'Successfully updated profile.',
-        updateSnackbarSuccessTimeout: 6000
+        updateSnackbarSuccessTimeout: 6000,
+        // Image Preview Dialog
+        imagePreviewDialogShow: false,
+        imagePreviewDialogTitle: '',
+        imagePreviewDialogSource: ''
     }),
     methods: {
         sendEvent: function (command, data) {
@@ -306,6 +331,12 @@ export default {
         
         initialize () {
             this.retrieveAccount(store.account.accountId);
+        },
+        
+        previewImage: function (title, source) {
+            this.imagePreviewDialogShow = true;
+            this.imagePreviewDialogTitle = title;
+            this.imagePreviewDialogSource = source;
         },
         
         // BEGIN handling requests to the API
