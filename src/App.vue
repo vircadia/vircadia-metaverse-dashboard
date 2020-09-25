@@ -17,8 +17,8 @@
             <v-list v-if="$store.state.account.isLoggedIn">
                 <v-list-item-group v-model="mainMenuModel" mandatory>
                     <v-list-item
-                        v-for="(route, i) in getRoutes"
-                        :key="i"
+                        v-for="(route) in getRoutes"
+                        :key="route.name"
                         @click.native="$router.push(route.path)"
                     >
                         <v-list-item-icon>

@@ -118,10 +118,11 @@
                 <span>Delete User</span>
             </v-tooltip>
         </template>
-        <template v-slot:item.images="{ item }">
+        <template v-slot:item.thumbnail="{ item }">
             <v-avatar>
                 <img
-                    :src="item.images.thumbnail"
+                    v-show="item.thumbnail"
+                    :src="item.thumbnail"
                 >
             </v-avatar>
         </template>
@@ -164,6 +165,7 @@ export default {
     data: () => ({
         dialog: false,
         headers: [
+            { text: 'Thumbnail', value: 'thumbnail' },
             {
                 text: 'Username',
                 align: 'start',
@@ -258,7 +260,8 @@ export default {
                                 username: item.username,
                                 status: isOnline,
                                 locationData: item.location,
-                                accountId: item.accountId
+                                accountId: item.accountId,
+                                thumbnail: item.images.thumbnail ? item.images.thumbnail : ''
                             }
                         );
                     });
