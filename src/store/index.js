@@ -47,6 +47,9 @@ export default new Vuex.Store({
             createdAt: null, // int
             expiresIn: null, // int
             scope: null // string
+        },
+        places: {
+            showOnlyMine: false // bool
         }
     },
     mutations: {

@@ -79,14 +79,15 @@ Vue.mixin({
 // STORE FUNCTIONS
 
 function initStore () {
-    var storedItems = {
+    var accountItems = {
+        // Account / General Stuff
         isLoggedIn: parseFromStorage('isLoggedIn'), // bool
         isAdmin: parseFromStorage('isAdmin'), // bool
         useAsAdmin: parseFromStorage('useAsAdmin'), // bool
         username: localStorage.getItem('username'), // string
         accountId: localStorage.getItem('accountId'), // string
         metaverseServer: localStorage.getItem('metaverseServer'), // string
-        // Token data
+        // Account / Token Stuff
         accessToken: localStorage.getItem('accessToken'), // string
         refreshToken: localStorage.getItem('refreshToken'), // string
         tokenType: localStorage.getItem('tokenType'), // string
@@ -97,7 +98,17 @@ function initStore () {
 
     store.commit('mutate', {
         property: 'account',
-        with: storedItems
+        with: accountItems
+    });
+
+    var placesItems = {
+        // Places / General Stuff
+        showOnlyMine: parseFromStorage('showOnlyMine') // bool
+    }
+
+    store.commit('mutate', {
+        property: 'places',
+        with: placesItems
     });
 
     store.commit('mutate', {

@@ -49,8 +49,8 @@
             <span v-if="this.$store.state.account.isAdmin" class="mt-5">
                 <v-switch
                     v-model="useAsAdminStore"
-                    inset
                     row
+                    color="input"
                     label="Admin View"
                 ></v-switch>
             </span>
@@ -114,6 +114,9 @@ export default {
         updateAccountSession () {
             return this.$store.state.account;
         },
+        updatePlacesSettings () {
+            return this.$store.state.places;
+        },
         updateAccessToken () {
             return this.$store.state.account.accessToken;
         },
@@ -156,6 +159,17 @@ export default {
     watch: {
         // Save the state of the session to storage for retrieval if the user leaves and comes back.
         updateAccountSession: {
+            handler: function (newVal) {
+                for (var item in newVal) {
+                    if (newVal[item] !== null) {
+                        localStorage.setItem(item, newVal[item]);
+                    }
+                }
+            },
+            deep: true
+        },
+        // Save the settings for places.
+        updatePlacesSettings: {
             handler: function (newVal) {
                 for (var item in newVal) {
                     if (newVal[item] !== null) {

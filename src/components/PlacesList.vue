@@ -29,6 +29,12 @@
                         inset
                         vertical
                     ></v-divider>
+                    <v-switch class="mt-5"
+                        v-model="showOnlyMineStore"
+                        row
+                        color="input"
+                        label="Show Only Mine"
+                    ></v-switch>
                     <v-spacer></v-spacer>
                     <v-tooltip left>
                         <template v-slot:activator="{ on, attrs }">
@@ -386,6 +392,11 @@ export default {
     },
 
     watch: {
+        showOnlyMineStore: {
+            handler: function () {
+                this.retrievePlacesList(metaverseServer);
+            }
+        },
     },
 
     created () {
@@ -397,6 +408,20 @@ export default {
     },
     
     computed: {
+        showOnlyMineStore: {
+            get () {
+                return this.$store.state.places.showOnlyMine;
+            },
+            set (value) {
+                this.$store.commit('mutate', {
+                    update: true,
+                    property: 'places',
+                    with: {
+                        showOnlyMine: value
+                    }
+                });
+            }
+        }
     },
 
     methods: {
@@ -452,9 +477,14 @@ export default {
             });
             parameters = "?" + parameters;
 
+            var apiURL = '/api/v1/places';
+            if (this.showOnlyMineStore) {
+                apiURL = '/api/v1/user/places';
+            }
+
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + '/api/v1/places' + parameters,
+                url: metaverseURL + apiURL + parameters,
                 contentType: 'application/json',
             })
                 .done(function (result) {
