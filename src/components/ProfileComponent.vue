@@ -61,14 +61,25 @@
                 name="images_hero"
                 v-model="images_hero"
                 placeholder="Large Sized Image URL"
-                prepend-icon="mdi-image-size-select-actual"
                 append-icon="mdi-content-save-outline"
-                @click:prepend="previewImage('Hero Image Preview', images_hero)"
                 @click:append="postUpdateAccount('images_hero', images_hero)"
                 type="text"
                 :loading="images_heroLoading"
                 color="input"
-            ></v-text-field>
+            >
+                <v-tooltip slot="prepend" left>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon 
+                            @click="previewImage('Hero Image Preview', images_hero)" 
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            mdi-image-size-select-actual
+                        </v-icon>
+                    </template>
+                    <span>Preview</span>
+                </v-tooltip>
+            </v-text-field>
         </v-form>
 
         <v-form
@@ -79,14 +90,25 @@
                 name="images_tiny"
                 v-model="images_tiny"
                 placeholder="Medium Sized Image URL"
-                prepend-icon="mdi-image-size-select-large"
                 append-icon="mdi-content-save-outline"
-                @click:prepend="previewImage('Tiny Image Preview', images_tiny)"
                 @click:append="postUpdateAccount('images_tiny', images_tiny)"
                 type="text"
                 :loading="images_tinyLoading"
                 color="input"
-            ></v-text-field>
+            >
+                <v-tooltip slot="prepend" left>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon 
+                            @click="previewImage('Tiny Image Preview', images_tiny)" 
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            mdi-image-size-select-large
+                        </v-icon>
+                    </template>
+                    <span>Preview</span>
+                </v-tooltip>
+            </v-text-field>
         </v-form>
         
         <v-form
@@ -97,14 +119,25 @@
                 name="images_thumbnail"
                 v-model="images_thumbnail"
                 placeholder="Thumbnail Sized Image URL"
-                prepend-icon="mdi-image-size-select-small"
                 append-icon="mdi-content-save-outline"
-                @click:prepend="previewImage('Thumbnail Preview', images_thumbnail)"
                 @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
                 type="text"
                 :loading="images_thumbnailLoading"
                 color="input"
-            ></v-text-field>
+            >
+                <v-tooltip slot="prepend" left>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon 
+                            @click="previewImage('Thumbnail Image Preview', images_thumbnail)" 
+                            v-bind="attrs"
+                            v-on="on"
+                        >
+                            mdi-image-size-select-small
+                        </v-icon>
+                    </template>
+                    <span>Preview</span>
+                </v-tooltip>
+            </v-text-field>
         </v-form>
         
         <v-form
