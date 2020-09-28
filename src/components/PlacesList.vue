@@ -63,118 +63,167 @@
                         <v-card>
                             <v-card-title>
                                 {{ placeDialog.placeName }}
+                                <v-divider
+                                    class="mx-4"
+                                    inset
+                                    vertical
+                                ></v-divider>
+                                <v-spacer></v-spacer>
+                                <v-tooltip left>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click="placeEditMode = !placeEditMode" 
+                                            color="primary"
+                                            small
+                                            fab
+                                            disabled
+                                        >
+                                            <v-icon>
+                                                mdi-home-edit
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Edit</span>
+                                </v-tooltip>
                             </v-card-title>
-                    
-                            <v-card-text class="text-left">
-                                <v-list class="transparent">
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Place Name
-                                            </v-list-item-title>
-                                            <v-list-item-subtitle>
-                                                {{ placeDialog.placeName }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Description
-                                            </v-list-item-title>
-                                            <v-list-item-subtitle>
-                                                {{ placeDialog.description }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Users
-                                            </v-list-item-title>
-                                            <v-list-item-subtitle>
-                                                {{ placeDialog.domainUsers }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Address
-                                            </v-list-item-title>
-                                            <v-list-item-subtitle>
-                                                {{ placeDialog.address }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-list-item>
-                                        <v-expansion-panels>
-                                            <v-expansion-panel>
-                                                <v-expansion-panel-header disable-icon-rotate>
-                                                    Domain
-                                                    <template v-slot:actions>
-                                                        <v-icon color="primary">mdi-information-variant</v-icon>
-                                                    </template>
-                                                </v-expansion-panel-header>
-                                                <v-expansion-panel-content>
-                                                    <v-list>
-                                                        <v-list-item>
-                                                            <v-list-item-content>
-                                                                <v-list-item-title>
-                                                                    Domain ID
-                                                                </v-list-item-title>
-                                                                <v-list-item-subtitle>
-                                                                    {{ placeDialog.domainID }}
-                                                                </v-list-item-subtitle>
-                                                            </v-list-item-content>
-                                                        </v-list-item>
-                                                        <v-list-item>
-                                                            <v-list-item-content>
-                                                                <v-list-item-title>
-                                                                    Domain Name
-                                                                </v-list-item-title>
-                                                                <v-list-item-subtitle>
-                                                                    {{ placeDialog.domainName }}
-                                                                </v-list-item-subtitle>
-                                                            </v-list-item-content>
-                                                        </v-list-item>
-                                                        <v-list-item>
-                                                            <v-list-item-content>
-                                                                <v-list-item-title>
-                                                                    Domain Network Address
-                                                                </v-list-item-title>
-                                                                <v-list-item-subtitle>
-                                                                    {{ placeDialog.domainNetworkAddress }}
-                                                                </v-list-item-subtitle>
-                                                            </v-list-item-content>
-                                                        </v-list-item>
-                                                        <v-list-item>
-                                                            <v-list-item-content>
-                                                                <v-list-item-title>
-                                                                    Domain Ice Server
-                                                                </v-list-item-title>
-                                                                <v-list-item-subtitle>
-                                                                    {{ placeDialog.domainID }}
-                                                                </v-list-item-subtitle>
-                                                            </v-list-item-content>
-                                                        </v-list-item>
-                                                        <v-list-item>
-                                                            <v-list-item-content>
-                                                                <v-list-item-title>
-                                                                    Domain Last Checked In
-                                                                </v-list-item-title>
-                                                                <v-list-item-subtitle>
-                                                                    {{ placeDialog.domainLastSeen }}
-                                                                </v-list-item-subtitle>
-                                                            </v-list-item-content>
-                                                        </v-list-item>
-                                                    </v-list>
-                                                </v-expansion-panel-content>
-                                            </v-expansion-panel>
-                                        </v-expansion-panels>
-                                    </v-list-item>
-                                </v-list>
-                            </v-card-text>
+                            <v-scroll-x-transition 
+                                :hide-on-leave="true"
+                            >
+                                <v-card-text v-show="!placeEditMode" transition="scroll-x-transition" class="text-left">
+                                    <v-list class="transparent">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    Place Name
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ placeDialog.placeName }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    Description
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ placeDialog.description }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    Users
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ placeDialog.domainUsers }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    Address
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ placeDialog.address }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-expansion-panels>
+                                                <v-expansion-panel>
+                                                    <v-expansion-panel-header disable-icon-rotate>
+                                                        Domain
+                                                        <template v-slot:actions>
+                                                            <v-icon color="primary">mdi-information-variant</v-icon>
+                                                        </template>
+                                                    </v-expansion-panel-header>
+                                                    <v-expansion-panel-content>
+                                                        <v-list>
+                                                            <v-list-item>
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>
+                                                                        Domain ID
+                                                                    </v-list-item-title>
+                                                                    <v-list-item-subtitle>
+                                                                        {{ placeDialog.domainID }}
+                                                                    </v-list-item-subtitle>
+                                                                </v-list-item-content>
+                                                            </v-list-item>
+                                                            <v-list-item>
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>
+                                                                        Domain Name
+                                                                    </v-list-item-title>
+                                                                    <v-list-item-subtitle>
+                                                                        {{ placeDialog.domainName }}
+                                                                    </v-list-item-subtitle>
+                                                                </v-list-item-content>
+                                                            </v-list-item>
+                                                            <v-list-item>
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>
+                                                                        Domain Network Address
+                                                                    </v-list-item-title>
+                                                                    <v-list-item-subtitle>
+                                                                        {{ placeDialog.domainNetworkAddress }}
+                                                                    </v-list-item-subtitle>
+                                                                </v-list-item-content>
+                                                            </v-list-item>
+                                                            <v-list-item>
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>
+                                                                        Domain Ice Server
+                                                                    </v-list-item-title>
+                                                                    <v-list-item-subtitle>
+                                                                        {{ placeDialog.domainID }}
+                                                                    </v-list-item-subtitle>
+                                                                </v-list-item-content>
+                                                            </v-list-item>
+                                                            <v-list-item>
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>
+                                                                        Domain Last Checked In
+                                                                    </v-list-item-title>
+                                                                    <v-list-item-subtitle>
+                                                                        {{ placeDialog.domainLastSeen }}
+                                                                    </v-list-item-subtitle>
+                                                                </v-list-item-content>
+                                                            </v-list-item>
+                                                        </v-list>
+                                                    </v-expansion-panel-content>
+                                                </v-expansion-panel>
+                                            </v-expansion-panels>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-card-text>
+                            </v-scroll-x-transition>
+                            <v-scroll-x-reverse-transition
+                                :hide-on-leave="true"
+                            >
+                                <v-card-text v-show="placeEditMode" class="text-left">
+                                    <v-form
+                                        ref="editPlaceName"
+                                    >
+                                        <v-text-field
+                                            label="Place Name"
+                                            name="editPlaceName"
+                                            v-model="editPlaceName"
+                                            prepend-icon="mdi-rename-box"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'name', editPlaceName)"
+                                            type="text"
+                                            :rules="editPlaceNameRules"
+                                            :loading="editPlaceNameLoading"
+                                            color="input"
+                                        ></v-text-field>
+                                    </v-form>
+                                </v-card-text>
+                            </v-scroll-x-reverse-transition>
                         </v-card>
                     </v-dialog>
                     <!-- End Places Dialog -->
@@ -230,7 +279,7 @@
                                         label="Assign to Domain"
                                         item-text="placeName"
                                         item-value="domainID"
-                                        :filter="addPlaceDialogFilter"
+                                        :filter="placeDialogFilter"
                                         :rules="addPlaceDialog.domainIDRules"
                                         color="input"
                                     >
@@ -392,6 +441,13 @@ export default {
             domainLastSeen: null,
             domainUsers: null
         },
+        // Place Dialog -> Edit Mode
+        placeEditMode: false,
+        editPlaceName: '',
+        editPlaceNameRules: [
+            v => !!v || 'A place name is required.'
+        ],
+        editPlaceNameLoading: false,
         // Place Add Dialog
         addPlaceDialogShow: false,
         addPlaceDialog: {
@@ -469,6 +525,22 @@ export default {
             this.retrievePlacesList(metaverseServer);
         },
 
+        // BEGIN Add Place Dialog AND General Place Dialog
+        
+        showAddPlaceDialog () {
+            this.addPlaceDialogShow = true; 
+            this.retrieveDomainList(metaverseServer);
+        },
+        
+        placeDialogFilter (item, queryText) {
+            var placeName = item.placeName.toLowerCase();
+            var domainID = item.domainID;
+            var searchText = queryText.toLowerCase();
+            
+            return placeName.indexOf(searchText) > -1 ||
+                   domainID.indexOf(searchText) > -1
+        },
+        
         rowClicked (rowData) {
             this.placeDialogShow = true;
             this.placeDialog.placeName = rowData.placeName;
@@ -484,22 +556,6 @@ export default {
             this.placeDialog.domainIceServer = rowData.domainIceServer;
             this.placeDialog.domainLastSeen = rowData.domainLastSeen;
             this.placeDialog.domainUsers = rowData.domainUsers;
-        },
-        
-        // BEGIN Add Place Dialog
-        
-        showAddPlaceDialog () {
-            this.addPlaceDialogShow = true; 
-            this.retrieveDomainList(metaverseServer);
-        },
-        
-        addPlaceDialogFilter (item, queryText) {
-            var placeName = item.placeName.toLowerCase();
-            var domainID = item.domainID;
-            var searchText = queryText.toLowerCase();
-            
-            return placeName.indexOf(searchText) > -1 ||
-                   domainID.indexOf(searchText) > -1
         },
         
         // END Add Place Dialog
@@ -661,6 +717,7 @@ export default {
             });
             parameters = "?" + parameters;
 
+            this[fieldToUpdate + 'Loading'] = true;
             window.$.ajax({
                 type: 'POST',
                 url: metaverseServer + '/api/v1/places/' + placeID + '/field/' + fieldToUpdate + parameters,
@@ -671,12 +728,14 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully updated place:', placeID);
+                    this[fieldToUpdate + 'Loading'] = false;
                     vue_this.snackbarSuccessText = "Successfully updated place.";
                     vue_this.snackbarSuccessShow = true;
                     vue_this.retrievePlacesList(metaverseServer);
                 })
                 .fail(function (result) {
                     console.info('Failed to update place:', placeID);
+                    this[fieldToUpdate + 'Loading'] = false;
 
                     vue_this.$store.commit('mutate', {
                         property: 'error',
