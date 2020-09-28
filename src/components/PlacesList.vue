@@ -41,7 +41,7 @@
                             <v-btn
                                 v-bind="attrs"
                                 v-on="on"
-                                @click="addPlaceDialogShow = true" 
+                                @click="showAddPlaceDialog()" 
                                 color="primary"
                                 small
                                 fab
@@ -212,8 +212,8 @@
                                         color="input"
                                     ></v-textarea>
                                     <v-text-field
-                                        label="Address ( /x,y,z/x,y,z,w )"
-                                        placeholder="Location & Orientation"
+                                        label="Location & Orientation ( /x,y,z/x,y,z,w )"
+                                        placeholder="/0,0,0/0,0,0,1"
                                         name="address"
                                         v-model="addPlaceDialog.address"
                                         prepend-icon="mdi-compass-outline"
@@ -221,16 +221,50 @@
                                         :rules="addPlaceDialog.addressRules"
                                         color="input"
                                     ></v-text-field>
-                                    <v-text-field
-                                        label="Assign to Domain"
-                                        placeholder="Domain ID"
-                                        name="domainID"
+                                    <v-autocomplete
                                         v-model="addPlaceDialog.domainID"
                                         prepend-icon="mdi-earth"
-                                        type="text"
+                                        :items="domains"
+                                        filled
+                                        chips
+                                        label="Assign to Domain"
+                                        item-text="placeName"
+                                        item-value="domainID"
+                                        :filter="addPlaceDialogFilter"
                                         :rules="addPlaceDialog.domainIDRules"
                                         color="input"
-                                    ></v-text-field>
+                                    >
+                                        <template v-slot:item="data">
+                                            <template>
+                                                <v-list-item-content>
+                                                    <v-list-item-title 
+                                                        v-if="data.item.placeName !== ''" 
+                                                        v-html="data.item.placeName"
+                                                    ></v-list-item-title>
+                                                    <v-list-item-title 
+                                                        v-else 
+                                                    >
+                                                        Unknown
+                                                    </v-list-item-title>
+                                                    <v-list-item-subtitle 
+                                                        v-html="data.item.domainID"
+                                                    ></v-list-item-subtitle>
+                                                    <v-list-item-subtitle 
+                                                        v-html="data.item.created"
+                                                    ></v-list-item-subtitle>
+                                                </v-list-item-content>
+                                            </template>
+                                        </template>
+                                        <template v-slot:selection="data">
+                                            <v-chip
+                                                v-bind="data.attrs"
+                                                :input-value="data.selected"
+                                            >
+                                                <span v-if="data.item.placeName !== ''">{{ data.item.placeName }}</span>
+                                                <span v-else>{{ data.item.domainID }}</span>
+                                            </v-chip>
+                                        </template>
+                                    </v-autocomplete>
                                 </v-form>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
@@ -369,7 +403,7 @@ export default {
             descriptionRules: [
                 v => !!v || 'A description is required.'
             ],
-            address: null,
+            address: "/0,0,0/0,0,0,0",
             addressRules: [
                 v => !!v || 'An address is required.'
             ],
@@ -382,6 +416,8 @@ export default {
         editingPlace: null,
         // Places List
         places: [],
+        // Domains List
+        domains: [],
         // Success Snackbar
         snackbarSuccessShow: false,
         snackbarSuccessText: 'Success.',
@@ -449,6 +485,24 @@ export default {
             this.placeDialog.domainLastSeen = rowData.domainLastSeen;
             this.placeDialog.domainUsers = rowData.domainUsers;
         },
+        
+        // BEGIN Add Place Dialog
+        
+        showAddPlaceDialog () {
+            this.addPlaceDialogShow = true; 
+            this.retrieveDomainList(metaverseServer);
+        },
+        
+        addPlaceDialogFilter (item, queryText) {
+            var placeName = item.placeName.toLowerCase();
+            var domainID = item.domainID;
+            var searchText = queryText.toLowerCase();
+            
+            return placeName.indexOf(searchText) > -1 ||
+                   domainID.indexOf(searchText) > -1
+        },
+        
+        // END Add Place Dialog
         
         canEditPlace: function (placeOwningID) {
             return store.account.useAsAdmin || store.account.accountId === placeOwningID;
@@ -523,6 +577,33 @@ export default {
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
+                })
+        },
+        
+        retrieveDomainList: function (metaverseURL) {
+            var parameters = window.$.param({
+                "asAdmin": store.account.useAsAdmin
+            });
+            parameters = "?" + parameters;
+            window.$.ajax({
+                type: 'GET',
+                url: metaverseURL + '/api/v1/domains' + parameters,
+                contentType: 'application/json',
+            })
+                .done(function (result) {
+                    vue_this.domains = [];
+                    result.data.domains.forEach(function(item, index) {
+                        vue_this.domains.push(
+                            {
+                                placeName: item.name,
+                                domainID: item.domainId,
+                                created: item.when_domain_entry_created
+                            }
+                        );
+                    });
+                })
+                .fail(function (result) {
+                    console.info('Failed to retrieve domain list: ', result);
                 })
         },
         

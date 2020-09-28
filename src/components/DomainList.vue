@@ -203,7 +203,6 @@ export default {
                 sortable: true,
                 value: 'placeName',
             },
-            { text: 'Protocol', value: 'protocol' },
             { text: 'Version', value: 'version' },
             { text: 'Users', value: 'users' },
             { text: 'Actions', value: 'actions', sortable: false },
