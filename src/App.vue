@@ -14,6 +14,24 @@
             v-model="mainMenu"
             app
         >
+            <v-list-item
+                href="https://vircadia.com/"
+            >
+                <v-list-item-icon>
+                    <v-avatar>
+                        <img
+                            src="/assets/vircadia-icon-256.png"
+                        >
+                    </v-avatar>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                    <v-list-item-title>Vircadia Home</v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
+
+            <v-divider></v-divider>
+
             <v-list v-if="$store.state.account.isLoggedIn">
                 <v-list-item-group v-model="mainMenuModel" mandatory>
                     <v-list-item
