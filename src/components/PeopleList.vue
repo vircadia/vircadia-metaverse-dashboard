@@ -38,28 +38,39 @@
                 >
                     <v-card>
                         <v-card-title>
+                            <v-avatar
+                                v-show="userDialog.thumbnail"
+                                class="mr-5"
+                            >
+                                <img :src="userDialog.thumbnail">
+                            </v-avatar>
                             {{ userDialog.username }}
                         </v-card-title>
                 
                         <v-card-text class="text-left">
                             <v-list class="transparent">
                                 <v-list-item>
-                                    <v-list-item-title>
-                                        Account ID
-                                    </v-list-item-title>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Account ID
+                                        </v-list-item-title>
 
-                                    <v-list-item-subtitle class="text-right">
-                                        {{ userDialog.accountId }}
-                                    </v-list-item-subtitle>
+                                        <v-list-item-subtitle>
+                                            {{ userDialog.accountId }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
                                 </v-list-item>
-                                <v-list-item>
-                                    <v-list-item-title>
-                                        Status
-                                    </v-list-item-title>
 
-                                    <v-list-item-subtitle class="text-right">
-                                        {{ userDialog.status }}
-                                    </v-list-item-subtitle>
+                                <v-list-item>
+                                    <v-list-item-content>
+                                        <v-list-item-title>
+                                            Status
+                                        </v-list-item-title>
+
+                                        <v-list-item-subtitle>
+                                            {{ userDialog.status }}
+                                        </v-list-item-subtitle>
+                                    </v-list-item-content>
                                 </v-list-item>
                             </v-list>
                             <v-expansion-panels>
@@ -68,21 +79,23 @@
                                     <v-expansion-panel-content>
                                         <v-list class="transparent">
                                             <v-list-item>
-                                                <!-- <v-list-item-title>
-                                                    Domain ID
-                                                </v-list-item-title>
-                                                <v-list-item-subtitle class="text-right">
-                                                    {{ userDialog.location.root.domain.id }}
-                                                </v-list-item-subtitle>
-                                                <v-list-item-subtitle class="text-right">
-                                                    {{ userDialog.location.root.domain.name }}
-                                                </v-list-item-subtitle> -->
-                                                <v-list-item-title>
-                                                    Session ID
-                                                </v-list-item-title>
-                                                <v-list-item-subtitle class="text-right">
-                                                    {{ userDialog.location_node_id }}
-                                                </v-list-item-subtitle>
+                                                <v-list-item-content>
+                                                    <!-- <v-list-item-title>
+                                                        Domain ID
+                                                    </v-list-item-title>
+                                                    <v-list-item-subtitle class="text-right">
+                                                        {{ userDialog.location.root.domain.id }}
+                                                    </v-list-item-subtitle>
+                                                    <v-list-item-subtitle class="text-right">
+                                                        {{ userDialog.location.root.domain.name }}
+                                                    </v-list-item-subtitle> -->
+                                                    <v-list-item-title>
+                                                        Session ID
+                                                    </v-list-item-title>
+                                                    <v-list-item-subtitle>
+                                                        {{ userDialog.location_node_id }}
+                                                    </v-list-item-subtitle>
+                                                </v-list-item-content>
                                             </v-list-item>
                                             <!-- <v-list-item>
                                                 <v-list-item-title>
@@ -181,6 +194,7 @@ export default {
         ],
         userDialogShow: false,
         userDialog: {
+            thumbnail: '',
             username: '',
             accountId: '',
             status: '',
@@ -213,6 +227,7 @@ export default {
 
         rowClicked (rowData) {
             this.userDialogShow = true;
+            this.userDialog.thumbnail = rowData.thumbnail;
             this.userDialog.username = rowData.username;
             this.userDialog.accountId = rowData.accountId;
             this.userDialog.status = rowData.status;
