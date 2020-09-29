@@ -638,24 +638,26 @@ export default {
                 .done(function (result) {
                     vue_this.places = [];
                     result.data.places.forEach(function(item, index) {
-                        vue_this.places.push(
-                            {
-                                name: item.name,
-                                placeID: item.placeId,
-                                address: item.address,
-                                description: item.description,
-                                accountID: item.accountId,
-                                thumbnail: item.thumbanil,
-                                images: item.images,
-                                // Place's domain information
-                                domainID: item.domain.id,
-                                domainName: item.domain.name,
-                                domainNetworkAddress: item.domain.network_address,
-                                domainIceServer: item.domain.ice_server_address,
-                                domainLastSeen: item.domain.time_of_last_heartbeat,
-                                domainUsers: item.domain.num_users,
-                            }
-                        );
+                        var objectToPush = {
+                            name: item.name,
+                            placeID: item.placeId,
+                            address: item.address,
+                            description: item.description,
+                            accountID: item.accountId,
+                            thumbnail: item.thumbanil,
+                            images: item.images
+                        };
+
+                        if (item.domain) {
+                            objectToPush.domainID = item.domain.id;
+                            objectToPush.domainName = item.domain.name;
+                            objectToPush.domainNetworkAddress = item.domain.network_address;
+                            objectToPush.domainIceServer = item.domain.ice_server_address;
+                            objectToPush.domainLastSeen = item.domain.time_of_last_heartbeat;
+                            objectToPush.domainUsers = item.domain.num_users;
+                        }
+
+                        vue_this.places.push(objectToPush);
                     });
                 })
                 .fail(function (result) {
