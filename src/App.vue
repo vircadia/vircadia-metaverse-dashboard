@@ -51,7 +51,7 @@
             </v-list>
 
         </v-navigation-drawer>
-        <!-- src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg" -->
+
         <v-app-bar
             app
             color="primary"
@@ -101,7 +101,7 @@
             color="primary"
             app
         >
-            <span class="white--text">Iamus Dashboard v0.0.1g | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
+            <span class="white--text">Iamus Dashboard v0.0.1h | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse: <b>{{ $store.state.metaverseConfig.server }}</b></span>
             <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>
