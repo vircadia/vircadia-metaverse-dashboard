@@ -37,7 +37,7 @@
                 >
                     <v-card>
                         <v-card-title>
-                            {{ domainDialog.placeName }}
+                            {{ domainDialog.name }}
                         </v-card-title>
                 
                         <v-card-text class="text-left">
@@ -45,10 +45,10 @@
                                 <v-list-item>
                                     <v-list-item-content>
                                         <v-list-item-title>
-                                            Place Name
+                                            Domain Name
                                         </v-list-item-title>
                                         <v-list-item-subtitle>
-                                            {{ domainDialog.placeName }}
+                                            {{ domainDialog.name }}
                                         </v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
@@ -139,7 +139,7 @@
                     <v-icon
                         small
                         color="red"
-                        v-on:click.stop="deleteDomain(item.domainID, item.placeName)"
+                        v-on:click.stop="deleteDomain(item.domainID, item.name)"
                         v-bind="attrs"
                         v-on="on"
                         :disabled="!canEditDomain(item.sponsorAccountId)"
@@ -198,10 +198,10 @@ export default {
         dialog: false,
         headers: [
             {
-                text: 'Place Name',
+                text: 'Domain Name',
                 align: 'start',
                 sortable: true,
-                value: 'placeName',
+                value: 'name',
             },
             { text: 'Version', value: 'version' },
             { text: 'Users', value: 'users' },
@@ -209,7 +209,7 @@ export default {
         ],
         domainDialogShow: false,
         domainDialog: {
-            placeName: '',
+            name: '',
             users: '',
             domainID: '',
             version: '',
@@ -249,7 +249,7 @@ export default {
 
         rowClicked (rowData) {
             this.domainDialogShow = true;
-            this.domainDialog.placeName = rowData.placeName;
+            this.domainDialog.name = rowData.name;
             this.domainDialog.domainID = rowData.domainID;
             this.domainDialog.version = rowData.version;
             this.domainDialog.protocol = rowData.protocol;
@@ -285,8 +285,8 @@ export default {
             })
         },
         
-        deleteDomain (domainID, placeName) {
-            confirm('Are you sure you want to delete ' + placeName + '?') && this.postDeleteDomain(domainID);
+        deleteDomain (domainID, domainName) {
+            confirm('Are you sure you want to delete ' + domainName + '?') && this.postDeleteDomain(domainID);
         },
         // END Inline Editing Functionality
         
@@ -307,7 +307,7 @@ export default {
                     result.data.domains.forEach(function(item, index) {
                         vue_this.domains.push(
                             {
-                                placeName: item.name,
+                                name: item.name,
                                 domainID: item.domainId,
                                 users: item.total_users,
                                 protocol: item.protocol_version,
