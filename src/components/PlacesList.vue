@@ -62,23 +62,24 @@
                     >
                         <v-card>
                             <v-card-title>
-                                {{ placeDialog.placeName }}
+                                {{ placeDialog.name }}
                                 <v-divider
                                     class="mx-4"
                                     inset
                                     vertical
                                 ></v-divider>
+                                {{ placeDialog.domainUsers }} users
                                 <v-spacer></v-spacer>
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-btn
                                             v-bind="attrs"
                                             v-on="on"
-                                            @click="placeEditMode = !placeEditMode" 
+                                            @click="togglePlaceEditMode" 
                                             color="primary"
                                             small
                                             fab
-                                            disabled
+                                            :disabled="!canEditPlace(placeDialog.accountID)"
                                         >
                                             <v-icon>
                                                 mdi-home-edit
@@ -99,7 +100,7 @@
                                                     Place Name
                                                 </v-list-item-title>
                                                 <v-list-item-subtitle>
-                                                    {{ placeDialog.placeName }}
+                                                    {{ placeDialog.name }}
                                                 </v-list-item-subtitle>
                                             </v-list-item-content>
                                         </v-list-item>
@@ -110,16 +111,6 @@
                                                 </v-list-item-title>
                                                 <v-list-item-subtitle>
                                                     {{ placeDialog.description }}
-                                                </v-list-item-subtitle>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-content>
-                                                <v-list-item-title>
-                                                    Users
-                                                </v-list-item-title>
-                                                <v-list-item-subtitle>
-                                                    {{ placeDialog.domainUsers }}
                                                 </v-list-item-subtitle>
                                             </v-list-item-content>
                                         </v-list-item>
@@ -221,6 +212,32 @@
                                             :loading="editPlaceNameLoading"
                                             color="input"
                                         ></v-text-field>
+
+                                        <v-textarea
+                                            label="Description"
+                                            name="editPlaceDescription"
+                                            v-model="editPlaceDescription"
+                                            prepend-icon="mdi-image-text"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'description', editPlaceDescription)"
+                                            type="text"
+                                            :rules="editPlaceDescriptionRules"
+                                            :loading="editPlaceDescriptionLoading"
+                                            color="input"
+                                        ></v-textarea>
+
+                                        <v-text-field
+                                            label="Address ( /x,y,z/x,y,z,w )"
+                                            name="editPlaceAddress"
+                                            v-model="editPlaceAddress"
+                                            prepend-icon="mdi-compass-outline"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'address', editPlaceAddress)"
+                                            type="text"
+                                            :rules="editPlaceAddressRules"
+                                            :loading="editPlaceAddressLoading"
+                                            color="input"
+                                        ></v-text-field>
                                     </v-form>
                                 </v-card-text>
                             </v-scroll-x-reverse-transition>
@@ -244,7 +261,7 @@
                                 >
                                     <v-text-field
                                         label="Place Name"
-                                        name="placeName"
+                                        name="name"
                                         v-model="addPlaceDialog.name"
                                         prepend-icon="mdi-rename-box"
                                         type="text"
@@ -277,7 +294,7 @@
                                         filled
                                         chips
                                         label="Assign to Domain"
-                                        item-text="placeName"
+                                        item-text="name"
                                         item-value="domainID"
                                         :filter="placeDialogFilter"
                                         :rules="addPlaceDialog.domainIDRules"
@@ -287,8 +304,8 @@
                                             <template>
                                                 <v-list-item-content>
                                                     <v-list-item-title 
-                                                        v-if="data.item.placeName !== ''" 
-                                                        v-html="data.item.placeName"
+                                                        v-if="data.item.name !== ''" 
+                                                        v-html="data.item.name"
                                                     ></v-list-item-title>
                                                     <v-list-item-title 
                                                         v-else 
@@ -309,7 +326,7 @@
                                                 v-bind="data.attrs"
                                                 :input-value="data.selected"
                                             >
-                                                <span v-if="data.item.placeName !== ''">{{ data.item.placeName }}</span>
+                                                <span v-if="data.item.name !== ''">{{ data.item.name }}</span>
                                                 <span v-else>{{ data.item.domainID }}</span>
                                             </v-chip>
                                         </template>
@@ -336,7 +353,7 @@
                         <v-icon
                             small
                             color="red"
-                            v-on:click.stop="deletePlace(item.placeID, item.placeName)"
+                            v-on:click.stop="deletePlace(item.placeID, item.name)"
                             v-bind="attrs"
                             v-on="on"
                             :disabled="!canEditPlace(item.accountID)"
@@ -358,17 +375,17 @@
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template> -->
             <!-- EDIT DIALOGS -->
-            <!-- <template v-slot:item.placeName="{ item }">
+            <!-- <template v-slot:item.name="{ item }">
                 <v-edit-dialog
-                    @save="savePlaceName(item.placeName)"
+                    @save="savename(item.name)"
                     @cancel=""
                     @open="beginEditingPlace(item.placeID)"
                     @close=""
-                    :return-value.sync="item.placeName"
-                > {{ item.placeName }}
+                    :return-value.sync="item.name"
+                > {{ item.name }}
                     <template v-slot:input>
                         <v-text-field
-                            v-model="item.placeName"
+                            v-model="item.name"
                             label="Edit"
                             single-line
                             counter
@@ -418,7 +435,7 @@ export default {
                 text: 'Place Name',
                 align: 'start',
                 sortable: true,
-                value: 'placeName',
+                value: 'name',
             },
             { text: 'Users', value: 'domainUsers' },
             { text: 'Actions', value: 'actions', sortable: false },
@@ -426,7 +443,7 @@ export default {
         // Place Dialog
         placeDialogShow: false,
         placeDialog: {
-            placeName: null,
+            name: null,
             placeID: null,
             address: null,
             description: null,
@@ -448,6 +465,16 @@ export default {
             v => !!v || 'A place name is required.'
         ],
         editPlaceNameLoading: false,
+        editPlaceAddress: '',
+        editPlaceAddressRules: [
+            v => !!v || 'A place address is required.'
+        ],
+        editPlaceAddressLoading: false,
+        editPlaceDescription: '',
+        editPlaceDescriptionRules: [
+            v => !!v || 'A place description is required.'
+        ],
+        editPlaceDescriptionLoading: false,
         // Place Add Dialog
         addPlaceDialogShow: false,
         addPlaceDialog: {
@@ -479,7 +506,7 @@ export default {
         snackbarSuccessText: 'Success.',
         snackbarSuccessTimeout: 6000
     }),
-    
+
     computed: {
     },
 
@@ -498,7 +525,7 @@ export default {
         
         this.initialize();
     },
-    
+
     computed: {
         showOnlyMineStore: {
             get () {
@@ -532,8 +559,18 @@ export default {
             this.retrieveDomainList(metaverseServer);
         },
         
+        togglePlaceEditMode () {
+            this.placeEditMode = !this.placeEditMode;
+            
+            if (this.placeEditMode === true) {
+                this.editPlaceName = this.placeDialog.name;
+                this.editPlaceDescription = this.placeDialog.description;
+                this.editPlaceAddress = this.placeDialog.address;
+            }
+        },
+        
         placeDialogFilter (item, queryText) {
-            var placeName = item.placeName.toLowerCase();
+            var placeName = item.name.toLowerCase();
             var domainID = item.domainID;
             var searchText = queryText.toLowerCase();
             
@@ -542,8 +579,9 @@ export default {
         },
         
         rowClicked (rowData) {
+            this.placeEditMode = false; // We don't want the edit mode to still be on.
             this.placeDialogShow = true;
-            this.placeDialog.placeName = rowData.placeName;
+            this.placeDialog.name = rowData.name;
             this.placeDialog.placeID = rowData.placeID;
             this.placeDialog.address = rowData.address;
             this.placeDialog.description = rowData.description;
@@ -567,12 +605,6 @@ export default {
         // BEGIN Inline Editing Functionality
         beginEditingPlace (placeID) {
             this.editingPlace = placeID;
-        },
-        
-        savePlaceName (newPlaceName) {
-            this.postUpdatePlace(this.editingPlace, "name", {
-                'set': newPlaceName
-            })
         },
         
         deletePlace (placeID, placeName) {
@@ -602,7 +634,7 @@ export default {
                     result.data.places.forEach(function(item, index) {
                         vue_this.places.push(
                             {
-                                placeName: item.name,
+                                name: item.name,
                                 placeID: item.placeId,
                                 address: item.address,
                                 description: item.description,
@@ -716,19 +748,23 @@ export default {
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
+            
+            var objectToPost = {
+                'set': dataToUpdate
+            };
 
             this[fieldToUpdate + 'Loading'] = true;
             window.$.ajax({
                 type: 'POST',
                 url: metaverseServer + '/api/v1/places/' + placeID + '/field/' + fieldToUpdate + parameters,
                 contentType: 'application/json',
-                data: { 
-                    dataToUpdate
-                }
+                data: JSON.stringify(objectToPost)
             })
                 .done(function (result) {
                     console.info('Successfully updated place:', placeID);
                     this[fieldToUpdate + 'Loading'] = false;
+
+                    vue_this.placeDialog[fieldToUpdate] = dataToUpdate;
                     vue_this.snackbarSuccessText = "Successfully updated place.";
                     vue_this.snackbarSuccessShow = true;
                     vue_this.retrievePlacesList(metaverseServer);
