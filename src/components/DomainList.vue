@@ -16,6 +16,7 @@
     <v-data-table
         :headers="headers"
         :items="domains"
+        :loading="domainDataTableLoading"
         sort-by="user"
         class="elevation-1"
         @click:row="rowClicked"
@@ -29,6 +30,23 @@
                     vertical
                 ></v-divider>
                 <v-spacer></v-spacer>
+                <v-tooltip left>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="retrieveDomainList()" 
+                            color="primary"
+                            small
+                            fab
+                        >
+                            <v-icon>
+                                mdi-refresh
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Refresh Domain List</span>
+                </v-tooltip>
                 <!-- DOMAIN DATA DIALOG -->
                 <v-dialog
                     v-model="domainDialogShow"
@@ -207,6 +225,7 @@ export default {
             { text: 'Users', value: 'users' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        domainDataTableLoading: false,
         domainDialogShow: false,
         domainDialog: {
             name: '',
@@ -244,7 +263,7 @@ export default {
 
     methods: {
         initialize () {
-            this.retrieveDomainList(metaverseServer);
+            this.retrieveDomainList();
         },
 
         rowClicked (rowData) {
@@ -291,18 +310,22 @@ export default {
         // END Inline Editing Functionality
         
         // BEGIN Handling requests to the API
-        retrieveDomainList: function (metaverseURL) {
+        retrieveDomainList: function () {
             var parameters = window.$.param({
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
 
+            this.domainDataTableLoading = true;
+
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + '/api/v1/domains' + parameters,
+                url: metaverseServer + '/api/v1/domains' + parameters,
                 contentType: 'application/json',
             })
                 .done(function (result) {
+                    vue_this.domainDataTableLoading = false;
+
                     vue_this.domains = [];
                     result.data.domains.forEach(function(item, index) {
                         vue_this.domains.push(
@@ -322,7 +345,8 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to retrieve domain list: ', result);
-                    
+                    vue_this.domainDataTableLoading = false;
+
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
@@ -354,7 +378,7 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully updated domain:', domainID);
-                    vue_this.retrieveDomainList(metaverseServer);
+                    vue_this.retrieveDomainList();
                 })
                 .fail(function (result) {
                     console.info('Failed to update domain:', domainID);
@@ -369,7 +393,7 @@ export default {
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
-                    vue_this.retrieveDomainList(metaverseServer);
+                    vue_this.retrieveDomainList();
                 })
         },
         
@@ -385,7 +409,7 @@ export default {
             })
                 .done(function (result) {
                     console.info('Successfully deleted domain:', domainID);
-                    vue_this.retrieveDomainList(metaverseServer);
+                    vue_this.retrieveDomainList();
                 })
                 .fail(function (result) {
                     console.info('Failed to delete domain:', domainID);
@@ -400,7 +424,7 @@ export default {
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
-                    vue_this.retrieveDomainList(metaverseServer);
+                    vue_this.retrieveDomainList();
                 })
         }
         // END Handling requests to the API

@@ -681,6 +681,7 @@ export default {
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
+
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + '/api/v1/domains' + parameters,

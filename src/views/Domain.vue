@@ -19,7 +19,16 @@
                     align="center"
                     justify="center"
                 >
-                    <DomainList></DomainList>
+                    <v-col
+                        cols="4"
+                    >
+                        <RegisterDomain></RegisterDomain>
+                    </v-col>
+                    <v-col
+                        cols="6"
+                    >
+                        <DomainList></DomainList>
+                    </v-col>
                 </v-row>
             </v-container>
         </v-main>
@@ -29,6 +38,7 @@
 <script>
 
 import DomainList from '../components/DomainList'
+import RegisterDomain from '../components/RegisterDomain'
 
 export default {
     name: 'Domain',
@@ -36,7 +46,8 @@ export default {
         source: String
     },
     components: {
-        DomainList
+        DomainList,
+        RegisterDomain
     }
 }
 </script>
