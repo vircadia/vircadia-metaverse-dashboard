@@ -20,12 +20,34 @@
                     Register A Domain
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                    Use the access token that is generated to let your domain server log in to the metaverse.
+                    Use the access token that is generated to allow your domain server to log in to the metaverse.
                 </v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
         <v-list-item class="mb-4">
-            <p class="overline text-center" style="width: 100%; font-size: 1.0rem !important" v-text="generatedToken"></p>
+            <p
+                id="generatedToken"
+                class="overline text-center mt-4" 
+                style="width: 100%; 
+                font-size: 1.0rem !important" 
+                v-text="generatedToken"
+            ></p>
+            <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="copyGeneratedToken" 
+                        color="input"
+                        small
+                        fab
+                        v-show="generatedToken"
+                    >
+                        <v-icon>mdi-content-copy</v-icon>
+                    </v-btn>
+                </template>
+                <span>Copy</span>
+            </v-tooltip>
         </v-list-item>
         <v-list-item-subtitle v-text="generatedTokenText"></v-list-item-subtitle>
         <v-card-actions>
@@ -38,11 +60,28 @@
                 Generate
             </v-btn>
         </v-card-actions>
+        
+        <v-snackbar
+            v-model="copiedToClipboardSnackbar"
+            color="success"
+        >
+            Copied to clipboard.
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    text
+                    v-bind="attrs"
+                    @click="copiedToClipboardSnackbar = false"
+                >
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </v-card>
 </template>
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;
@@ -54,7 +93,8 @@ export default {
     },
     data: () => ({
         generatedToken: null,
-        generatedTokenText: 'Click "Generate" to create a token.'
+        generatedTokenText: 'Click "Generate" to create a token.',
+        copiedToClipboardSnackbar: false
     }),
     
     computed: {
@@ -78,6 +118,11 @@ export default {
         initialize () {
         },
         
+        copyGeneratedToken: function () {
+            navigator.clipboard.writeText(this.generatedToken);
+            this.copiedToClipboardSnackbar = true;
+        },
+        
         // BEGIN Handling requests to the API
         postGenerateDomainToken () {
             var parameters = window.$.param({
@@ -94,7 +139,7 @@ export default {
                 .done(function (result) {
                     console.info('Successfully generated token:', result);
                     vue_this.generatedToken = result.data.token;
-                    vue_this.generatedTokenText = 'Paste this token into your domain-server.';
+                    vue_this.generatedTokenText = 'Paste this token into your domain server.';
                 })
                 .fail(function (result) {
                     console.info('Failed to generate token:', result);
