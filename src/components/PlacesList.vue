@@ -17,6 +17,7 @@
         <v-data-table
             :headers="headers"
             :items="places"
+            :search="search"
             sort-by="domain"
             class="elevation-1"
             @click:row="rowClicked"
@@ -36,6 +37,13 @@
                         label="Show Only Mine"
                     ></v-switch>
                     <v-spacer></v-spacer>
+                    <v-text-field
+                        v-model="search"
+                        solo
+                        label="Search"
+                        class="mt-7 mx-2"
+                        clearable
+                    ></v-text-field>
                     <v-tooltip left>
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -444,6 +452,7 @@ export default {
             { text: 'Users', value: 'domainUsers' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        search: null,
         // Place Dialog
         placeDialogShow: false,
         placeDialog: {

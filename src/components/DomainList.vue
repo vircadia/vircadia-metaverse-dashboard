@@ -17,6 +17,7 @@
         :headers="headers"
         :items="domains"
         :loading="domainDataTableLoading"
+        :search="search"
         sort-by="user"
         class="elevation-1"
         @click:row="rowClicked"
@@ -30,6 +31,13 @@
                     vertical
                 ></v-divider>
                 <v-spacer></v-spacer>
+                <v-text-field
+                    v-model="search"
+                    solo
+                    label="Search"
+                    class="mt-7 mx-2"
+                    clearable
+                ></v-text-field>
                 <v-tooltip left>
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -238,6 +246,7 @@ export default {
             sponsorAccountId: '',
             networkingMode: ''
         },
+        search: null,
         // Editing Domain
         editingDomain: null,
         // Domain List

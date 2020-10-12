@@ -16,6 +16,7 @@
     <v-data-table
         :headers="headers"
         :items="people"
+        :search="search"
         sort-by="user"
         class="elevation-1"
         @click:row="rowClicked"
@@ -30,6 +31,13 @@
                 ></v-divider>
                 <v-toolbar-title>Users</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-text-field
+                    v-model="search"
+                    solo
+                    label="Search"
+                    class="mt-7"
+                    clearable
+                ></v-text-field>
                 <!-- USER DATA DIALOG -->
                 <v-dialog
                     v-model="userDialogShow"
@@ -235,6 +243,7 @@ export default {
             // { text: 'Online', value: 'online' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
+        search: null,
         // User Dialog
         userDialogShow: false,
         userDialog: {
@@ -256,7 +265,7 @@ export default {
         // Editing User
         editingUser: null,
         // User List
-        people: [],
+        people: []
     }),
     
     computed: {
