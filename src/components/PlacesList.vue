@@ -17,6 +17,7 @@
         <v-data-table
             :headers="headers"
             :items="places"
+            :loading="placesDataTableLoading"
             :search="search"
             sort-by="domain"
             class="elevation-1"
@@ -431,6 +432,7 @@
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;
@@ -453,6 +455,7 @@ export default {
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         search: null,
+        placesDataTableLoading: false,
         // Place Dialog
         placeDialogShow: false,
         placeDialog: {
@@ -633,6 +636,8 @@ export default {
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
+            
+            this.placesDataTableLoading = true;
 
             var apiURL = '/api/v1/places';
             if (this.showOnlyMineStore) {
@@ -645,6 +650,8 @@ export default {
                 contentType: 'application/json',
             })
                 .done(function (result) {
+                    vue_this.placesDataTableLoading = false;
+
                     vue_this.places = [];
                     result.data.places.forEach(function(item, index) {
                         var objectToPush = {
@@ -670,6 +677,8 @@ export default {
                     });
                 })
                 .fail(function (result) {
+                    vue_this.placesDataTableLoading = false;
+
                     console.info('Failed to retrieve places list: ', result);
 
                     vue_this.$store.commit('mutate', {

@@ -16,6 +16,7 @@
     <v-data-table
         :headers="headers"
         :items="people"
+        :loading="peopleDataTableLoading"
         :search="search"
         sort-by="user"
         class="elevation-1"
@@ -217,6 +218,8 @@
 </template>
 
 <script>
+import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;
@@ -244,6 +247,7 @@ export default {
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         search: null,
+        peopleDataTableLoading: false,
         // User Dialog
         userDialogShow: false,
         userDialog: {
@@ -283,6 +287,10 @@ export default {
     },
 
     methods: {
+        sendEvent: function (command, data) {
+            EventBus.$emit(command, data);
+        },
+
         initialize () {
             this.retrieveAccountList(this.$store.state.metaverseConfig.server);
         },
@@ -332,12 +340,16 @@ export default {
                 "asAdmin": vue_this.$store.state.account.useAsAdmin
             });
             parameters = "?" + parameters;
+            
+            this.peopleDataTableLoading = true;
 
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + '/api/v1/users' + parameters
             })
                 .done(function (result) {
+                    vue_this.peopleDataTableLoading = false;
+
                     vue_this.people = [];
                     result.data.users.forEach(function(item, index) {
                         var isOnline = item.location.online ? 'Online' : 'Offline';
@@ -353,7 +365,20 @@ export default {
                     });
                 })
                 .fail(function (result) {
-                    console.info('Failed to retrieve account list: ', result);
+                    vue_this.peopleDataTableLoading = false;
+
+                    console.info('Failed to retrieve people list: ', result);
+                    
+                    vue_this.$store.commit('mutate', {
+                        property: 'error',
+                        with: {
+                            title: 'Failed to retrieve people list.',
+                            code: '2',
+                            full: result.responseJSON.error
+                        }
+                    });
+
+                    vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
 

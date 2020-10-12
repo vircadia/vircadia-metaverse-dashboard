@@ -211,6 +211,7 @@
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;

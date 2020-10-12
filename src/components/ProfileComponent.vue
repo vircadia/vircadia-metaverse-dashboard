@@ -372,6 +372,14 @@ export default {
             this.imagePreviewDialogSource = source;
         },
         
+        setAllLoading: function (to) {
+            this.usernameLoading = to;
+            this.emailLoading = to;
+            this.images_heroLoading = to;
+            this.images_tinyLoading = to;
+            this.images_thumbnailLoading = to;
+        },
+        
         // BEGIN handling requests to the API
         
         retrieveAccount: function (userID) {
@@ -379,12 +387,16 @@ export default {
                 "asAdmin": store.account.useAsAdmin
             });
             parameters = "?" + parameters;
+            
+            this.setAllLoading(true);
 
             window.$.ajax({
                 type: 'GET',
                 url: metaverseServer + '/api/v1/account/' + userID + parameters
             })
                 .done(function (result) {
+                    vue_this.setAllLoading(false);
+
                     vue_this.username = result.data.account.username;
                     // If the username was updated, we'll also update that in our dashboard.
                     vue_this.$store.commit('mutate', {
@@ -413,7 +425,10 @@ export default {
                     }
                 })
                 .fail(function (result) {
+                    vue_this.setAllLoading(false);
+
                     console.info('Failed to retrieve account: ', result);
+
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
@@ -440,6 +455,7 @@ export default {
             parameters = "?" + parameters;
             
             this[fieldToUpdate + 'Loading'] = true;
+
             window.$.ajax({
                 type: 'POST',
                 url: metaverseServer + '/api/v1/account/' + store.account.accountId + '/field/' + fieldToUpdate + parameters,
