@@ -145,7 +145,8 @@
                         >
                             <v-card-text v-show="userEditMode" class="text-left">
                                 <v-form
-                                    ref="editUser.password"
+                                    ref="editUserPassword"
+                                    @submit.prevent="postUpdateAccount(userDialog.accountID, 'password', editUser.password)"
                                 >
                                     <v-text-field
                                         label="Password"
@@ -264,7 +265,7 @@ export default {
             passwordRules: [
                 v => !!v || 'A password is required.'
             ],
-            passwordLoading: false
+            passwordLoading: false,
         },
         // Editing User
         editingUser: null,
@@ -313,7 +314,7 @@ export default {
             this.userEditMode = !this.userEditMode;
             
             if (this.placeEditMode === true) {
-                this.editUser.password = '';
+                this.$refs.editUserPassword.reset();
             }
         },
 

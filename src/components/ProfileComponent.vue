@@ -21,6 +21,7 @@
         </div>
         <v-form
             ref="username"
+            @submit.prevent="postUpdateAccount('username', username)"
         >
             <v-text-field
                 label="Username"
@@ -38,6 +39,7 @@
         
         <v-form
             ref="email"
+            @submit.prevent="postUpdateAccount('email', email)"
         >
             <v-text-field
                 label="Email"
@@ -55,6 +57,7 @@
         
         <v-form
             ref="images_hero"
+            @submit.prevent="postUpdateAccount('images_hero', images_hero)"
         >
             <v-text-field
                 label="Hero Image"
@@ -84,6 +87,7 @@
 
         <v-form
             ref="images_tiny"
+            @submit.prevent="postUpdateAccount('images_tiny', images_tiny)"
         >
             <v-text-field
                 label="Tiny Image"
@@ -113,6 +117,7 @@
         
         <v-form
             ref="images_thumbnail"
+            @submit.prevent="postUpdateAccount('images_thumbnail', images_thumbnail)"
         >
             <v-text-field
                 label="Thumbnail Image"
@@ -210,6 +215,7 @@
                 <v-expansion-panel-content>
                     <v-form
                         ref="password"
+                        onSubmit="return false;"
                     >
                         <v-list class="transparent">
                             <v-list-item>
