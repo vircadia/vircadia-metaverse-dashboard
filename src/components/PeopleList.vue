@@ -46,32 +46,38 @@
                     color="primary"
                 >
                     <v-card>
-                        <v-card-title>
-                            <v-avatar
-                                v-show="userDialog.thumbnail"
-                                class="mr-5"
-                            >
-                                <img :src="userDialog.thumbnail">
-                            </v-avatar>
-                            {{ userDialog.username }}
-                            <v-spacer></v-spacer>
-                            <v-tooltip left>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                        v-bind="attrs"
-                                        v-on="on"
-                                        @click="toggleUserEditMode" 
-                                        color="primary"
-                                        small
-                                        fab
-                                        :disabled="!canEditUser(userDialog.accountID)"
-                                    >
-                                        <v-icon v-text="!userEditMode ? 'mdi-account-edit' : 'mdi-image-text'"></v-icon>
-                                    </v-btn>
-                                </template>
-                                <span v-text="!userEditMode ? 'Edit' : 'View'"></span>
-                            </v-tooltip>
-                        </v-card-title>
+                        <v-img
+                            height="80px"
+                            class="userDialogHero"
+                            :src="userDialog.hero"
+                        >
+                            <v-card-title>
+                                <v-avatar
+                                    v-show="userDialog.thumbnail"
+                                    class="mr-5"
+                                >
+                                    <img :src="userDialog.thumbnail">
+                                </v-avatar>
+                                {{ userDialog.username }}
+                                <v-spacer></v-spacer>
+                                <v-tooltip left>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            @click="toggleUserEditMode" 
+                                            color="primary"
+                                            small
+                                            fab
+                                            :disabled="!canEditUser(userDialog.accountID)"
+                                        >
+                                            <v-icon v-text="!userEditMode ? 'mdi-account-edit' : 'mdi-image-text'"></v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span v-text="!userEditMode ? 'Edit' : 'View'"></span>
+                                </v-tooltip>
+                            </v-card-title>
+                        </v-img>
 
                         <v-scroll-x-transition 
                             :hide-on-leave="true"
@@ -253,6 +259,7 @@ export default {
         userDialogShow: false,
         userDialog: {
             thumbnail: '',
+            hero: '',
             username: '',
             accountID: '',
             status: '',
@@ -300,6 +307,7 @@ export default {
             this.userEditMode = false;
             this.userDialogShow = true;
             this.userDialog.thumbnail = rowData.thumbnail;
+            this.userDialog.hero = rowData.hero;
             this.userDialog.username = rowData.username;
             this.userDialog.accountID = rowData.accountID;
             this.userDialog.status = rowData.status;
@@ -360,7 +368,8 @@ export default {
                                 status: isOnline,
                                 locationData: item.location,
                                 accountID: item.accountId,
-                                thumbnail: item.images.thumbnail ? item.images.thumbnail : ''
+                                thumbnail: item.images.thumbnail ? item.images.thumbnail : '',
+                                hero: item.images.hero ? item.images.hero : '../assets/1920_bar.png'
                             }
                         );
                     });
@@ -404,11 +413,17 @@ export default {
                 .done(function (result) {
                     console.info('Successfully updated account:', userID);
                     vue_this.editUser[fieldToUpdate + 'Loading'] = false;
+                    if (vue_this.userEditMode === true) {
+                        vue_this.toggleUserEditMode();
+                    }
                     vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
                 })
                 .fail(function (result) {
                     console.info('Failed to update account:', userID);
                     vue_this.editUser[fieldToUpdate + 'Loading'] = false;
+                    if (vue_this.userEditMode === true) {
+                        vue_this.toggleUserEditMode();
+                    }
                     vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
                 })
         },
