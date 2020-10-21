@@ -79,6 +79,24 @@ Vue.mixin({
 // STORE FUNCTIONS
 
 function initStore () {
+    var metaverseConfigItems = {
+        // Metaverse Config
+        server: localStorage.getItem('metaverseConfig.server') // string
+    }
+
+    console.info('Initing metaverseConfig.server', metaverseConfigItems.server);
+
+    if (metaverseConfigItems.server !== null) {
+        console.info('metaverseConfigItems.server !== null');
+        store.commit('mutate', {
+            update: true,
+            property: 'metaverseConfig',
+            with: {
+                server: metaverseConfigItems.server
+            }
+        });
+    }
+
     var accountItems = {
         // Account / General Stuff
         isLoggedIn: parseFromStorage('isLoggedIn'), // bool

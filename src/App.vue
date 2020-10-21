@@ -215,6 +215,10 @@ export default {
         },
         metaverseServerChanged: {
             handler: function (newMetaverseServer) {
+                localStorage.setItem('metaverseConfig.server', newMetaverseServer);
+
+                this.retrieveMetaverseConfig(newMetaverseServer);
+
                 if (newMetaverseServer !== store.account.metaverseServer) {
                     this.logout();
                 }
@@ -244,6 +248,7 @@ export default {
         },
         // Metaverse Bootstrapping
         retrieveMetaverseConfig: function (metaverseURL) {
+            console.info('Bootstrapping metaverse config for', metaverseURL);
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + '/api/metaverse_info'
@@ -299,6 +304,10 @@ export default {
             this.retrieveMetaverseConfig(params.get('metaverse'));
         } else {
             this.retrieveMetaverseConfig(metaverseServer);
+        }
+
+        if (metaverseServer !== store.account.metaverseServer) {
+            this.logout();
         }
 
         if (params.has('page')) {

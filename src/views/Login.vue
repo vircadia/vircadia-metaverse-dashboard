@@ -72,26 +72,6 @@ attemptLogin<!--
                                                 type="password"
                                                 :rules="passwordRules"
                                             ></v-text-field>
-                                            <v-expansion-panels v-if="false">
-                                                <v-expansion-panel>
-                                                    <v-expansion-panel-header disable-icon-rotate>
-                                                        Advanced
-                                                        <template v-slot:actions>
-                                                            <v-icon color="error">mdi-web</v-icon>
-                                                        </template>
-                                                    </v-expansion-panel-header>
-                                                    <v-expansion-panel-content>
-                                                        <v-text-field
-                                                            id="metaverseServer"
-                                                            label="Metaverse Server"
-                                                            name="metaverseServer"
-                                                            v-model="metaverseServer"
-                                                            prepend-icon="mdi-web"
-                                                            type="text"
-                                                        ></v-text-field>
-                                                    </v-expansion-panel-content>
-                                                </v-expansion-panel>
-                                            </v-expansion-panels>
                                         </v-form>
                                     </v-card-text>
                                     <v-card-actions>
@@ -150,6 +130,31 @@ attemptLogin<!--
                                     </v-card-actions>
                                 </v-tab-item>
                             </v-tabs-items>
+                            <v-expansion-panels
+                                v-model="metaverseServerSettingExpansion"
+                            >
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header disable-icon-rotate>
+                                        Advanced
+                                        <template v-slot:actions>
+                                            <v-icon color="error">mdi-web</v-icon>
+                                        </template>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-autocomplete
+                                            id="metaverseServer"
+                                            label="Metaverse Server"
+                                            name="metaverseServerSetting"
+                                            v-model="metaverseServerSetting"
+                                            :items="defaultMetaverseServer"
+                                            prepend-icon="mdi-web"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="metaverseServerStore = metaverseServerSetting; metaverseServerSettingExpansion = null"
+                                            type="text"
+                                        ></v-autocomplete>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
                         </v-card>
                     </v-col>
                 </v-row>
@@ -194,8 +199,27 @@ export default {
             }
         ],
         // END REGISTER BOX
-        currentTab: null
+        currentTab: null,
+        metaverseServerSettingExpansion: false,
+        metaverseServerSetting: null,
+        defaultMetaverseServer: ['https://metaverse.vircadia.com/live']
     }),
+    computed: {
+        metaverseServerStore: {
+            get () {
+                return this.$store.state.metaverseConfig.server;
+            },
+            set (value) {
+                this.$store.commit('mutate', {
+                    update: true,
+                    property: 'metaverseConfig',
+                    with: {
+                        server: value
+                    }
+                });
+            }
+        }
+    },
     methods: {
         sendEvent: function (command, data) {
             EventBus.$emit(command, data);
@@ -292,6 +316,8 @@ export default {
     },
     created: function () {
         vue_this = this;
+
+        this.metaverseServerSetting = this.metaverseServerStore;
     }
 }
 </script>
