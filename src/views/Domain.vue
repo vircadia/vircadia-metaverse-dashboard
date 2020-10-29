@@ -20,14 +20,27 @@
                     justify="center"
                 >
                     <v-col
-                        cols="4"
+                        xl="4"
+                        lg="4"
+                        md="4"
+                        xs="12"
+                        sm="12"
                     >
                         <RegisterDomain></RegisterDomain>
                     </v-col>
                     <v-col
-                        cols="6"
+                        xl="6"
+                        lg="6"
+                        md="6"
+                        xs="12"
+                        sm="12"
                     >
-                        <DomainList></DomainList>
+                        <div
+                            style="max-height: 80vh"
+                            class="overflow-y-auto"
+                        >
+                            <DomainList></DomainList>
+                        </div>
                     </v-col>
                 </v-row>
             </v-container>
