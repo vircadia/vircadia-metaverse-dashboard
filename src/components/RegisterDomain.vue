@@ -24,14 +24,16 @@
                 </v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
         <v-list-item class="mb-4">
-            <p
-                id="generatedToken"
-                class="overline text-center mt-4" 
-                style="width: 100%; 
-                font-size: 1.0rem !important" 
-                v-text="generatedToken"
-            ></p>
+                <kbd
+                    id="generatedToken"
+                    class="text-center mt-4" 
+                    style="width: 100%; 
+                    font-size: 1.0rem !important" 
+                    v-text="generatedToken"
+                >
+                </kbd>
             <v-tooltip top>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -39,6 +41,7 @@
                         v-on="on"
                         @click="copyGeneratedToken" 
                         color="input"
+                        class="ml-3 mt-3"
                         small
                         fab
                         v-show="generatedToken"
