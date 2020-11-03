@@ -19,6 +19,21 @@
                 align="center"
                 justify="center"
             >
+                <v-col
+                    class="text-center"
+                    xl="4"
+                    lg="4"
+                    md="4"
+                    xs="12"
+                    sm="12"
+                >
+                    <MetaverseStats></MetaverseStats>
+                </v-col>
+            </v-row>
+            <v-row
+                align="center"
+                justify="center"
+            >
                 <v-col class="text-center">
                     <v-tooltip top>
                         <template v-slot:activator="{ on }">
@@ -47,10 +62,16 @@
 </template>
 
 <script>
+
+import MetaverseStats from '../components/MetaverseStats'
+
 export default {
     name: 'Home',
     props: {
         source: String
+    },
+    components: {
+        MetaverseStats
     }
 }
 </script>
