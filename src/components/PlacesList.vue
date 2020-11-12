@@ -659,7 +659,6 @@ export default {
                             placeID: item.placeId,
                             address: item.address,
                             description: item.description,
-                            accountID: item.accountId,
                             thumbnail: item.thumbanil,
                             images: item.images
                         };
@@ -671,6 +670,7 @@ export default {
                             objectToPush.domainIceServer = item.domain.ice_server_address;
                             objectToPush.domainLastSeen = item.domain.time_of_last_heartbeat;
                             objectToPush.domainUsers = item.domain.num_users;
+                            objectToPush.accountID = item.domain.sponsorAccountId;
                         }
 
                         vue_this.places.push(objectToPush);
