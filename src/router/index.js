@@ -49,7 +49,22 @@ const routes = [
         path: '/profile',
         name: 'Profile',
         icon: 'mdi-account-circle',
-        component: () => import('../views/Profile.vue')
+        component: () => import('../views/MyProfile.vue')
+    },
+    { 
+        path: '/profile/:user',
+        name: 'Profile',
+        icon: 'mdi-account-circle',
+        component: () => import('../views/MyProfile.vue'),
+        children: [
+            // MyProfile will be rendered inside User's <router-view>
+            // when /user/:id is matched
+            { path: '', component: () => import('../views/MyProfile.vue') },
+
+            // UserProfile will be rendered inside User's <router-view>
+            // when /user/:id/profile is matched
+            { path: 'profile', component: () => import('../views/UserProfile.vue') }
+        ]
     }
 ]
 

@@ -309,7 +309,7 @@ export default {
         if (metaverseServer !== store.account.metaverseServer) {
             this.logout();
         }
-
+        // https://metaverse.vircadia.com/live/users/basinsky
         if (params.has('page')) {
             if (this.isLoggedIn) {
                 this.$router.push(params.get('page'));

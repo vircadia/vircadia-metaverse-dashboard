@@ -1,7 +1,7 @@
 <!--
-//  ProfileComponent.vue
+//  UserProfileComponent.vue
 //
-//  Created by Kalila L. on 17 Sep 2020.
+//  Created by Kalila L. on Dec 20 2020.
 //  Copyright 2020 Vircadia contributors.
 //
 //  Distributed under the Apache License, Version 2.0.
@@ -297,7 +297,7 @@ var store;
 var metaverseServer;
 
 export default {
-    name: 'ProfileComponent',
+    name: 'UserProfileComponent',
     props: {
         source: String
     },

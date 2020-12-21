@@ -1,7 +1,7 @@
 <!--
-//  Profile.vue
+//  UserProfile.vue
 //
-//  Created by Kalila L. on 8 Jul 2020.
+//  Created by Kalila L. on Dec 21 2020.
 //  Copyright 2020 Vircadia contributors.
 //
 //  Distributed under the Apache License, Version 2.0.
@@ -26,7 +26,7 @@
                         xs="12"
                         sm="12"
                     >
-                        <ProfileComponent></ProfileComponent>
+                        <UserProfileComponent></UserProfileComponent>
                     </v-col>
                 </v-row>
             </v-container>
@@ -36,7 +36,7 @@
 
 <script>
 
-import ProfileComponent from '../components/ProfileComponent'
+import UserProfileComponent from '../components/UserProfileComponent'
 
 export default {
     name: 'Profile',
@@ -44,7 +44,7 @@ export default {
         source: String
     },
     components: {
-        ProfileComponent
+        UserProfileComponent
     }
 }
 </script>
