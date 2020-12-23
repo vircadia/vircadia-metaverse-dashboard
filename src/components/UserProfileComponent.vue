@@ -13,158 +13,227 @@
 </script>
 
 <template>
-    <v-form>
-        <div 
-            class="subtitle-1 mb-10"
-        >
-            You can make changes to your account by changing the fields below. Press the save icon on the right of a field to save it.
-        </div>
-        <v-form
-            ref="username"
-            @submit.prevent="postUpdateAccount('username', username)"
-        >
-            <v-text-field
-                label="Username"
-                name="username"
-                v-model="username"
-                prepend-icon="mdi-rename-box"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('username', username)"
-                type="text"
-                :rules="usernameRules"
-                :loading="usernameLoading"
-                color="input"
-            ></v-text-field>
-        </v-form>
-        
-        <v-form
-            ref="email"
-            @submit.prevent="postUpdateAccount('email', email)"
-        >
-            <v-text-field
-                label="Email"
-                name="email"
-                v-model="email"
-                prepend-icon="mdi-email"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('email', email)"
-                type="text"
-                :rules="emailRules"
-                :loading="emailLoading"
-                color="input"
-            ></v-text-field>
-        </v-form>
-        
-        <v-form
-            ref="images_hero"
-            @submit.prevent="postUpdateAccount('images_hero', images_hero)"
-        >
-            <v-text-field
-                label="Hero Image"
-                name="images_hero"
-                v-model="images_hero"
-                placeholder="Large Sized Image URL"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('images_hero', images_hero)"
-                type="text"
-                :loading="images_heroLoading"
-                color="input"
-            >
-                <v-tooltip slot="prepend" left>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Hero Image Preview', images_hero)" 
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            mdi-image-size-select-actual
-                        </v-icon>
-                    </template>
-                    <span>Preview</span>
-                </v-tooltip>
-            </v-text-field>
-        </v-form>
 
-        <v-form
-            ref="images_tiny"
-            @submit.prevent="postUpdateAccount('images_tiny', images_tiny)"
-        >
-            <v-text-field
-                label="Tiny Image"
-                name="images_tiny"
-                v-model="images_tiny"
-                placeholder="Medium Sized Image URL"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('images_tiny', images_tiny)"
-                type="text"
-                :loading="images_tinyLoading"
-                color="input"
+    <v-form>
+        <v-card>
+            <v-img
+                height="80px"
+                class="userProfileHero"
+                :src="images_hero"
             >
-                <v-tooltip slot="prepend" left>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Tiny Image Preview', images_tiny)" 
-                            v-bind="attrs"
-                            v-on="on"
-                        >
-                            mdi-image-size-select-large
-                        </v-icon>
-                    </template>
-                    <span>Preview</span>
-                </v-tooltip>
-            </v-text-field>
-        </v-form>
-        
-        <v-form
-            ref="images_thumbnail"
-            @submit.prevent="postUpdateAccount('images_thumbnail', images_thumbnail)"
-        >
-            <v-text-field
-                label="Thumbnail Image"
-                name="images_thumbnail"
-                v-model="images_thumbnail"
-                placeholder="Thumbnail Sized Image URL"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
-                type="text"
-                :loading="images_thumbnailLoading"
-                color="input"
+                <v-card-title>
+                    <v-avatar
+                        v-show="images_thumbnail"
+                        class="mr-5"
+                    >
+                        <img :src="images_thumbnail">
+                    </v-avatar>
+                    {{ username }}
+                    <v-spacer></v-spacer>
+                    <v-tooltip left>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="userEditMode = !userEditMode" 
+                                color="primary"
+                                small
+                                fab
+                                :disabled="!canEditUser(null)"
+                            >
+                                <v-icon v-text="!userEditMode ? 'mdi-account-edit' : 'mdi-image-text'"></v-icon>
+                            </v-btn>
+                        </template>
+                        <span v-text="!userEditMode ? 'Edit' : 'View'"></span>
+                    </v-tooltip>
+                </v-card-title>
+            </v-img>
+    
+            <v-scroll-x-transition 
+                :hide-on-leave="true"
             >
-                <v-tooltip slot="prepend" left>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Thumbnail Image Preview', images_thumbnail)" 
-                            v-bind="attrs"
-                            v-on="on"
+                <v-card-text v-show="!userEditMode" class="text-left">
+                    <v-expansion-panels>
+                        <v-expansion-panel>
+                            <v-expansion-panel-header>Location</v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                                <v-list class="transparent">
+                                    <v-list-item>
+                                        <v-list-item-content>
+                                            <v-list-item-title>
+                                                Session ID
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                Test
+                                            </v-list-item-subtitle>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </v-card-text>
+            </v-scroll-x-transition>
+            <v-scroll-x-reverse-transition
+                :hide-on-leave="true"
+            >
+                <v-card-text v-show="userEditMode" class="text-left">
+                    <div 
+                        class="subtitle-1 mb-10"
+                    >
+                        You can make changes to your account by changing the fields below. Press the save icon on the right of a field to save it.
+                    </div>
+                    
+                    <v-form
+                        ref="username"
+                        @submit.prevent="postUpdateAccount('username', username)"
+                    >
+                        <v-text-field
+                            label="Username"
+                            name="username"
+                            v-model="username"
+                            prepend-icon="mdi-rename-box"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('username', username)"
+                            type="text"
+                            :rules="usernameRules"
+                            :loading="usernameLoading"
+                            color="input"
+                        ></v-text-field>
+                    </v-form>
+                    
+                    <v-form
+                        ref="email"
+                        @submit.prevent="postUpdateAccount('email', email)"
+                    >
+                        <v-text-field
+                            label="Email"
+                            name="email"
+                            v-model="email"
+                            prepend-icon="mdi-email"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('email', email)"
+                            type="text"
+                            :rules="emailRules"
+                            :loading="emailLoading"
+                            color="input"
+                        ></v-text-field>
+                    </v-form>
+                    
+                    <v-form
+                        ref="images_hero"
+                        @submit.prevent="postUpdateAccount('images_hero', images_hero)"
+                    >
+                        <v-text-field
+                            label="Hero Image"
+                            name="images_hero"
+                            v-model="images_hero"
+                            placeholder="Large Sized Image URL"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('images_hero', images_hero)"
+                            type="text"
+                            :loading="images_heroLoading"
+                            color="input"
                         >
-                            mdi-image-size-select-small
-                        </v-icon>
-                    </template>
-                    <span>Preview</span>
-                </v-tooltip>
-            </v-text-field>
-        </v-form>
-        
-        <v-form
-            ref="publicKey"
-            v-show="false"
-        >
-            <v-textarea
-                label="Public Key"
-                name="publicKey"
-                v-model="publicKey"
-                prepend-icon="mdi-account-key"
-                append-icon="mdi-content-save-outline"
-                @click:append="postUpdateAccount('public_key', publicKey)"
-                type="text"
-                :rules="publicKeyRules"
-                color="input"
-            ></v-textarea>
-        </v-form>
+                            <v-tooltip slot="prepend" left>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon 
+                                        @click="previewImage('Hero Image Preview', images_hero)" 
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        mdi-image-size-select-actual
+                                    </v-icon>
+                                </template>
+                                <span>Preview</span>
+                            </v-tooltip>
+                        </v-text-field>
+                    </v-form>
+            
+                    <v-form
+                        ref="images_tiny"
+                        @submit.prevent="postUpdateAccount('images_tiny', images_tiny)"
+                    >
+                        <v-text-field
+                            label="Tiny Image"
+                            name="images_tiny"
+                            v-model="images_tiny"
+                            placeholder="Medium Sized Image URL"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('images_tiny', images_tiny)"
+                            type="text"
+                            :loading="images_tinyLoading"
+                            color="input"
+                        >
+                            <v-tooltip slot="prepend" left>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon 
+                                        @click="previewImage('Tiny Image Preview', images_tiny)" 
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        mdi-image-size-select-large
+                                    </v-icon>
+                                </template>
+                                <span>Preview</span>
+                            </v-tooltip>
+                        </v-text-field>
+                    </v-form>
+                    
+                    <v-form
+                        ref="images_thumbnail"
+                        @submit.prevent="postUpdateAccount('images_thumbnail', images_thumbnail)"
+                    >
+                        <v-text-field
+                            label="Thumbnail Image"
+                            name="images_thumbnail"
+                            v-model="images_thumbnail"
+                            placeholder="Thumbnail Sized Image URL"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('images_thumbnail', images_thumbnail)"
+                            type="text"
+                            :loading="images_thumbnailLoading"
+                            color="input"
+                        >
+                            <v-tooltip slot="prepend" left>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon 
+                                        @click="previewImage('Thumbnail Image Preview', images_thumbnail)" 
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        mdi-image-size-select-small
+                                    </v-icon>
+                                </template>
+                                <span>Preview</span>
+                            </v-tooltip>
+                        </v-text-field>
+                    </v-form>
+                    
+                    <v-form
+                        ref="publicKey"
+                        v-show="false"
+                    >
+                        <v-textarea
+                            label="Public Key"
+                            name="publicKey"
+                            v-model="publicKey"
+                            prepend-icon="mdi-account-key"
+                            append-icon="mdi-content-save-outline"
+                            @click:append="postUpdateAccount('public_key', publicKey)"
+                            type="text"
+                            :rules="publicKeyRules"
+                            color="input"
+                        ></v-textarea>
+                    </v-form>
+                </v-card-text>
+            </v-scroll-x-reverse-transition>
+        </v-card>
 
         <v-expansion-panels>
-            <v-expansion-panel>
-                <v-expansion-panel-header disable-icon-rotate>
+            <v-expansion-panel
+                v-show="!userEditMode"
+            >                <v-expansion-panel-header disable-icon-rotate>
                     Details
                     <template v-slot:actions>
                         <v-icon color="error">mdi-information-variant</v-icon>
@@ -205,7 +274,9 @@
                     </v-list>
                 </v-expansion-panel-content>
             </v-expansion-panel>
-            <v-expansion-panel>
+            <v-expansion-panel
+                v-show="userEditMode"
+            >
                 <v-expansion-panel-header disable-icon-rotate>
                     Change Password
                     <template v-slot:actions>
@@ -220,7 +291,7 @@
                         <v-list class="transparent">
                             <v-list-item>
                                 <v-text-field
-                                    label="Password"
+                                    label="New Password"
                                     name="password"
                                     v-model="password"
                                     prepend-icon="mdi-form-textbox-password"
@@ -361,7 +432,10 @@ export default {
         // Image Preview Dialog
         imagePreviewDialogShow: false,
         imagePreviewDialogTitle: '',
-        imagePreviewDialogSource: ''
+        imagePreviewDialogSource: '',
+        // Main Functionality
+        accountToRetrieve: null,
+        userEditMode: false
     }),
     methods: {
         sendEvent: function (command, data) {
@@ -369,7 +443,22 @@ export default {
         },
         
         initialize () {
-            this.retrieveAccount(store.account.accountId);
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('appMode') === 'true') {
+                this.showAppBar = false;
+                this.showFooter = false;
+                this.mainMenu = false;
+            }
+
+            if (params.has('user')) {
+                this.accountToRetrieve = params.get('user');
+            } else if (this.$route.params && this.$route.params.user) {
+                this.accountToRetrieve = this.$route.params.user;
+            } else {
+                this.accountToRetrieve = this.$store.state.account.accountId;
+            }
+
+            this.retrieveAccount(this.accountToRetrieve);
         },
         
         previewImage: function (title, source) {
@@ -386,9 +475,13 @@ export default {
             this.images_thumbnailLoading = to;
         },
         
+        canEditUser: function () {
+            return store.account.useAsAdmin || (this.accountId === this.$store.state.account.accountId);
+        },
+        
         // BEGIN handling requests to the API
         
-        retrieveAccount: function (userID) {
+        retrieveAccount: function (userIdentifier) {
             var parameters = window.$.param({
                 "asAdmin": store.account.useAsAdmin
             });
@@ -398,7 +491,7 @@ export default {
 
             window.$.ajax({
                 type: 'GET',
-                url: metaverseServer + '/api/v1/account/' + userID + parameters
+                url: metaverseServer + '/api/v1/account/' + userIdentifier + parameters
             })
                 .done(function (result) {
                     vue_this.setAllLoading(false);
@@ -420,6 +513,8 @@ export default {
                     
                     if (result.data.account.images.hero) {
                         vue_this.images_hero = result.data.account.images.hero;
+                    } else {
+                        vue_this.images_hero = '../assets/1920_bar.png';
                     }
                     
                     if (result.data.account.images.tiny) {
@@ -438,7 +533,7 @@ export default {
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to retrieve account ' + userID,
+                            title: 'Failed to retrieve account ' + userIdentifier,
                             code: '2',
                             full: result.responseJSON.error
                         }
@@ -472,7 +567,7 @@ export default {
                     console.info('Successfully updated account:', store.account.accountId);
                     vue_this[fieldToUpdate + 'Loading'] = false;
                     vue_this.updateSnackbarSuccessShow = true;
-                    vue_this.retrieveAccount(store.account.accountId);
+                    vue_this.retrieveAccount(this.accountToRetrieve);
                 })
                 .fail(function (result) {
                     console.info('Failed to update account:', store.account.accountId);
@@ -488,7 +583,7 @@ export default {
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
-                    vue_this.retrieveAccount(store.account.accountId);
+                    vue_this.retrieveAccount(this.accountToRetrieve);
                 })
         },
         
@@ -497,7 +592,7 @@ export default {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = this.$store.state.metaverseConfig.server;
-        
+
         this.initialize();
     }
 }

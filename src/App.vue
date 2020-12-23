@@ -53,6 +53,7 @@
         </v-navigation-drawer>
 
         <v-app-bar
+            v-show="showAppBar"
             app
             color="primary"
             src="/assets/1920_bar.png"
@@ -98,6 +99,7 @@
         </transition>
 
         <v-footer
+            v-show="showFooter"
             color="primary"
             app
         >
@@ -144,12 +146,16 @@ export default {
         getRoutes () {
             var routes = this.$router.options.routes;
 
+            routes = routes.filter(
+                r => r.showOnMenu === true
+            );
+
             if (this.$store.state.account.isLoggedIn) {
-                routes = this.$router.options.routes.filter(
+                routes = routes.filter(
                     r => r.name !== 'Login'
                 );
             } else {
-                routes = this.$router.options.routes.filter(
+                routes = routes.filter(
                     r => r.name === 'Login'
                 );
             }
@@ -226,8 +232,9 @@ export default {
         },
         isLoggedIn: {
             handler: function () {
-                if (this.awaitingRouteOnLogin) {
-                    this.$router.push(this.routeOnLogin);
+                if (store.router.awaitingRouteOnLogin) {
+                    alert('lol');
+                    this.$router.push(store.router.routeOnLogin);
                 }
             }
         }
@@ -310,24 +317,24 @@ export default {
             this.logout();
         }
         // https://metaverse.vircadia.com/live/users/basinsky
-        if (params.has('page')) {
-            if (this.isLoggedIn) {
-                this.$router.push(params.get('page'));
-            } else {
-                this.awaitingRouteOnLogin = true;
-                this.routeOnLogin = params.get('page');
-            }
+        // console.info('params.get("page")', params.get('page'));
+        // console.info('params.get("appMode")', params.get('appMode'));
+
+        if (params.get('appMode') === 'true') {
+            this.showAppBar = false;
+            this.showFooter = false;
+            this.mainMenu = false;
         }
     },
     data: () => ({
         mainMenu: null,
         mainMenuModel: null,
+        showAppBar: true,
+        showFooter: true,
         dialog: {
             show: false,
             which: ''
-        },
-        awaitingRouteOnLogin: false,
-        routeOnLogin: ''
+        }
     })
 }
 </script>

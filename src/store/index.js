@@ -18,6 +18,10 @@ export default new Vuex.Store({
         globalConsts: {
             SAFETY_BEFORE_SESSION_TIMEOUT: 21600 // If a token has 6 or less hours left on its life, refresh it.
         },
+        router: {
+            awaitingRouteOnLogin: false,
+            routeOnLogin: ''
+        },
         initialized: false,
         metaverseConfig: { // Prefilled with initial values
             name: '',

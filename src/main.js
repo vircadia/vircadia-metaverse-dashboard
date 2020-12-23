@@ -140,13 +140,54 @@ function initStore () {
 // ROUTER CONTROLS
 
 router.beforeEach((to, from, next) => {
+    console.log('to.meta.requiresLogin' + to.meta.requiresLogin);
+    console.log('just for lols' + from);
     console.info('Attempting to navigate to:', to.name)
 
     // If the store has not yet been initialized...
-    console.info('store.initialized', store.state.initialized);
+    console.info('Is store.initialized', store.state.initialized);
     if (store.state.initialized === false) {
         initStore();
         initializeAjax();
+    }
+
+    var params = new URLSearchParams(window.location.search);
+    var pageValue = null;
+
+    if (params.has('page')) {
+        // Make the first letter uppercase in case we get e.g. 'places' instead of 'Places'.
+        pageValue = params.get('page').substring(0, 1).toUpperCase() + params.get('page').substring(1);
+    }
+
+    if (pageValue) {
+        // Bypass all route checking if this is a page that does not require a login...
+        router.options.routes.forEach(route => {
+            if (route.name === pageValue && !route.meta.requiresLogin) {
+                console.info('This route does not require the user to be logged in, continuing to ', route.name);
+                next({ name: pageValue });
+            }
+        });
+
+        if (store.state.account.isLoggedIn) {
+            if (to.name !== pageValue) {
+                next({ name: pageValue });
+            }
+        } else {
+            store.commit('mutate', {
+                update: true,
+                property: 'router',
+                with: {
+                    'awaitingRouteOnLogin': true,
+                    'routeOnLogin': pageValue
+                }
+            });
+        }
+    }
+
+    // Bypass all route checking if this is a page that does not require a login...
+    if (to.name !== 'Login' && to.meta.requiresLogin === false) {
+        console.info('This route does not require the user to be logged in, continuing to ', to.name);
+        next();
     }
 
     console.info('Is the user logged in?', store.state.account.isLoggedIn);

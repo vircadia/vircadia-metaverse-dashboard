@@ -19,53 +19,71 @@ const routes = [
         path: '/login',
         name: 'Login',
         icon: 'mdi-login',
+        showOnMenu: true,
+        meta: {
+            requiresLogin: false
+        },
         component: () => import('../views/Login.vue')
     },
     {
         path: '/',
         name: 'Home',
         icon: 'mdi-home',
+        showOnMenu: true,
+        meta: {
+            requiresLogin: true
+        },
         component: Home
     },
     {
         path: '/people',
         name: 'People',
         icon: 'mdi-account-group',
+        showOnMenu: true,
+        meta: {
+            requiresLogin: true
+        },
         component: () => import('../views/People.vue')
     },
     {
         path: '/places',
         name: 'Places',
         icon: 'mdi-map-marker-multiple-outline',
+        showOnMenu: true,
+        meta: {
+            requiresLogin: true
+        },
         component: () => import('../views/Places.vue')
     },
     {
         path: '/domain',
         name: 'Domain',
         icon: 'mdi-earth',
+        showOnMenu: true,
+        meta: {
+            requiresLogin: true
+        },
         component: () => import('../views/Domain.vue')
     },
     {
-        path: '/profile',
+        path: '/profile/:user?',
         name: 'Profile',
         icon: 'mdi-account-circle',
-        component: () => import('../views/MyProfile.vue')
-    },
-    { 
-        path: '/profile/:user',
-        name: 'Profile',
-        icon: 'mdi-account-circle',
-        component: () => import('../views/MyProfile.vue'),
-        children: [
-            // MyProfile will be rendered inside User's <router-view>
-            // when /user/:id is matched
-            { path: '', component: () => import('../views/MyProfile.vue') },
-
-            // UserProfile will be rendered inside User's <router-view>
-            // when /user/:id/profile is matched
-            { path: 'profile', component: () => import('../views/UserProfile.vue') }
-        ]
+        showOnMenu: true,
+        meta: {
+            requiresLogin: false
+        },
+        component: () => import('../views/UserProfile.vue')
     }
+    // {
+    //     path: '/profile/:user?',
+    //     icon: 'mdi-account-circle',
+    //     showOnMenu: false,
+    //     meta: {
+    //         requiresLogin: false
+    //     },
+    //     component: () => import('../views/UserProfile.vue')
+    // }
 ]
 
 const router = new VueRouter({
