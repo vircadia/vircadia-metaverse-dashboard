@@ -32,7 +32,7 @@
 
             <v-divider></v-divider>
 
-            <v-list v-if="$store.state.account.isLoggedIn">
+            <v-list>
                 <v-list-item-group v-model="mainMenuModel" mandatory>
                     <v-list-item
                         v-for="(route) in getRoutes"
@@ -233,7 +233,6 @@ export default {
         isLoggedIn: {
             handler: function () {
                 if (store.router.awaitingRouteOnLogin) {
-                    alert('lol');
                     this.$router.push(store.router.routeOnLogin);
                 }
             }

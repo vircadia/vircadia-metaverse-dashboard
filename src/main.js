@@ -140,16 +140,14 @@ function initStore () {
 // ROUTER CONTROLS
 
 router.beforeEach((to, from, next) => {
-    console.log('to.meta.requiresLogin' + to.meta.requiresLogin);
-    console.log('just for lols' + from);
-    console.info('Attempting to navigate to:', to.name)
-
     // If the store has not yet been initialized...
     console.info('Is store.initialized', store.state.initialized);
     if (store.state.initialized === false) {
         initStore();
         initializeAjax();
     }
+
+    console.info('Is the user logged in?', store.state.account.isLoggedIn);
 
     var params = new URLSearchParams(window.location.search);
     var pageValue = null;
@@ -184,15 +182,11 @@ router.beforeEach((to, from, next) => {
         }
     }
 
-    // Bypass all route checking if this is a page that does not require a login...
     if (to.name !== 'Login' && to.meta.requiresLogin === false) {
+        // Bypass all route checking if this is a page that does not require the user to be logged in...
         console.info('This route does not require the user to be logged in, continuing to ', to.name);
         next();
-    }
-
-    console.info('Is the user logged in?', store.state.account.isLoggedIn);
-
-    if (to.name !== 'Login' && !store.state.account.isLoggedIn) {
+    } else if (to.name !== 'Login' && !store.state.account.isLoggedIn) {
         console.info('Attempting to access a page while logged out, routing to login.');
         next({ name: 'Login' });
     } else if (to.name === 'Login' && store.state.account.isLoggedIn === true) {
