@@ -37,7 +37,7 @@
                     <v-list-item
                         v-for="(route) in getRoutes"
                         :key="route.name"
-                        @click.native="$router.push(route.path)"
+                        @click.native="$router.push({ name: route.name })"
                     >
                         <v-list-item-icon>
                             <v-icon v-text="route.icon"></v-icon>

@@ -13,7 +13,6 @@
 </script>
 
 <template>
-
     <v-form>
         <v-card>
             <v-img
@@ -25,6 +24,7 @@
                     <v-avatar
                         v-show="images_thumbnail"
                         class="mr-5"
+                        @click="previewImage('Avatar', images_thumbnail)"
                     >
                         <img :src="images_thumbnail">
                     </v-avatar>
@@ -53,9 +53,35 @@
                 :hide-on-leave="true"
             >
                 <v-card-text v-show="!userEditMode" class="text-left">
+                    <div class="grey--text">
+                        Created {{ whenAccountCreatedDate }} <i>({{ calculateDaysSinceCreationDate }} days)</i>
+                    </div>
+                    
+                    <v-divider class="my-4"></v-divider>
+
+                    <div class="subtitle-1">
+                        Bio
+                    </div>
+                    
+                    <div>Coming soon...</div>
+                    
+                    <v-divider class="my-4"></v-divider>
+                    
+                    <div class="subtitle-1">
+                        Links
+                    </div>
+                    
+                    <div>Coming soon...</div>
+                    
+                    <v-divider class="my-4"></v-divider>
+                    
                     <v-expansion-panels>
-                        <v-expansion-panel>
-                            <v-expansion-panel-header>Location</v-expansion-panel-header>
+                        <v-expansion-panel
+                            :disabled="!online"
+                        >
+                            <v-expansion-panel-header>
+                                {{ online ? "Online" : "Offline" }}
+                            </v-expansion-panel-header>
                             <v-expansion-panel-content>
                                 <v-list class="transparent">
                                     <v-list-item>
@@ -64,7 +90,7 @@
                                                 Session ID
                                             </v-list-item-title>
                                             <v-list-item-subtitle>
-                                                Test
+                                                {{ sessionID }}
                                             </v-list-item-subtitle>
                                         </v-list-item-content>
                                     </v-list-item>
@@ -233,7 +259,8 @@
         <v-expansion-panels>
             <v-expansion-panel
                 v-show="!userEditMode"
-            >                <v-expansion-panel-header disable-icon-rotate>
+            >                
+                <v-expansion-panel-header disable-icon-rotate>
                     Details
                     <template v-slot:actions>
                         <v-icon color="error">mdi-information-variant</v-icon>
@@ -421,10 +448,11 @@ export default {
             }
         ],
         confirmPasswordLoading: false,
-        // These are not meant to be changed, but rather displayed.
         accountId: '',
         roles: [],
         whenAccountCreated: '',
+        online: false,
+        sessionID: null,
         // Snackbar Functionality
         updateSnackbarSuccessShow: false,
         updateSnackbarSuccessText: 'Successfully updated profile.',
@@ -457,6 +485,8 @@ export default {
             } else {
                 this.accountToRetrieve = this.$store.state.account.accountId;
             }
+            
+            // alert('this.$route.params.user' + this.$route.params.user);
 
             this.retrieveAccount(this.accountToRetrieve);
         },
@@ -478,7 +508,7 @@ export default {
         canEditUser: function () {
             return store.account.useAsAdmin || (this.accountId === this.$store.state.account.accountId);
         },
-        
+
         // BEGIN handling requests to the API
         
         retrieveAccount: function (userIdentifier) {
@@ -497,19 +527,13 @@ export default {
                     vue_this.setAllLoading(false);
 
                     vue_this.username = result.data.account.username;
-                    // If the username was updated, we'll also update that in our dashboard.
-                    vue_this.$store.commit('mutate', {
-                        update: true,
-                        property: 'account',
-                        with: {
-                            username: vue_this.username,
-                        }
-                    });
                     vue_this.email = result.data.account.email;
                     vue_this.publicKey = result.data.account.public_key;
                     vue_this.accountId = result.data.account.accountId;
                     vue_this.roles = result.data.account.roles;
                     vue_this.whenAccountCreated = result.data.account.when_account_created;
+                    vue_this.online = result.data.account.location.online;
+                    vue_this.sessionID = result.data.account.location.node_id;
                     
                     if (result.data.account.images.hero) {
                         vue_this.images_hero = result.data.account.images.hero;
@@ -567,7 +591,7 @@ export default {
                     console.info('Successfully updated account:', store.account.accountId);
                     vue_this[fieldToUpdate + 'Loading'] = false;
                     vue_this.updateSnackbarSuccessShow = true;
-                    vue_this.retrieveAccount(this.accountToRetrieve);
+                    vue_this.retrieveAccount(vue_this.accountToRetrieve);
                 })
                 .fail(function (result) {
                     console.info('Failed to update account:', store.account.accountId);
@@ -588,6 +612,33 @@ export default {
         },
         
     },
+    
+    computed: {
+        calculateDaysSinceCreationDate() {
+            // e.g. 2020-09-13T04:38:44.402Z -> 2020-09-13
+            var creationDate = this.whenAccountCreated.split('T')[0];
+            // e.g. 2020-09-13 -> 2020/09/13
+            creationDate = creationDate.split('-').join('/');
+
+            var currentDate = new Date();
+            var dd = String(currentDate.getDate()).padStart(2, '0');
+            var mm = String(currentDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = currentDate.getFullYear();
+            currentDate = yyyy + '/' + mm + '/' + dd;
+
+            const diffTime = Math.abs(Date.parse(currentDate) - Date.parse(creationDate));
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return diffDays;
+        },
+        whenAccountCreatedDate() {
+            // e.g. 2020-09-13T04:38:44.402Z -> 2020-09-13
+            var creationDate = this.whenAccountCreated.split('T')[0];
+            // e.g. 2020-09-13 -> 2020/09/13
+            return creationDate.split('-').join('/');
+        }
+    },
+    
     created: function () {
         vue_this = this;
         store = this.$store.state;
