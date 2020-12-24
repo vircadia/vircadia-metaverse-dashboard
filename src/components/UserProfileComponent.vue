@@ -396,9 +396,7 @@ var metaverseServer;
 
 export default {
     name: 'UserProfileComponent',
-    props: {
-        source: String
-    },
+    props: ['userToLoad'],
     data: () => ({
         username: '',
         usernameRules: [
@@ -477,8 +475,10 @@ export default {
                 this.showFooter = false;
                 this.mainMenu = false;
             }
-
-            if (params.has('user')) {
+            
+            if (this.userToLoad) {
+                this.accountToRetrieve = this.userToLoad;
+            } else if (params.has('user')) {
                 this.accountToRetrieve = params.get('user');
             } else if (this.$route.params && this.$route.params.user) {
                 this.accountToRetrieve = this.$route.params.user;
@@ -607,7 +607,7 @@ export default {
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
-                    vue_this.retrieveAccount(this.accountToRetrieve);
+                    vue_this.retrieveAccount(vue_this.accountToRetrieve);
                 })
         },
         
@@ -636,6 +636,15 @@ export default {
             var creationDate = this.whenAccountCreated.split('T')[0];
             // e.g. 2020-09-13 -> 2020/09/13
             return creationDate.split('-').join('/');
+        }
+    },
+    
+    watch: {
+        userToLoad: {
+            handler: function () {
+                this.accountToRetrieve = this.userToLoad; 
+                this.retrieveAccount(this.userToLoad);
+            }
         }
     },
     

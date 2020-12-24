@@ -41,135 +41,11 @@
                 ></v-text-field>
                 <!-- USER DATA DIALOG -->
                 <v-dialog
-                    v-model="userDialogShow"
+                    v-model="userDialog.show"
                     width="500"
                     color="primary"
                 >
-                    <v-card>
-                        <v-img
-                            height="80px"
-                            class="userDialogHero"
-                            :src="userDialog.hero"
-                        >
-                            <v-card-title>
-                                <v-avatar
-                                    v-show="userDialog.thumbnail"
-                                    class="mr-5"
-                                >
-                                    <img :src="userDialog.thumbnail">
-                                </v-avatar>
-                                {{ userDialog.username }}
-                                <v-spacer></v-spacer>
-                                <v-tooltip left>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            @click="toggleUserEditMode" 
-                                            color="primary"
-                                            small
-                                            fab
-                                            :disabled="!canEditUser(userDialog.accountID)"
-                                        >
-                                            <v-icon v-text="!userEditMode ? 'mdi-account-edit' : 'mdi-image-text'"></v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span v-text="!userEditMode ? 'Edit' : 'View'"></span>
-                                </v-tooltip>
-                            </v-card-title>
-                        </v-img>
-
-                        <v-scroll-x-transition 
-                            :hide-on-leave="true"
-                        >
-                            <v-card-text v-show="!userEditMode" class="text-left">
-                                <v-list class="transparent">
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Account ID
-                                            </v-list-item-title>
-
-                                            <v-list-item-subtitle>
-                                                {{ userDialog.accountID }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-
-                                    <v-list-item>
-                                        <v-list-item-content>
-                                            <v-list-item-title>
-                                                Status
-                                            </v-list-item-title>
-
-                                            <v-list-item-subtitle>
-                                                {{ userDialog.status }}
-                                            </v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </v-list>
-                                <v-expansion-panels>
-                                    <v-expansion-panel>
-                                        <v-expansion-panel-header>Location</v-expansion-panel-header>
-                                        <v-expansion-panel-content>
-                                            <v-list class="transparent">
-                                                <v-list-item>
-                                                    <v-list-item-content>
-                                                        <!-- <v-list-item-title>
-                                                            Domain ID
-                                                        </v-list-item-title>
-                                                        <v-list-item-subtitle class="text-right">
-                                                            {{ userDialog.location.root.domain.id }}
-                                                        </v-list-item-subtitle>
-                                                        <v-list-item-subtitle class="text-right">
-                                                            {{ userDialog.location.root.domain.name }}
-                                                        </v-list-item-subtitle> -->
-                                                        <v-list-item-title>
-                                                            Session ID
-                                                        </v-list-item-title>
-                                                        <v-list-item-subtitle>
-                                                            {{ userDialog.location_node_id }}
-                                                        </v-list-item-subtitle>
-                                                    </v-list-item-content>
-                                                </v-list-item>
-                                                <!-- <v-list-item>
-                                                    <v-list-item-title>
-                                                        Path
-                                                    </v-list-item-title>
-                                                    <v-list-item-subtitle class="text-right">
-                                                        {{ userDialog.location.path }}
-                                                    </v-list-item-subtitle>
-                                                </v-list-item> -->
-                                            </v-list>
-                                        </v-expansion-panel-content>
-                                    </v-expansion-panel>
-                                </v-expansion-panels>
-                            </v-card-text>
-                        </v-scroll-x-transition>
-                        <v-scroll-x-reverse-transition
-                            :hide-on-leave="true"
-                        >
-                            <v-card-text v-show="userEditMode" class="text-left">
-                                <v-form
-                                    ref="editUserPassword"
-                                    @submit.prevent="postUpdateAccount(userDialog.accountID, 'password', editUser.password)"
-                                >
-                                    <v-text-field
-                                        label="Password"
-                                        name="editUser.password"
-                                        v-model="editUser.password"
-                                        prepend-icon="mdi-rename-box"
-                                        append-icon="mdi-content-save-outline"
-                                        @click:append="postUpdateAccount(userDialog.accountID, 'password', editUser.password)"
-                                        type="password"
-                                        :rules="editUser.passwordRules"
-                                        :loading="editUser.passwordLoading"
-                                        color="input"
-                                    ></v-text-field>
-                                </v-form>
-                            </v-card-text>
-                        </v-scroll-x-reverse-transition>
-                    </v-card>
+                    <UserProfileComponent :userToLoad="userDialog.username"></UserProfileComponent>
                 </v-dialog>
             </v-toolbar>
         </template>
@@ -226,6 +102,7 @@
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+import UserProfileComponent from './UserProfileComponent'
 
 var vue_this;
 var store;
@@ -235,6 +112,9 @@ export default {
     name: 'PeopleList',
     props: {
         source: String
+    },
+    components: {
+        UserProfileComponent
     },
     data: () => ({
         dialog: false,
@@ -256,14 +136,9 @@ export default {
         search: null,
         peopleDataTableLoading: false,
         // User Dialog
-        userDialogShow: false,
         userDialog: {
-            thumbnail: '',
-            hero: '',
-            username: '',
-            accountID: '',
-            status: '',
-            location_node_id: ''
+            show: false,
+            username: ''
         },
         // User Dialog -> Edit Mode
         userEditMode: false,
@@ -305,13 +180,8 @@ export default {
 
         rowClicked (rowData) {
             this.userEditMode = false;
-            this.userDialogShow = true;
-            this.userDialog.thumbnail = rowData.thumbnail;
-            this.userDialog.hero = rowData.hero;
+            this.userDialog.show = true;
             this.userDialog.username = rowData.username;
-            this.userDialog.accountID = rowData.accountID;
-            this.userDialog.status = rowData.status;
-            this.userDialog.location_node_id = rowData.locationData.node_id;
         },
         
         canEditUser: function () {
