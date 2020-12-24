@@ -65,7 +65,7 @@
             <span v-if="$store.state.account.isLoggedIn" class="mr-4">
                 Hello, {{ $store.state.account.username }}!
             </span>
-            <span v-if="this.$store.state.account.isAdmin" class="mt-5">
+            <span v-if="$store.state.account.isAdmin" class="mt-5">
                 <v-switch
                     v-model="useAsAdminStore"
                     row
@@ -103,7 +103,7 @@
             color="primary"
             app
         >
-            <span class="white--text">Iamus Dashboard v1.1.3 | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
+            <span class="white--text">Iamus Dashboard {{ $store.state.globalConsts.DASHBOARD_VERSION }} | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse: <b>{{ $store.state.metaverseConfig.server }}</b></span>
             <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>

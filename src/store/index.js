@@ -16,7 +16,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         globalConsts: {
-            SAFETY_BEFORE_SESSION_TIMEOUT: 21600 // If a token has 6 or less hours left on its life, refresh it.
+            SAFETY_BEFORE_SESSION_TIMEOUT: 21600, // If a token has 6 or less hours left on its life, refresh it.
+            DASHBOARD_VERSION: process.env.VUE_APP_VERSION
         },
         router: {
             awaitingRouteOnLogin: false,
