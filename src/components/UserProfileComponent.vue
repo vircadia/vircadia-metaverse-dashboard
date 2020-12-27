@@ -503,7 +503,7 @@ export default {
         },
 
         canEditUser: function () {
-            return store.account.useAsAdmin || (this.accountId === this.$store.state.account.accountId);
+            return (store.account.isAdmin && store.account.useAsAdmin) || (this.accountId === this.$store.state.account.accountId);
         },
 
         // BEGIN handling requests to the API

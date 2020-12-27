@@ -26,7 +26,7 @@
                         xs="12"
                         sm="12"
                     >
-                        <ErrorOccurred @hide-dialog="redirect"></ErrorOccurred>
+                        <ErrorOccurred @close-dialog="redirect"></ErrorOccurred>
                     </v-col>
                 </v-row>
             </v-container>

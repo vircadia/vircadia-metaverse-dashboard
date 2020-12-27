@@ -36,7 +36,7 @@
                 <v-spacer></v-spacer>
                 <v-btn
                     color="red"
-                    @click="$emit('hide-dialog')"
+                    @click="$emit('close-dialog')"
                 >
                     Close
                 </v-btn>
