@@ -147,7 +147,7 @@ export default {
             var routes = this.$router.options.routes;
 
             routes = routes.filter(
-                r => r.showOnMenu === true
+                r => r.meta.showOnMenu === true
             );
 
             if (this.$store.state.account.isLoggedIn) {
@@ -231,8 +231,8 @@ export default {
             }
         },
         isLoggedIn: {
-            handler: function () {
-                if (store.router.awaitingRouteOnLogin) {
+            handler: function (newValue) {
+                if (newValue === true && store.router.awaitingRouteOnLogin) {
                     this.$router.push(store.router.routeOnLogin);
                 }
             }
@@ -296,7 +296,7 @@ export default {
                     refreshToken: null
                 }
             });
-            this.$router.push('Login');
+            this.$router.push({ name: 'Login' });
         }
     },
     created: function () {

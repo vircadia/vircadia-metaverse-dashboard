@@ -57,7 +57,8 @@
             "camelcase": "off",
             "semi": "off",
             "import/first": "off",
-            "quote-props": "off"
+            "quote-props": "off",
+            "no-useless-return": "off"
         }
     },
     "browserslist": [

@@ -261,7 +261,7 @@ export default {
                     });
 
                     console.info('Login successful, routing to home.');
-                    vue_this.$router.push('/');
+                    vue_this.$router.push({ name: 'Home' });
                 })
                 .fail(function (result) {
                     console.info('Failed to login:', result);

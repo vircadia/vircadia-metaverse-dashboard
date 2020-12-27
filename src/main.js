@@ -7,7 +7,8 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 */
-
+// This is temporary for rapid iteration.
+/* eslint-disable */
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -139,115 +140,101 @@ function initStore () {
 
 // ROUTER CONTROLS
 
+function attemptRefreshToken (next, to) {
+    window.$.ajax({
+        type: 'POST',
+        url: store.state.metaverseConfig.server + '/oauth/token',
+        contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
+        data: {
+            grant_type: 'refresh_token',
+            scope: store.state.account.scope,
+            refresh_token: store.state.account.refreshToken
+        }
+    })
+        .done(function (result) {
+            store.commit('mutate', {
+                update: true,
+                property: 'account',
+                with: {
+                    isLoggedIn: true,
+                    accessToken: result.access_token,
+                    tokenType: result.token_type,
+                    createdAt: result.created_at,
+                    expiresIn: result.expires_in,
+                    refreshToken: result.refresh_token,
+                    scope: result.scope
+                }
+            });
+            console.info('Token refresh successful, routing to', to)
+            next();
+        })
+        .fail(function (result) {
+            // If this fails for any reason, the user must log back in.
+            console.info('Refresh failed, re-routing to login.');
+            store.commit('mutate', {
+                update: true,
+                property: 'account',
+                with: {
+                    isLoggedIn: false
+                }
+            });
+            next({ name: 'Login' });
+        })
+}
+
 router.beforeEach((to, from, next) => {
     // If the store has not yet been initialized...
-    console.info('Is store.initialized', store.state.initialized);
+    console.info('Is the store initialized?', store.state.initialized);
     if (store.state.initialized === false) {
         initStore();
         initializeAjax();
     }
 
-    console.info('Is the user logged in?', store.state.account.isLoggedIn);
+    var routerDebugging = store.state.router.debugging;
+    var requestedRoute = to;
+    var isLoggedIn = store.state.account.isLoggedIn;
 
-    var params = new URLSearchParams(window.location.search);
-    var pageValue = null;
-
-    if (params.has('page')) {
+    var query = Object.assign({}, requestedRoute.query);
+    if (query.page) {
         // Make the first letter uppercase in case we get e.g. 'places' instead of 'Places'.
-        pageValue = params.get('page').substring(0, 1).toUpperCase() + params.get('page').substring(1);
+        // var pageValue = query.page.substring(0, 1).toUpperCase() + query.page.substring(1);
+        var pageValue = query.page;
+        if (routerDebugging) console.info('?page parameter set for', pageValue);
+        delete query.page;
+        router.replace({ query });
+        router.push({ path: pageValue });
+        return;
     }
 
-    if (pageValue) {
-        // Bypass all route checking if this is a page that does not require a login...
-        router.options.routes.forEach(route => {
-            if (route.name === pageValue && !route.meta.requiresLogin) {
-                console.info('This route does not require the user to be logged in, continuing to ', route.name);
-                next({ name: pageValue });
+    if (routerDebugging) console.info('Is the user logged in?', isLoggedIn);
+    if (routerDebugging) console.info('Requested route', requestedRoute);
+    
+    // Verify the user's session is still active. If it is not, it will redirect them to login.
+    if (checkNeedsTokenRefresh()) {
+        // If the session has expired... Attempt to refresh it.
+        if (routerDebugging) console.info('Token refresh needed, attempting to refresh token.');
+        attemptRefreshToken(next, to);
+        return;
+    }
+
+    if (requestedRoute.meta.requiresLogin && !isLoggedIn) {
+        if (routerDebugging) console.info('Page requires login and user is not logged in, routing to login.');
+        store.commit('mutate', {
+            update: true,
+            property: 'router',
+            with: {
+                'awaitingRouteOnLogin': true,
+                'routeOnLogin': requestedRoute.name
             }
         });
 
-        if (store.state.account.isLoggedIn) {
-            if (to.name !== pageValue) {
-                next({ name: pageValue });
-            }
-        } else {
-            store.commit('mutate', {
-                update: true,
-                property: 'router',
-                with: {
-                    'awaitingRouteOnLogin': true,
-                    'routeOnLogin': pageValue
-                }
-            });
-        }
-    }
-
-    if (to.name !== 'Login' && to.meta.requiresLogin === false) {
-        // Bypass all route checking if this is a page that does not require the user to be logged in...
-        console.info('This route does not require the user to be logged in, continuing to ', to.name);
-        next();
-    } else if (to.name !== 'Login' && !store.state.account.isLoggedIn) {
-        console.info('Attempting to access a page while logged out, routing to login.');
         next({ name: 'Login' });
-    } else if (to.name === 'Login' && store.state.account.isLoggedIn === true) {
-        // The user should log out first before trying to access the login page.
-        console.info('Attemping to access login before logging out, re-routing to home.');
-        next({ name: 'Home' });
-    } else if (to.name === 'Login' && !store.state.account.isLoggedIn) {
-        console.info('Attempting to access login while logged out, routing to login.');
-        next();
-    } else { // For any other case...
-        // Verify the user's session is still active. If it is not, it will redirect them to login.
-        console.info('All other routing cases... Checking if a token refresh is needed.');
-        if (checkNeedsTokenRefresh()) {
-            // If the session has expired... Attempt to refresh it.
-            console.info('Token refresh needed. Attempting to refresh token.');
-
-            window.$.ajax({
-                type: 'POST',
-                url: store.state.metaverseConfig.server + '/oauth/token',
-                contentType: 'application/x-www-form-urlencoded;charset=UTF-8',
-                data: {
-                    grant_type: 'refresh_token',
-                    scope: store.state.account.scope,
-                    refresh_token: store.state.account.refreshToken
-                }
-            })
-                .done(function (result) {
-                    store.commit('mutate', {
-                        update: true,
-                        property: 'account',
-                        with: {
-                            isLoggedIn: true,
-                            accessToken: result.access_token,
-                            tokenType: result.token_type,
-                            createdAt: result.created_at,
-                            expiresIn: result.expires_in,
-                            refreshToken: result.refresh_token,
-                            scope: result.scope
-                        }
-                    });
-                    console.info('Token refresh successful, routing to', to)
-                    next();
-                })
-                .fail(function (result) {
-                    // If this fails for any reason, the user must log back in.
-                    console.info('Refresh failed, re-routing to login.');
-                    store.commit('mutate', {
-                        update: true,
-                        property: 'account',
-                        with: {
-                            isLoggedIn: false
-                        }
-                    });
-                    next({ name: 'Login' });
-                })
-        } else {
-            // Good to go, send them on their way.
-            console.info('Refresh not needed, attempting to continue route to', to);
-            next();
-        }
+        return;
     }
+
+    // Good to go, send them on their way.
+    if (routerDebugging) console.info('All router guards cleared, attempting to continue route to', requestedRoute.name);
+    next();
 })
 
 // END ROUTER CONTROLS

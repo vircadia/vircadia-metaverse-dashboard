@@ -20,6 +20,7 @@ export default new Vuex.Store({
             DASHBOARD_VERSION: process.env.VUE_APP_VERSION
         },
         router: {
+            debugging: true,
             awaitingRouteOnLogin: false,
             routeOnLogin: ''
         },

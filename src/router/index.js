@@ -19,8 +19,8 @@ const routes = [
         path: '/login',
         name: 'Login',
         icon: 'mdi-login',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: false
         },
         component: () => import('../views/Login.vue')
@@ -29,8 +29,8 @@ const routes = [
         path: '/',
         name: 'Home',
         icon: 'mdi-home',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: true
         },
         component: Home
@@ -39,8 +39,8 @@ const routes = [
         path: '/people',
         name: 'People',
         icon: 'mdi-account-group',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: true
         },
         component: () => import('../views/People.vue')
@@ -49,8 +49,8 @@ const routes = [
         path: '/places',
         name: 'Places',
         icon: 'mdi-map-marker-multiple-outline',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: true
         },
         component: () => import('../views/Places.vue')
@@ -59,8 +59,8 @@ const routes = [
         path: '/domain',
         name: 'Domain',
         icon: 'mdi-earth',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: true
         },
         component: () => import('../views/Domain.vue')
@@ -69,8 +69,8 @@ const routes = [
         path: '/profile/:user?',
         name: 'Profile',
         icon: 'mdi-account-circle',
-        showOnMenu: true,
         meta: {
+            showOnMenu: true,
             requiresLogin: false
         },
         component: () => import('../views/UserProfile.vue')
@@ -78,8 +78,8 @@ const routes = [
     // {
     //     path: '/profile/:user?',
     //     icon: 'mdi-account-circle',
-    //     showOnMenu: false,
     //     meta: {
+    //         showOnMenu: true,
     //         requiresLogin: false
     //     },
     //     component: () => import('../views/UserProfile.vue')
