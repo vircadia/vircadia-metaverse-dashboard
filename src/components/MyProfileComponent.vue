@@ -7,14 +7,10 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-form>
-        <div 
+        <div
             class="subtitle-1 mb-10"
         >
             You can make changes to your account by changing the fields below. Press the save icon on the right of a field to save it.
@@ -36,7 +32,7 @@
                 color="input"
             ></v-text-field>
         </v-form>
-        
+
         <v-form
             ref="email"
             @submit.prevent="postUpdateAccount('email', email)"
@@ -54,7 +50,7 @@
                 color="input"
             ></v-text-field>
         </v-form>
-        
+
         <v-form
             ref="images_hero"
             @submit.prevent="postUpdateAccount('images_hero', images_hero)"
@@ -72,8 +68,8 @@
             >
                 <v-tooltip slot="prepend" left>
                     <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Hero Image Preview', images_hero)" 
+                        <v-icon
+                            @click="previewImage('Hero Image Preview', images_hero)"
                             v-bind="attrs"
                             v-on="on"
                         >
@@ -102,8 +98,8 @@
             >
                 <v-tooltip slot="prepend" left>
                     <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Tiny Image Preview', images_tiny)" 
+                        <v-icon
+                            @click="previewImage('Tiny Image Preview', images_tiny)"
                             v-bind="attrs"
                             v-on="on"
                         >
@@ -114,7 +110,7 @@
                 </v-tooltip>
             </v-text-field>
         </v-form>
-        
+
         <v-form
             ref="images_thumbnail"
             @submit.prevent="postUpdateAccount('images_thumbnail', images_thumbnail)"
@@ -132,8 +128,8 @@
             >
                 <v-tooltip slot="prepend" left>
                     <template v-slot:activator="{ on, attrs }">
-                        <v-icon 
-                            @click="previewImage('Thumbnail Image Preview', images_thumbnail)" 
+                        <v-icon
+                            @click="previewImage('Thumbnail Image Preview', images_thumbnail)"
                             v-bind="attrs"
                             v-on="on"
                         >
@@ -144,7 +140,7 @@
                 </v-tooltip>
             </v-text-field>
         </v-form>
-        
+
         <v-form
             ref="publicKey"
             v-show="false"
@@ -249,14 +245,14 @@
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
-        
+
         <v-snackbar
             v-model="updateSnackbarSuccessShow"
             :timeout="updateSnackbarSuccessTimeout"
             color="success"
         >
             {{ updateSnackbarSuccessText }}
-    
+
             <template v-slot:action="{ attrs }">
                 <v-btn
                     color="white"
@@ -268,7 +264,7 @@
                 </v-btn>
             </template>
         </v-snackbar>
-        
+
         <v-dialog
             v-model="imagePreviewDialogShow"
             width="500"
@@ -279,7 +275,7 @@
                     {{ imagePreviewDialogTitle }}
                 </v-card-title>
                 <v-card-text>
-                    <v-img 
+                    <v-img
                         :src="imagePreviewDialogSource"
                         contain
                     ></v-img>
@@ -292,6 +288,7 @@
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;
@@ -367,17 +364,17 @@ export default {
         sendEvent: function (command, data) {
             EventBus.$emit(command, data);
         },
-        
+
         initialize () {
             this.retrieveAccount(store.account.accountId);
         },
-        
+
         previewImage: function (title, source) {
             this.imagePreviewDialogShow = true;
             this.imagePreviewDialogTitle = title;
             this.imagePreviewDialogSource = source;
         },
-        
+
         setAllLoading: function (to) {
             this.usernameLoading = to;
             this.emailLoading = to;
@@ -385,15 +382,15 @@ export default {
             this.images_tinyLoading = to;
             this.images_thumbnailLoading = to;
         },
-        
+
         // BEGIN handling requests to the API
-        
+
         retrieveAccount: function (userID) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this.setAllLoading(true);
 
             window.$.ajax({
@@ -409,7 +406,7 @@ export default {
                         update: true,
                         property: 'account',
                         with: {
-                            username: vue_this.username,
+                            username: vue_this.username
                         }
                     });
                     vue_this.email = result.data.account.email;
@@ -417,15 +414,15 @@ export default {
                     vue_this.accountId = result.data.account.accountId;
                     vue_this.roles = result.data.account.roles;
                     vue_this.whenAccountCreated = result.data.account.when_account_created;
-                    
+
                     if (result.data.account.images.hero) {
                         vue_this.images_hero = result.data.account.images.hero;
                     }
-                    
+
                     if (result.data.account.images.tiny) {
                         vue_this.images_tiny = result.data.account.images.tiny;
                     }
-                    
+
                     if (result.data.account.images.thumbnail) {
                         vue_this.images_thumbnail = result.data.account.images.thumbnail;
                     }
@@ -447,19 +444,19 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
-        
+
         postUpdateAccount (fieldToUpdate, dataToUpdate) {
             if (!this.$refs[fieldToUpdate].validate()) return;
-            
+
             var objectToPost = {
                 'set': dataToUpdate
             };
-            
+
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this[fieldToUpdate + 'Loading'] = true;
 
             window.$.ajax({
@@ -490,14 +487,14 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrieveAccount(store.account.accountId);
                 })
-        },
-        
+        }
+
     },
     created: function () {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = this.$store.state.metaverseConfig.server;
-        
+
         this.initialize();
     }
 }

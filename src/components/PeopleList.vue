@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-data-table
@@ -124,14 +120,14 @@ export default {
                 text: 'Username',
                 align: 'start',
                 sortable: true,
-                value: 'username',
+                value: 'username'
             },
             { text: 'Account ID', value: 'accountID' },
             // { text: 'Connection', value: 'connection' },
             // { text: 'Images', value: 'images', sortable: false },
             { text: 'Status', value: 'status' },
             // { text: 'Online', value: 'online' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Actions', value: 'actions', sortable: false }
         ],
         search: null,
         peopleDataTableLoading: false,
@@ -147,14 +143,14 @@ export default {
             passwordRules: [
                 v => !!v || 'A password is required.'
             ],
-            passwordLoading: false,
+            passwordLoading: false
         },
         // Editing User
         editingUser: null,
         // User List
         people: []
     }),
-    
+
     computed: {
     },
 
@@ -165,7 +161,7 @@ export default {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = this.$store.state.metaverseConfig.server;
-        
+
         this.initialize();
     },
 
@@ -183,14 +179,14 @@ export default {
             this.userDialog.show = true;
             this.userDialog.username = rowData.username;
         },
-        
+
         canEditUser: function () {
             return store.account.useAsAdmin;
         },
-        
+
         toggleUserEditMode () {
             this.userEditMode = !this.userEditMode;
-            
+
             if (this.placeEditMode === true) {
                 this.$refs.editUserPassword.reset();
             }
@@ -216,10 +212,10 @@ export default {
 
         retrieveAccountList: function (metaverseURL) {
             var parameters = window.$.param({
-                "asAdmin": vue_this.$store.state.account.useAsAdmin
+                'asAdmin': vue_this.$store.state.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this.peopleDataTableLoading = true;
 
             window.$.ajax({
@@ -230,7 +226,7 @@ export default {
                     vue_this.peopleDataTableLoading = false;
 
                     vue_this.people = [];
-                    result.data.users.forEach(function(item, index) {
+                    result.data.users.forEach(function (item, index) {
                         var isOnline = item.location.online ? 'Online' : 'Offline';
                         vue_this.people.push(
                             {
@@ -248,7 +244,7 @@ export default {
                     vue_this.peopleDataTableLoading = false;
 
                     console.info('Failed to retrieve people list: ', result);
-                    
+
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
@@ -265,10 +261,10 @@ export default {
         // THESE REQUESTS USE THE ACCOUNT API WHILE THE LIST IS USING THE USERS API
         postUpdateAccount (userID, fieldToUpdate, dataToUpdate) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             var objectToPost = {
                 'set': dataToUpdate
             };
@@ -297,16 +293,16 @@ export default {
                     vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server);
                 })
         },
-        
+
         postDeleteAccount (userID) {
             var parameters = window.$.param({
-                "asAdmin": vue_this.$store.state.account.useAsAdmin
+                'asAdmin': vue_this.$store.state.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'DELETE',
-                url: vue_this.$store.state.metaverseConfig.server + '/api/v1/account/' + userID + parameters,
+                url: vue_this.$store.state.metaverseConfig.server + '/api/v1/account/' + userID + parameters
             })
                 .done(function (result) {
                     console.info('Successfully deleted account:', userID);
@@ -318,6 +314,6 @@ export default {
                 })
         }
         // END Handling requests to the API
-    },
+    }
 }
 </script>

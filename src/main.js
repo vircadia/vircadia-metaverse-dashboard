@@ -7,8 +7,7 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 */
-// This is temporary for rapid iteration.
-/* eslint-disable */
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -208,7 +207,7 @@ router.beforeEach((to, from, next) => {
 
     if (routerDebugging) console.info('Is the user logged in?', isLoggedIn);
     if (routerDebugging) console.info('Requested route', requestedRoute);
-    
+
     if (requestedRoute.matched.length === 0) {
         if (routerDebugging) console.info('Requested route does not exist', requestedRoute);
         if (routerDebugging) console.info('Routing to 404 page.');
@@ -223,7 +222,7 @@ router.beforeEach((to, from, next) => {
         next({ name: 'PageNotFound' });
         return;
     }
-    
+
     // Verify the user's session is still active. If it is not, it will redirect them to login.
     if (checkNeedsTokenRefresh()) {
         // If the session has expired... Attempt to refresh it.

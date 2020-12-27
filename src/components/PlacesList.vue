@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <div>
@@ -50,7 +46,7 @@
                             <v-btn
                                 v-bind="attrs"
                                 v-on="on"
-                                @click="showAddPlaceDialog()" 
+                                @click="showAddPlaceDialog()"
                                 color="primary"
                                 small
                                 fab
@@ -62,7 +58,7 @@
                         </template>
                         <span>Create Place</span>
                     </v-tooltip>
-                    
+
                     <!-- PLACES DATA DIALOG -->
                     <v-dialog
                         v-model="placeDialogShow"
@@ -84,7 +80,7 @@
                                         <v-btn
                                             v-bind="attrs"
                                             v-on="on"
-                                            @click="togglePlaceEditMode" 
+                                            @click="togglePlaceEditMode"
                                             color="primary"
                                             small
                                             fab
@@ -96,7 +92,7 @@
                                     <span v-text="!placeEditMode ? 'Edit' : 'View'"></span>
                                 </v-tooltip>
                             </v-card-title>
-                            <v-scroll-x-transition 
+                            <v-scroll-x-transition
                                 :hide-on-leave="true"
                             >
                                 <v-card-text v-show="!placeEditMode" transition="scroll-x-transition" class="text-left">
@@ -267,7 +263,7 @@
                             <v-card-title>
                                 Add Place
                             </v-card-title>
-                    
+
                             <v-card-text>
                                 <v-form
                                     ref="addPlaceForm"
@@ -316,19 +312,19 @@
                                         <template v-slot:item="data">
                                             <template>
                                                 <v-list-item-content>
-                                                    <v-list-item-title 
-                                                        v-if="data.item.name !== ''" 
+                                                    <v-list-item-title
+                                                        v-if="data.item.name !== ''"
                                                         v-html="data.item.name"
                                                     ></v-list-item-title>
-                                                    <v-list-item-title 
-                                                        v-else 
+                                                    <v-list-item-title
+                                                        v-else
                                                     >
                                                         Unknown
                                                     </v-list-item-title>
-                                                    <v-list-item-subtitle 
+                                                    <v-list-item-subtitle
                                                         v-html="data.item.domainID"
                                                     ></v-list-item-subtitle>
-                                                    <v-list-item-subtitle 
+                                                    <v-list-item-subtitle
                                                         v-html="data.item.created"
                                                     ></v-list-item-subtitle>
                                                 </v-list-item-content>
@@ -415,7 +411,7 @@
             color="success"
         >
             {{ snackbarSuccessText }}
-    
+
             <template v-slot:action="{ attrs }">
                 <v-btn
                     color="white"
@@ -449,10 +445,10 @@ export default {
                 text: 'Place Name',
                 align: 'start',
                 sortable: true,
-                value: 'name',
+                value: 'name'
             },
             { text: 'Users', value: 'domainUsers' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Actions', value: 'actions', sortable: false }
         ],
         search: null,
         placesDataTableLoading: false,
@@ -504,14 +500,14 @@ export default {
             descriptionRules: [
                 v => !!v || 'A description is required.'
             ],
-            address: "/0,0,0/0,0,0,0",
+            address: '/0,0,0/0,0,0,0',
             addressRules: [
                 v => !!v || 'An address is required.'
             ],
             domainID: null,
             domainIDRules: [
                 v => !!v || 'A domain to assign this place to is required.'
-            ],
+            ]
         },
         // Editing Place
         editingPlace: null,
@@ -525,22 +521,19 @@ export default {
         snackbarSuccessTimeout: 6000
     }),
 
-    computed: {
-    },
-
     watch: {
         showOnlyMineStore: {
             handler: function () {
                 this.retrievePlacesList(metaverseServer);
             }
-        },
+        }
     },
 
     created () {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
-        
+
         this.initialize();
     },
 
@@ -571,22 +564,22 @@ export default {
         },
 
         // BEGIN Add Place Dialog AND General Place Dialog
-        
+
         showAddPlaceDialog () {
-            this.addPlaceDialogShow = true; 
+            this.addPlaceDialogShow = true;
             this.retrieveDomainList(metaverseServer);
         },
-        
+
         togglePlaceEditMode () {
             this.placeEditMode = !this.placeEditMode;
-            
+
             if (this.placeEditMode === true) {
                 this.editPlace.name = this.placeDialog.name;
                 this.editPlace.description = this.placeDialog.description;
                 this.editPlace.address = this.placeDialog.address;
             }
         },
-        
+
         placeDialogFilter (item, queryText) {
             var placeName = item.name.toLowerCase();
             var domainID = item.domainID;
@@ -595,7 +588,7 @@ export default {
             return placeName.indexOf(searchText) > -1 ||
                    domainID.indexOf(searchText) > -1
         },
-        
+
         rowClicked (rowData) {
             this.placeEditMode = false; // We don't want the edit mode to still be on when you open the place info dialog.
             this.placeDialogShow = true;
@@ -613,18 +606,18 @@ export default {
             this.placeDialog.domainLastSeen = rowData.domainLastSeen;
             this.placeDialog.domainUsers = rowData.domainUsers;
         },
-        
+
         // END Add Place Dialog
-        
+
         canEditPlace: function (placeOwningID) {
             return store.account.useAsAdmin || store.account.accountId === placeOwningID;
         },
-        
+
         // BEGIN Inline Editing Functionality
         beginEditingPlace (placeID) {
             this.editingPlace = placeID;
         },
-        
+
         deletePlace (placeID, placeName) {
             confirm('Are you sure you want to delete ' + placeName + '?') && this.postDeletePlace(placeID);
         },
@@ -633,10 +626,10 @@ export default {
         // BEGIN Handling requests to the API
         retrievePlacesList: function (metaverseURL) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this.placesDataTableLoading = true;
 
             var apiURL = '/api/v1/places';
@@ -647,13 +640,13 @@ export default {
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + apiURL + parameters,
-                contentType: 'application/json',
+                contentType: 'application/json'
             })
                 .done(function (result) {
                     vue_this.placesDataTableLoading = false;
 
                     vue_this.places = [];
-                    result.data.places.forEach(function(item, index) {
+                    result.data.places.forEach(function (item, index) {
                         var objectToPush = {
                             name: item.name,
                             placeID: item.placeId,
@@ -693,21 +686,21 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
-        
+
         retrieveDomainList: function (metaverseURL) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'GET',
                 url: metaverseURL + '/api/v1/domains' + parameters,
-                contentType: 'application/json',
+                contentType: 'application/json'
             })
                 .done(function (result) {
                     vue_this.domains = [];
-                    result.data.domains.forEach(function(item, index) {
+                    result.data.domains.forEach(function (item, index) {
                         vue_this.domains.push(
                             {
                                 name: item.name,
@@ -721,7 +714,7 @@ export default {
                     console.info('Failed to retrieve domain list: ', result);
                 })
         },
-        
+
         postAddPlace: function () {
             if (!this.$refs.addPlaceForm.validate()) return;
             this.addPlaceDialogShow = false;
@@ -734,11 +727,11 @@ export default {
                     'domainId': vue_this.addPlaceDialog.domainID
                 }
             };
-            
+
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'POST',
@@ -748,7 +741,7 @@ export default {
             })
                 .done(function (result) {
                     console.info('Add place successful.');
-                    vue_this.snackbarSuccessText = "Successfully created place.";
+                    vue_this.snackbarSuccessText = 'Successfully created place.';
                     vue_this.snackbarSuccessShow = true;
                     vue_this.$refs.addPlaceForm.reset();
                     vue_this.retrievePlacesList(metaverseServer);
@@ -769,13 +762,13 @@ export default {
                     vue_this.retrievePlacesList(metaverseServer);
                 })
         },
-        
+
         postUpdatePlace (placeID, fieldToUpdate, dataToUpdate) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             var objectToPost = {
                 'set': dataToUpdate
             };
@@ -792,7 +785,7 @@ export default {
                     vue_this.editPlace[fieldToUpdate + 'Loading'] = false;
 
                     vue_this.placeDialog[fieldToUpdate] = dataToUpdate;
-                    vue_this.snackbarSuccessText = "Successfully updated place.";
+                    vue_this.snackbarSuccessText = 'Successfully updated place.';
                     vue_this.snackbarSuccessShow = true;
                     vue_this.retrievePlacesList(metaverseServer);
                 })
@@ -813,20 +806,20 @@ export default {
                     vue_this.retrievePlacesList(metaverseServer);
                 })
         },
-        
+
         postDeletePlace (placeID) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'DELETE',
-                url: metaverseServer + '/api/v1/user/places/' + placeID + parameters,
+                url: metaverseServer + '/api/v1/user/places/' + placeID + parameters
             })
                 .done(function (result) {
                     console.info('Successfully deleted place:', placeID);
-                    vue_this.snackbarSuccessText = "Successfully deleted place.";
+                    vue_this.snackbarSuccessText = 'Successfully deleted place.';
                     vue_this.snackbarSuccessShow = true;
                     vue_this.retrievePlacesList(metaverseServer);
                 })
@@ -847,6 +840,6 @@ export default {
                 })
         }
         // END Handling requests to the API
-    },
+    }
 }
 </script>

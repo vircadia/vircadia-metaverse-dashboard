@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-data-table
@@ -43,7 +39,7 @@
                         <v-btn
                             v-bind="attrs"
                             v-on="on"
-                            @click="retrieveDomainList()" 
+                            @click="retrieveDomainList()"
                             color="primary"
                             small
                             fab
@@ -65,7 +61,7 @@
                         <v-card-title>
                             {{ domainDialog.name }}
                         </v-card-title>
-                
+
                         <v-card-text class="text-left">
                             <v-list class="transparent">
                                 <v-list-item>
@@ -228,11 +224,11 @@ export default {
                 text: 'Domain Name',
                 align: 'start',
                 sortable: true,
-                value: 'name',
+                value: 'name'
             },
             { text: 'Version', value: 'version' },
             { text: 'Users', value: 'users' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Actions', value: 'actions', sortable: false }
         ],
         domainDataTableLoading: false,
         domainDialogShow: false,
@@ -251,11 +247,8 @@ export default {
         // Editing Domain
         editingDomain: null,
         // Domain List
-        domains: [],
+        domains: []
     }),
-    
-    computed: {
-    },
 
     watch: {
     },
@@ -264,16 +257,20 @@ export default {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
-        
+
         this.initialize();
     },
-    
+
     computed: {
     },
 
     methods: {
         initialize () {
             this.retrieveDomainList();
+        },
+
+        sendEvent: function (command, data) {
+            EventBus.$emit(command, data);
         },
 
         rowClicked (rowData) {
@@ -298,46 +295,46 @@ export default {
             // this.domainDialog.anonUsers = rowData.anonUsers;
             // this.domainDialog.meta = rowData.meta;
         },
-        
+
         canEditDomain: function (domainOwningID) {
             return store.account.useAsAdmin || store.account.accountId === domainOwningID;
         },
-        
+
         // BEGIN Inline Editing Functionality
         beginEditingDomain (domainID) {
             this.editingDomain = domainID;
         },
-        
+
         savePlaceName (newPlaceName) {
             this.postUpdateDomain(this.editingDomain, {
-                'place_name': newPlaceName,
+                'place_name': newPlaceName
             })
         },
-        
+
         deleteDomain (domainID, domainName) {
             confirm('Are you sure you want to delete ' + domainName + '?') && this.postDeleteDomain(domainID);
         },
         // END Inline Editing Functionality
-        
+
         // BEGIN Handling requests to the API
         retrieveDomainList: function () {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             this.domainDataTableLoading = true;
 
             window.$.ajax({
                 type: 'GET',
                 url: metaverseServer + '/api/v1/domains' + parameters,
-                contentType: 'application/json',
+                contentType: 'application/json'
             })
                 .done(function (result) {
                     vue_this.domainDataTableLoading = false;
 
                     vue_this.domains = [];
-                    result.data.domains.forEach(function(item, index) {
+                    result.data.domains.forEach(function (item, index) {
                         vue_this.domains.push(
                             {
                                 name: item.name,
@@ -369,18 +366,18 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
-        
+
         postUpdateDomain (domainID, dataToUpdate) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'POST',
                 url: metaverseServer + '/api/v1/domains/' + domainID + parameters,
                 contentType: 'application/json',
-                data: { 
+                data: {
                     'domain': {
                         dataToUpdate
                     }
@@ -392,7 +389,7 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to update domain:', domainID);
-                    
+
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
@@ -406,16 +403,16 @@ export default {
                     vue_this.retrieveDomainList();
                 })
         },
-        
+
         postDeleteDomain (domainID) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'DELETE',
-                url: metaverseServer + '/api/v1/domains/' + domainID + parameters,
+                url: metaverseServer + '/api/v1/domains/' + domainID + parameters
             })
                 .done(function (result) {
                     console.info('Successfully deleted domain:', domainID);
@@ -423,7 +420,7 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to delete domain:', domainID);
-                    
+
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
@@ -438,6 +435,6 @@ export default {
                 })
         }
         // END Handling requests to the API
-    },
+    }
 }
 </script>

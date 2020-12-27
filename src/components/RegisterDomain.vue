@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-card>
@@ -28,9 +24,9 @@
         <v-list-item class="mb-4">
                 <kbd
                     id="generatedToken"
-                    class="text-center mt-4" 
-                    style="width: 100%; 
-                    font-size: 1.0rem !important" 
+                    class="text-center mt-4"
+                    style="width: 100%;
+                    font-size: 1.0rem !important"
                     v-text="generatedToken"
                 >
                 </kbd>
@@ -39,7 +35,7 @@
                     <v-btn
                         v-bind="attrs"
                         v-on="on"
-                        @click="copyGeneratedToken" 
+                        @click="copyGeneratedToken"
                         color="input"
                         class="ml-3 mt-3"
                         small
@@ -63,7 +59,7 @@
                 Generate
             </v-btn>
         </v-card-actions>
-        
+
         <v-snackbar
             v-model="copiedToClipboardSnackbar"
             color="success"
@@ -99,9 +95,6 @@ export default {
         generatedTokenText: 'Click "Generate" to create a token.',
         copiedToClipboardSnackbar: false
     }),
-    
-    computed: {
-    },
 
     watch: {
     },
@@ -110,29 +103,33 @@ export default {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
-        
+
         this.initialize();
     },
-    
+
     computed: {
     },
 
     methods: {
         initialize () {
         },
-        
+
+        sendEvent: function (command, data) {
+            EventBus.$emit(command, data);
+        },
+
         copyGeneratedToken: function () {
             navigator.clipboard.writeText(this.generatedToken);
             this.copiedToClipboardSnackbar = true;
         },
-        
+
         // BEGIN Handling requests to the API
         postGenerateDomainToken () {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin,
-                "scope": "domain"
+                'asAdmin': store.account.useAsAdmin,
+                'scope': 'domain'
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'POST',

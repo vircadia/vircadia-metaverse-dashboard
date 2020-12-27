@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-form>
@@ -35,7 +31,7 @@
                             <v-btn
                                 v-bind="attrs"
                                 v-on="on"
-                                @click="userEditMode = !userEditMode" 
+                                @click="userEditMode = !userEditMode"
                                 color="primary"
                                 small
                                 fab
@@ -48,33 +44,33 @@
                     </v-tooltip>
                 </v-card-title>
             </v-img>
-    
-            <v-scroll-x-transition 
+
+            <v-scroll-x-transition
                 :hide-on-leave="true"
             >
                 <v-card-text v-show="!userEditMode" class="text-left">
                     <div class="grey--text">
                         Created {{ whenAccountCreatedDate }} <i>({{ calculateDaysSinceCreationDate }} days)</i>
                     </div>
-                    
+
                     <v-divider class="my-4"></v-divider>
 
                     <div class="subtitle-1">
                         Bio
                     </div>
-                    
+
                     <div>Coming soon...</div>
-                    
+
                     <v-divider class="my-4"></v-divider>
-                    
+
                     <div class="subtitle-1">
                         Links
                     </div>
-                    
+
                     <div>Coming soon...</div>
-                    
+
                     <v-divider class="my-4"></v-divider>
-                    
+
                     <v-expansion-panels>
                         <v-expansion-panel
                             :disabled="!online"
@@ -104,12 +100,12 @@
                 :hide-on-leave="true"
             >
                 <v-card-text v-show="userEditMode" class="text-left">
-                    <div 
+                    <div
                         class="subtitle-1 mb-10"
                     >
                         You can make changes to your account by changing the fields below. Press the save icon on the right of a field to save it.
                     </div>
-                    
+
                     <v-form
                         ref="username"
                         @submit.prevent="postUpdateAccount('username', username)"
@@ -127,7 +123,7 @@
                             color="input"
                         ></v-text-field>
                     </v-form>
-                    
+
                     <v-form
                         ref="email"
                         @submit.prevent="postUpdateAccount('email', email)"
@@ -145,7 +141,7 @@
                             color="input"
                         ></v-text-field>
                     </v-form>
-                    
+
                     <v-form
                         ref="images_hero"
                         @submit.prevent="postUpdateAccount('images_hero', images_hero)"
@@ -163,8 +159,8 @@
                         >
                             <v-tooltip slot="prepend" left>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon 
-                                        @click="previewImage('Hero Image Preview', images_hero)" 
+                                    <v-icon
+                                        @click="previewImage('Hero Image Preview', images_hero)"
                                         v-bind="attrs"
                                         v-on="on"
                                     >
@@ -175,7 +171,7 @@
                             </v-tooltip>
                         </v-text-field>
                     </v-form>
-            
+
                     <v-form
                         ref="images_tiny"
                         @submit.prevent="postUpdateAccount('images_tiny', images_tiny)"
@@ -193,8 +189,8 @@
                         >
                             <v-tooltip slot="prepend" left>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon 
-                                        @click="previewImage('Tiny Image Preview', images_tiny)" 
+                                    <v-icon
+                                        @click="previewImage('Tiny Image Preview', images_tiny)"
                                         v-bind="attrs"
                                         v-on="on"
                                     >
@@ -205,7 +201,7 @@
                             </v-tooltip>
                         </v-text-field>
                     </v-form>
-                    
+
                     <v-form
                         ref="images_thumbnail"
                         @submit.prevent="postUpdateAccount('images_thumbnail', images_thumbnail)"
@@ -223,8 +219,8 @@
                         >
                             <v-tooltip slot="prepend" left>
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-icon 
-                                        @click="previewImage('Thumbnail Image Preview', images_thumbnail)" 
+                                    <v-icon
+                                        @click="previewImage('Thumbnail Image Preview', images_thumbnail)"
                                         v-bind="attrs"
                                         v-on="on"
                                     >
@@ -235,7 +231,7 @@
                             </v-tooltip>
                         </v-text-field>
                     </v-form>
-                    
+
                     <v-form
                         ref="publicKey"
                         v-show="false"
@@ -259,7 +255,7 @@
         <v-expansion-panels>
             <v-expansion-panel
                 v-show="!userEditMode"
-            >                
+            >
                 <v-expansion-panel-header disable-icon-rotate>
                     Details
                     <template v-slot:actions>
@@ -347,14 +343,14 @@
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
-        
+
         <v-snackbar
             v-model="updateSnackbarSuccessShow"
             :timeout="updateSnackbarSuccessTimeout"
             color="success"
         >
             {{ updateSnackbarSuccessText }}
-    
+
             <template v-slot:action="{ attrs }">
                 <v-btn
                     color="white"
@@ -366,7 +362,7 @@
                 </v-btn>
             </template>
         </v-snackbar>
-        
+
         <v-dialog
             v-model="imagePreviewDialogShow"
             width="500"
@@ -377,7 +373,7 @@
                     {{ imagePreviewDialogTitle }}
                 </v-card-title>
                 <v-card-text>
-                    <v-img 
+                    <v-img
                         :src="imagePreviewDialogSource"
                         contain
                     ></v-img>
@@ -390,6 +386,7 @@
 
 <script>
 import { EventBus } from '../plugins/eventBus.js';
+
 var vue_this;
 var store;
 var metaverseServer;
@@ -467,7 +464,7 @@ export default {
         sendEvent: function (command, data) {
             EventBus.$emit(command, data);
         },
-        
+
         initialize () {
             var params = new URLSearchParams(window.location.search);
             if (params.get('appMode') === 'true') {
@@ -475,7 +472,7 @@ export default {
                 this.showFooter = false;
                 this.mainMenu = false;
             }
-            
+
             if (this.userToLoad) {
                 this.accountToRetrieve = this.userToLoad;
             } else if (params.has('user')) {
@@ -485,18 +482,18 @@ export default {
             } else {
                 this.accountToRetrieve = this.$store.state.account.accountId;
             }
-            
+
             // alert('this.$route.params.user' + this.$route.params.user);
 
             this.retrieveAccount(this.accountToRetrieve);
         },
-        
+
         previewImage: function (title, source) {
             this.imagePreviewDialogShow = true;
             this.imagePreviewDialogTitle = title;
             this.imagePreviewDialogSource = source;
         },
-        
+
         setAllLoading: function (to) {
             this.usernameLoading = to;
             this.emailLoading = to;
@@ -504,19 +501,19 @@ export default {
             this.images_tinyLoading = to;
             this.images_thumbnailLoading = to;
         },
-        
+
         canEditUser: function () {
             return store.account.useAsAdmin || (this.accountId === this.$store.state.account.accountId);
         },
 
         // BEGIN handling requests to the API
-        
+
         retrieveAccount: function (userIdentifier) {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this.setAllLoading(true);
 
             window.$.ajax({
@@ -534,17 +531,17 @@ export default {
                     vue_this.whenAccountCreated = result.data.account.when_account_created;
                     vue_this.online = result.data.account.location.online;
                     vue_this.sessionID = result.data.account.location.node_id;
-                    
+
                     if (result.data.account.images.hero) {
                         vue_this.images_hero = result.data.account.images.hero;
                     } else {
                         vue_this.images_hero = '../assets/1920_bar.png';
                     }
-                    
+
                     if (result.data.account.images.tiny) {
                         vue_this.images_tiny = result.data.account.images.tiny;
                     }
-                    
+
                     if (result.data.account.images.thumbnail) {
                         vue_this.images_thumbnail = result.data.account.images.thumbnail;
                     }
@@ -566,19 +563,19 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
-        
+
         postUpdateAccount (fieldToUpdate, dataToUpdate) {
             if (!this.$refs[fieldToUpdate].validate()) return;
-            
+
             var objectToPost = {
                 'set': dataToUpdate
             };
-            
+
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
-            
+            parameters = '?' + parameters;
+
             this[fieldToUpdate + 'Loading'] = true;
 
             window.$.ajax({
@@ -609,12 +606,12 @@ export default {
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrieveAccount(vue_this.accountToRetrieve);
                 })
-        },
-        
+        }
+
     },
-    
+
     computed: {
-        calculateDaysSinceCreationDate() {
+        calculateDaysSinceCreationDate () {
             // e.g. 2020-09-13T04:38:44.402Z -> 2020-09-13
             var creationDate = this.whenAccountCreated.split('T')[0];
             // e.g. 2020-09-13 -> 2020/09/13
@@ -622,7 +619,7 @@ export default {
 
             var currentDate = new Date();
             var dd = String(currentDate.getDate()).padStart(2, '0');
-            var mm = String(currentDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var mm = String(currentDate.getMonth() + 1).padStart(2, '0'); // January is 0!
             var yyyy = currentDate.getFullYear();
             currentDate = yyyy + '/' + mm + '/' + dd;
 
@@ -631,23 +628,23 @@ export default {
 
             return diffDays;
         },
-        whenAccountCreatedDate() {
+        whenAccountCreatedDate () {
             // e.g. 2020-09-13T04:38:44.402Z -> 2020-09-13
             var creationDate = this.whenAccountCreated.split('T')[0];
             // e.g. 2020-09-13 -> 2020/09/13
             return creationDate.split('-').join('/');
         }
     },
-    
+
     watch: {
         userToLoad: {
             handler: function () {
-                this.accountToRetrieve = this.userToLoad; 
+                this.accountToRetrieve = this.userToLoad;
                 this.retrieveAccount(this.userToLoad);
             }
         }
     },
-    
+
     created: function () {
         vue_this = this;
         store = this.$store.state;

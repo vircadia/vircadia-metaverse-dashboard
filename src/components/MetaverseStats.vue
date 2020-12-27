@@ -7,10 +7,6 @@
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
 -->
-<script>
-// This is temporary for rapid iteration.
-/* eslint-disable */
-</script>
 
 <template>
     <v-card>
@@ -50,9 +46,6 @@ export default {
             totalOnline: 0
         }
     }),
-    
-    computed: {
-    },
 
     watch: {
     },
@@ -61,10 +54,10 @@ export default {
         vue_this = this;
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
-        
+
         this.initialize();
     },
-    
+
     computed: {
     },
 
@@ -72,13 +65,17 @@ export default {
         initialize () {
             this.getAllStats();
         },
-        
+
+        sendEvent: function (command, data) {
+            EventBus.$emit(command, data);
+        },
+
         // BEGIN Handling requests to the API
         getAllStats () {
             var parameters = window.$.param({
-                "asAdmin": store.account.useAsAdmin,
+                'asAdmin': store.account.useAsAdmin
             });
-            parameters = "?" + parameters;
+            parameters = '?' + parameters;
 
             window.$.ajax({
                 type: 'GET',
