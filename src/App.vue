@@ -91,7 +91,7 @@
         </v-app-bar>
 
         <transition name="fade" mode="out-in">
-            <component @hideDialog="dialog.show = false" v-if="dialog.show" v-bind:is="dialog.which"></component>
+            <component @hide-dialog="hideDialog" v-if="dialog.show" v-bind:is="dialog.which"></component>
         </transition>
 
         <transition name="fade" mode="out-in" hide-on-leave="true">

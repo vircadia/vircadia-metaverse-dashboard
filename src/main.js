@@ -209,6 +209,21 @@ router.beforeEach((to, from, next) => {
     if (routerDebugging) console.info('Is the user logged in?', isLoggedIn);
     if (routerDebugging) console.info('Requested route', requestedRoute);
     
+    if (requestedRoute.matched.length === 0) {
+        if (routerDebugging) console.info('Requested route does not exist', requestedRoute);
+        if (routerDebugging) console.info('Routing to 404 page.');
+        store.commit('mutate', {
+            property: 'error',
+            with: {
+                title: 'Oops.',
+                code: '404',
+                full: "We couldn't find the page you're looking for."
+            }
+        });
+        next({ name: 'PageNotFound' });
+        return;
+    }
+    
     // Verify the user's session is still active. If it is not, it will redirect them to login.
     if (checkNeedsTokenRefresh()) {
         // If the session has expired... Attempt to refresh it.

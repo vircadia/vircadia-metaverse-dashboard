@@ -74,6 +74,16 @@ const routes = [
             requiresLogin: false
         },
         component: () => import('../views/UserProfile.vue')
+    },
+    {
+        path: '/404',
+        name: 'PageNotFound',
+        icon: 'mdi-help',
+        meta: {
+            showOnMenu: false,
+            requiresLogin: false
+        },
+        component: () => import('../views/PageNotFound.vue')
     }
     // {
     //     path: '/profile/:user?',

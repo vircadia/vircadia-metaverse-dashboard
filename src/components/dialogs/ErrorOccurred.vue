@@ -21,13 +21,13 @@
                 dark
             >
                 <v-icon color="red" class="mr-2">mdi-comment-question</v-icon>
-                {{ this.error.title }}
+                {{ this.$store.state.error.title }}
             </v-card-title>
 
             <v-card-text>
-                Error code <code>{{ this.error.code }}</code> <br />
+                Error code <code>{{ this.$store.state.error.code }}</code> <br />
                 The full error is shown below: <br />
-                <code>{{ this.error.full }}</code>
+                <code>{{ this.$store.state.error.full }}</code>
             </v-card-text>
 
             <v-divider></v-divider>
@@ -36,7 +36,7 @@
                 <v-spacer></v-spacer>
                 <v-btn
                     color="red"
-                    @click="$emit('hideDialog')"
+                    @click="$emit('hide-dialog')"
                 >
                     Close
                 </v-btn>
@@ -51,19 +51,9 @@ export default {
     methods: {
     },
     data: () => ({
-        showDialogInternal: true,
-        error: {
-            title: '',
-            code: '',
-            full: ''
-        }
+        showDialogInternal: true
     }),
     created: function () {
-        this.error.title = this.$store.state.error.title;
-        this.error.code = this.$store.state.error.code;
-        this.error.full = this.$store.state.error.full;
-        console.info('this.error', this.error);
-        console.info('this.$store.state.error', this.$store.state.error);
     }
 };
 </script>
