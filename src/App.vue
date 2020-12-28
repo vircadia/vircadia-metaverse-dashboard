@@ -33,10 +33,11 @@
             <v-divider></v-divider>
 
             <v-list>
-                <v-list-item-group v-model="mainMenuModel" mandatory>
+                <v-list-item-group v-model="computedMenuModel" mandatory>
                     <v-list-item
                         v-for="(route) in getRoutes"
                         :key="route.name"
+                        :value="route.name"
                         @click.native="$router.push({ name: route.name })"
                     >
                         <v-list-item-icon>
@@ -178,6 +179,13 @@ export default {
         },
         isLoggedIn () {
             return this.$store.state.account.isLoggedIn;
+        },
+        computedMenuModel: {
+            get () {
+                return this.$route.name;
+            },
+            set () {
+            }
         }
     },
     watch: {
@@ -327,7 +335,6 @@ export default {
     },
     data: () => ({
         mainMenu: null,
-        mainMenuModel: null,
         showAppBar: true,
         showFooter: true,
         dialog: {
