@@ -67,10 +67,25 @@ function parseFromStorage (item) {
     return itemToSendBack;
 }
 
+function logout () {
+    store.commit('mutate', {
+        update: true,
+        property: 'account',
+        with: {
+            isLoggedIn: false,
+            isAdmin: false,
+            accessToken: null,
+            refreshToken: null
+        }
+    });
+    router.push({ name: 'Login' });
+}
+
 Vue.mixin({
     methods: {
         checkNeedsTokenRefresh: checkNeedsTokenRefresh,
-        parseFromStorage: parseFromStorage
+        parseFromStorage: parseFromStorage,
+        logout: logout
     }
 })
 
@@ -139,7 +154,7 @@ function initStore () {
 
 // ROUTER CONTROLS
 
-function attemptRefreshToken (next, to) {
+function attemptRefreshToken () {
     window.$.ajax({
         type: 'POST',
         url: store.state.metaverseConfig.server + '/oauth/token',
@@ -164,20 +179,14 @@ function attemptRefreshToken (next, to) {
                     scope: result.scope
                 }
             });
-            console.info('Token refresh successful, routing to', to)
-            next();
+            console.info('Token refresh successful.');
+            return true;
         })
         .fail(function (result) {
             // If this fails for any reason, the user must log back in.
-            console.info('Refresh failed, re-routing to login.');
-            store.commit('mutate', {
-                update: true,
-                property: 'account',
-                with: {
-                    isLoggedIn: false
-                }
-            });
-            next({ name: 'Login' });
+            console.info('Refresh failed.');
+            logout();
+            return false;
         })
 }
 
@@ -224,11 +233,12 @@ router.beforeEach((to, from, next) => {
     }
 
     // Verify the user's session is still active. If it is not, it will redirect them to login.
-    if (checkNeedsTokenRefresh()) {
+    if (isLoggedIn && checkNeedsTokenRefresh()) {
         // If the session has expired... Attempt to refresh it.
         if (routerDebugging) console.info('Token refresh needed, attempting to refresh token.');
-        attemptRefreshToken(next, to);
-        return;
+        if (!attemptRefreshToken()) {
+            return;
+        }
     }
 
     if (requestedRoute.meta.requiresLogin && !isLoggedIn) {

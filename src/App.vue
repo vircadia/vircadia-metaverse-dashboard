@@ -233,7 +233,7 @@ export default {
 
                 this.retrieveMetaverseConfig(newMetaverseServer);
 
-                if (newMetaverseServer !== store.account.metaverseServer) {
+                if (this.isLoggedIn && newMetaverseServer !== store.account.metaverseServer) {
                     this.logout();
                 }
             }
@@ -291,20 +291,6 @@ export default {
                     });
                     vue_this.openDialog('ErrorOccurred', true);
                 })
-        },
-        // Account Handling
-        logout: function () {
-            vue_this.$store.commit('mutate', {
-                update: true,
-                property: 'account',
-                with: {
-                    isLoggedIn: false,
-                    isAdmin: false,
-                    accessToken: null,
-                    refreshToken: null
-                }
-            });
-            this.$router.push({ name: 'Login' });
         }
     },
     created: function () {
@@ -320,12 +306,9 @@ export default {
             this.retrieveMetaverseConfig(metaverseServer);
         }
 
-        if (metaverseServer !== store.account.metaverseServer) {
+        if (this.isLoggedIn && metaverseServer !== store.account.metaverseServer) {
             this.logout();
         }
-        // https://metaverse.vircadia.com/live/users/basinsky
-        // console.info('params.get("page")', params.get('page'));
-        // console.info('params.get("appMode")', params.get('appMode'));
 
         if (params.get('appMode') === 'true') {
             this.showAppBar = false;
