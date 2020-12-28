@@ -10,7 +10,15 @@
 
 <template>
     <v-form>
-        <v-card>
+        <v-card v-if="isCardLoading && !userEditMode">
+            <div class="text-center">
+                <v-progress-linear
+                    indeterminate
+                    color="primary"
+                ></v-progress-linear>
+            </div>
+        </v-card>
+        <v-card v-else>
             <v-img
                 height="80px"
                 class="userProfileHero"
@@ -252,7 +260,7 @@
             </v-scroll-x-reverse-transition>
         </v-card>
 
-        <v-expansion-panels>
+        <v-expansion-panels v-show="!isCardLoading">
             <v-expansion-panel
                 v-show="!userEditMode"
             >
@@ -458,7 +466,8 @@ export default {
         imagePreviewDialogSource: '',
         // Main Functionality
         accountToRetrieve: null,
-        userEditMode: false
+        userEditMode: false,
+        isCardLoading: false
     }),
     methods: {
         sendEvent: function (command, data) {
@@ -500,6 +509,8 @@ export default {
             this.images_heroLoading = to;
             this.images_tinyLoading = to;
             this.images_thumbnailLoading = to;
+
+            this.isCardLoading = to;
         },
 
         canEditUser: function () {
@@ -540,10 +551,14 @@ export default {
 
                     if (result.data.account.images.tiny) {
                         vue_this.images_tiny = result.data.account.images.tiny;
+                    } else {
+                        vue_this.images_tiny = '../assets/vircadia-icon-256.png';
                     }
 
                     if (result.data.account.images.thumbnail) {
                         vue_this.images_thumbnail = result.data.account.images.thumbnail;
+                    } else {
+                        vue_this.images_thumbnail = '../assets/vircadia-icon-256.png';
                     }
                 })
                 .fail(function (result) {
