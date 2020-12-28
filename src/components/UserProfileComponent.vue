@@ -465,7 +465,7 @@ export default {
         imagePreviewDialogTitle: '',
         imagePreviewDialogSource: '',
         // Main Functionality
-        accountToRetrieve: null,
+        accountToManage: null,
         userEditMode: false,
         isCardLoading: false
     }),
@@ -483,18 +483,18 @@ export default {
             }
 
             if (this.userToLoad) {
-                this.accountToRetrieve = this.userToLoad;
+                this.accountToManage = this.userToLoad;
             } else if (params.has('user')) {
-                this.accountToRetrieve = params.get('user');
+                this.accountToManage = params.get('user');
             } else if (this.$route.params && this.$route.params.user) {
-                this.accountToRetrieve = this.$route.params.user;
+                this.accountToManage = this.$route.params.user;
             } else {
-                this.accountToRetrieve = this.$store.state.account.accountId;
+                this.accountToManage = this.$store.state.account.accountId;
             }
 
             // alert('this.$route.params.user' + this.$route.params.user);
 
-            this.retrieveAccount(this.accountToRetrieve);
+            this.retrieveAccount(this.accountToManage);
         },
 
         previewImage: function (title, source) {
@@ -595,31 +595,31 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: metaverseServer + '/api/v1/account/' + store.account.accountId + '/field/' + fieldToUpdate + parameters,
+                url: metaverseServer + '/api/v1/account/' + vue_this.accountToManage + '/field/' + fieldToUpdate + parameters,
                 contentType: 'application/json',
                 data: JSON.stringify(objectToPost)
             })
                 .done(function (result) {
-                    console.info('Successfully updated account:', store.account.accountId);
+                    console.info('Successfully updated account:', vue_this.accountToManage);
                     vue_this[fieldToUpdate + 'Loading'] = false;
                     vue_this.updateSnackbarSuccessShow = true;
-                    vue_this.retrieveAccount(vue_this.accountToRetrieve);
+                    vue_this.retrieveAccount(vue_this.accountToManage);
                 })
                 .fail(function (result) {
-                    console.info('Failed to update account:', store.account.accountId);
+                    console.info('Failed to update account:', vue_this.accountToManage);
                     vue_this[fieldToUpdate + 'Loading'] = false;
 
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to update account ' + store.account.username,
+                            title: 'Failed to update account ' + vue_this.accountToManage,
                             code: '3',
                             full: result.responseJSON.error
                         }
                     });
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
-                    vue_this.retrieveAccount(vue_this.accountToRetrieve);
+                    vue_this.retrieveAccount(vue_this.accountToManage);
                 })
         }
 
@@ -654,7 +654,7 @@ export default {
     watch: {
         userToLoad: {
             handler: function () {
-                this.accountToRetrieve = this.userToLoad;
+                this.accountToManage = this.userToLoad;
                 this.retrieveAccount(this.userToLoad);
             }
         }
