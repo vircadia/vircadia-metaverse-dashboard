@@ -51,6 +51,14 @@ export default {
         }
     },
     created: function () {
+        this.$store.commit('mutate', {
+            property: 'error',
+            with: {
+                title: 'Oops.',
+                code: '404',
+                full: "We couldn't find the page you're looking for."
+            }
+        });
     }
 }
 </script>

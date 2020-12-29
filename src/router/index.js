@@ -10,11 +10,28 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
+    {
+        path: '/',
+        redirect: '/login',
+        meta: {
+            showOnMenu: false,
+            requiresLogin: false
+        }
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        icon: 'mdi-home',
+        meta: {
+            showOnMenu: true,
+            requiresLogin: true
+        },
+        component: () => import('../views/Home.vue')
+    },
     {
         path: '/login',
         name: 'Login',
@@ -24,16 +41,6 @@ const routes = [
             requiresLogin: false
         },
         component: () => import('../views/Login.vue')
-    },
-    {
-        path: '/',
-        name: 'Home',
-        icon: 'mdi-home',
-        meta: {
-            showOnMenu: true,
-            requiresLogin: true
-        },
-        component: Home
     },
     {
         path: '/people',
@@ -75,8 +82,9 @@ const routes = [
         },
         component: () => import('../views/UserProfile.vue')
     },
+    // Catch-all, for all routes not listed above, redirect to a 404 error page.
     {
-        path: '/404',
+        path: '*',
         name: 'PageNotFound',
         icon: 'mdi-help',
         meta: {
@@ -85,15 +93,6 @@ const routes = [
         },
         component: () => import('../views/PageNotFound.vue')
     }
-    // {
-    //     path: '/profile/:user?',
-    //     icon: 'mdi-account-circle',
-    //     meta: {
-    //         showOnMenu: true,
-    //         requiresLogin: false
-    //     },
-    //     component: () => import('../views/UserProfile.vue')
-    // }
 ]
 
 const router = new VueRouter({
