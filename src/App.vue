@@ -33,7 +33,7 @@
             <v-divider></v-divider>
 
             <v-list>
-                <v-list-item-group v-model="computedMenuModel" mandatory>
+                <v-list-item-group v-model="computedMenuModel">
                     <v-list-item
                         v-for="(route) in getRoutes"
                         :key="route.name"
