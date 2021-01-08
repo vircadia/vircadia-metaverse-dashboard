@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { EventBus } from '../plugins/eventBus.js';
+import { EventBus } from '../../plugins/eventBus.js';
 
 var vue_this;
 var store;

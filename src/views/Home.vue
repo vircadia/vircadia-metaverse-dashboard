@@ -29,6 +29,16 @@
                 >
                     <MetaverseStats></MetaverseStats>
                 </v-col>
+                <v-col
+                    class="text-center"
+                    xl="4"
+                    lg="4"
+                    md="4"
+                    xs="12"
+                    sm="12"
+                >
+                    <APIStats></APIStats>
+                </v-col>
             </v-row>
             <v-row
                 align="center"
@@ -63,7 +73,8 @@
 
 <script>
 
-import MetaverseStats from '../components/MetaverseStats'
+import MetaverseStats from '../components/monitoring/MetaverseStats'
+import APIStats from '../components/monitoring/APIStats'
 
 export default {
     name: 'Home',
@@ -71,7 +82,8 @@ export default {
         source: String
     },
     components: {
-        MetaverseStats
+        MetaverseStats,
+        APIStats
     }
 }
 </script>
