@@ -282,7 +282,9 @@
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item>
+                        <v-list-item
+                            v-show="roles.length > 0"
+                        >
                             <v-list-item-content>
                                 <v-list-item-title>
                                     Roles
@@ -386,7 +388,6 @@
                         contain
                     ></v-img>
                 </v-card-text>
-
             </v-card>
         </v-dialog>
     </v-form>
@@ -476,11 +477,6 @@ export default {
 
         initialize () {
             var params = new URLSearchParams(window.location.search);
-            if (params.get('appMode') === 'true') {
-                this.showAppBar = false;
-                this.showFooter = false;
-                this.mainMenu = false;
-            }
 
             if (this.userToLoad) {
                 this.accountToManage = this.userToLoad;
@@ -525,11 +521,13 @@ export default {
             });
             parameters = '?' + parameters;
 
+            var apiToRequest = (store.account.isLoggedIn ? 'account' : 'profile');
+
             this.setAllLoading(true);
 
             window.$.ajax({
                 type: 'GET',
-                url: metaverseServer + '/api/v1/account/' + userIdentifier + parameters
+                url: metaverseServer + '/api/v1/' + apiToRequest + '/' + userIdentifier + parameters
             })
                 .done(function (result) {
                     vue_this.setAllLoading(false);
@@ -538,7 +536,9 @@ export default {
                     vue_this.email = result.data.account.email;
                     vue_this.publicKey = result.data.account.public_key;
                     vue_this.accountId = result.data.account.accountId;
-                    vue_this.roles = result.data.account.roles;
+                    if (result.data.account.roles) {
+                        vue_this.roles = result.data.account.roles;
+                    }
                     vue_this.whenAccountCreated = result.data.account.when_account_created;
                     vue_this.online = result.data.account.location.online;
                     vue_this.sessionID = result.data.account.location.node_id;
@@ -564,12 +564,12 @@ export default {
                 .fail(function (result) {
                     vue_this.setAllLoading(false);
 
-                    console.info('Failed to retrieve account: ', result);
+                    console.info('Failed to retrieve', apiToRequest, result);
 
                     vue_this.$store.commit('mutate', {
                         property: 'error',
                         with: {
-                            title: 'Failed to retrieve account ' + userIdentifier,
+                            title: 'Failed to retrieve ' + apiToRequest + ' ' + userIdentifier,
                             code: '2',
                             full: result.responseJSON.error
                         }
