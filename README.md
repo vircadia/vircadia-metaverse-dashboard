@@ -1,4 +1,4 @@
-# iamus-dashboard
+# Metaverse Dashboard (Codename Iamus)
 
 ## deployment
 
