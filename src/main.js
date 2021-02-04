@@ -241,6 +241,13 @@ router.beforeEach((to, from, next) => {
         return;
     }
 
+    if (requestedRoute.name === 'Login' && isLoggedIn) {
+        if (routerDebugging) console.info('User is logged in and trying to access the login page, routing to home.');
+
+        next({ name: 'Home' });
+        return;
+    }
+
     // Good to go, send them on their way.
     if (routerDebugging) console.info('All router guards cleared, attempting to continue route to', requestedRoute.name);
     next();
