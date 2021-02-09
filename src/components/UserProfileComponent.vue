@@ -32,7 +32,7 @@
                     >
                         <img :src="images_thumbnail">
                     </v-avatar>
-                    {{ username }}
+                    <span class="white--text">{{ username }}</span>
                     <v-spacer></v-spacer>
                     <v-tooltip left>
                         <template v-slot:activator="{ on, attrs }">
@@ -40,7 +40,8 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 @click="userEditMode = !userEditMode"
-                                color="primary"
+                                color="input"
+                                class="info"
                                 small
                                 fab
                                 :disabled="!canEditUser(null)"

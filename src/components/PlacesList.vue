@@ -47,7 +47,8 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 @click="showAddPlaceDialog()"
-                                color="primary"
+                                color="input"
+                                class="info"
                                 small
                                 fab
                             >

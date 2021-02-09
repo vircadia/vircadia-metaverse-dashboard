@@ -51,6 +51,17 @@
                 </v-list-item-group>
             </v-list>
 
+            <v-divider class="mb-5"></v-divider>
+
+            <v-slider
+                v-model="dashboardConfigStore.dashboardTheme"
+                :tick-labels="themeOptions"
+                :max="2"
+                step="1"
+                ticks="always"
+                tick-size="3"
+                class="px-5"
+            ></v-slider>
         </v-navigation-drawer>
 
         <v-app-bar
@@ -58,31 +69,42 @@
             app
             color="primary"
             src="/assets/1920_bar.png"
+            class="white--text"
         >
-            <v-app-bar-nav-icon @click.stop="mainMenu = !mainMenu"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon
+                color="white"
+                @click.stop="mainMenu = !mainMenu"
+            ></v-app-bar-nav-icon>
             <v-toolbar-title class="mr-4">
                 {{ $store.state.metaverseConfig.nickname }}
             </v-toolbar-title>
             <span v-if="$store.state.account.isLoggedIn" class="mr-4">
                 Hello, {{ $store.state.account.username }}!
             </span>
-            <span v-if="$store.state.account.isAdmin" class="mt-5">
+            <span v-if="$store.state.account.isAdmin" class="mt-5 white--text">
                 <v-switch
                     v-model="useAsAdminStore"
                     row
                     color="input"
                     label="Admin View"
-                ></v-switch>
+                >
+                    <template v-slot:label>
+                        <span class="white--text">Admin View</span>
+                    </template>
+                </v-switch>
             </span>
             <v-spacer></v-spacer>
             <v-tooltip left>
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
-                        icon
+                        fab
+                        small
                         @click="logout"
                         v-bind="attrs"
                         v-on="on"
                         v-show="isLoggedIn"
+                        color="input"
+                        class="info"
                     >
                         <v-icon>mdi-export</v-icon>
                     </v-btn>
@@ -101,7 +123,7 @@
 
         <v-footer
             v-show="showFooter"
-            color="primary"
+            color="vircadiaNavy"
             app
         >
             <span class="white--text">Iamus Dashboard {{ $store.state.globalConsts.DASHBOARD_VERSION }} | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
@@ -177,6 +199,21 @@ export default {
                 });
             }
         },
+        dashboardConfigStore: {
+            get () {
+                return this.$store.state.dashboardConfig;
+            },
+            set (value) {
+                this.$store.commit('mutate', {
+                    update: true,
+                    property: 'dashboardConfig',
+                    with: value
+                });
+            }
+        },
+        getDashboardTheme () {
+            return this.$store.state.dashboardConfig.dashboardTheme;
+        },
         isLoggedIn () {
             return this.$store.state.account.isLoggedIn;
         },
@@ -210,6 +247,22 @@ export default {
                 }
             },
             deep: true
+        },
+        // Save the settings for the dashboard.
+        dashboardConfigStore: {
+            handler: function (newVal) {
+                for (var item in newVal) {
+                    if (newVal[item] !== null) {
+                        localStorage.setItem(item, newVal[item]);
+                    }
+                }
+            },
+            deep: true
+        },
+        getDashboardTheme: {
+            handler: function () {
+                this.setDashboardTheme();
+            }
         },
         updateAccessToken: {
             handler: function () {
@@ -260,6 +313,19 @@ export default {
             this.dialog.which = '';
             this.dialog.show = false;
         },
+        setDashboardTheme: function () {
+            if (this.getDashboardTheme === 0) {
+                this.$vuetify.theme.dark = false;
+            } else if (this.getDashboardTheme === 1) {
+                this.$vuetify.theme.dark = true;
+            } else if (this.getDashboardTheme === 2) {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    this.$vuetify.theme.dark = true;
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    this.$vuetify.theme.dark = false;
+                }
+            }
+        },
         // Metaverse Bootstrapping
         retrieveMetaverseConfig: function (metaverseURL) {
             console.info('Bootstrapping metaverse config for', metaverseURL);
@@ -298,6 +364,8 @@ export default {
         store = this.$store.state;
         metaverseServer = store.metaverseConfig.server;
 
+        this.setDashboardTheme();
+
         var params = new URLSearchParams(window.location.search);
 
         if (params.has('metaverse')) {
@@ -320,6 +388,11 @@ export default {
         mainMenu: null,
         showAppBar: true,
         showFooter: true,
+        themeOptions: [
+            'Light', // 0
+            'Dark', // 1
+            'Auto' // 2
+        ],
         dialog: {
             show: false,
             which: ''

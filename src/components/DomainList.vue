@@ -40,7 +40,8 @@
                             v-bind="attrs"
                             v-on="on"
                             @click="retrieveDomainList()"
-                            color="primary"
+                            color="input"
+                            class="info"
                             small
                             fab
                         >

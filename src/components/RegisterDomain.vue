@@ -37,7 +37,7 @@
                         v-on="on"
                         @click="copyGeneratedToken"
                         color="input"
-                        class="ml-3 mt-3"
+                        class="ml-3 mt-3 info"
                         small
                         fab
                         v-show="generatedToken"
@@ -55,6 +55,7 @@
                 rounded
                 color="input"
                 @click="postGenerateDomainToken()"
+                class="info"
             >
                 Generate
             </v-btn>

@@ -56,6 +56,9 @@ export default new Vuex.Store({
         },
         places: {
             showOnlyMine: false // bool
+        },
+        dashboardConfig: {
+            dashboardTheme: 2 // int
         }
     },
     mutations: {

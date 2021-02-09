@@ -144,6 +144,15 @@ function initStore () {
         with: placesItems
     });
 
+    var dashboardConfig = {
+        dashboardTheme: parseFromStorage('dashboardTheme') // int
+    }
+
+    store.commit('mutate', {
+        property: 'dashboardConfig',
+        with: dashboardConfig
+    });
+
     store.commit('mutate', {
         property: 'initialized',
         with: true
