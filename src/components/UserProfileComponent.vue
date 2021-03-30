@@ -353,6 +353,39 @@
                     </v-form>
                 </v-expansion-panel-content>
             </v-expansion-panel>
+            <v-expansion-panel
+                v-show="userEditMode && $store.state.account.useAsAdmin"
+            >
+                <v-expansion-panel-header disable-icon-rotate>
+                    Change Roles
+                    <template v-slot:actions>
+                        <v-icon color="error">mdi-account-settings</v-icon>
+                    </template>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                    <v-form
+                        ref="roles"
+                        onSubmit="return false;"
+                    >
+                        <v-list class="transparent">
+                            <v-list-item>
+                                <v-select
+                                    v-model="roles"
+                                    :items="getPossibleRoles"
+                                    :rules="rolesRules"
+                                    :loading="rolesLoading"
+                                    mandatory
+                                    chips
+                                    label="Roles"
+                                    multiple
+                                    outlined
+                                    v-on:change="postUpdateAccount('roles', roles)"
+                                ></v-select>
+                            </v-list-item>
+                        </v-list>
+                    </v-form>
+                </v-expansion-panel-content>
+            </v-expansion-panel>
         </v-expansion-panels>
 
         <v-snackbar
@@ -455,6 +488,10 @@ export default {
         confirmPasswordLoading: false,
         accountId: '',
         roles: [],
+        rolesRules: [],
+        rolesLoading: false,
+        possibleRoles: ['admin', 'user'],
+        possibleRolesWhenIsUser: ['user'],
         whenAccountCreated: '',
         online: false,
         sessionID: null,
@@ -644,11 +681,20 @@ export default {
 
             return diffDays;
         },
+
         whenAccountCreatedDate () {
             // e.g. 2020-09-13T04:38:44.402Z -> 2020-09-13
             var creationDate = this.whenAccountCreated.split('T')[0];
             // e.g. 2020-09-13 -> 2020/09/13
             return creationDate.split('-').join('/');
+        },
+
+        getPossibleRoles () {
+            if (this.accountId === store.account.accountId) {
+                return this.possibleRolesWhenIsUser;
+            } else {
+                return this.possibleRoles;
+            }
         }
     },
 
