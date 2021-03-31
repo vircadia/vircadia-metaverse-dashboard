@@ -67,32 +67,45 @@
                         color="primary"
                     >
                         <v-card>
-                            <v-card-title>
-                                {{ placeDialog.name }}
-                                <v-divider
-                                    class="mx-4"
-                                    inset
-                                    vertical
-                                ></v-divider>
-                                {{ placeDialog.domainUsers }} users
-                                <v-spacer></v-spacer>
-                                <v-tooltip left>
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            @click="togglePlaceEditMode"
-                                            color="primary"
-                                            small
-                                            fab
-                                            :disabled="!canEditPlace(placeDialog.accountID)"
-                                        >
-                                            <v-icon v-text="!placeEditMode ? 'mdi-home-edit' : 'mdi-image-text'"></v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span v-text="!placeEditMode ? 'Edit' : 'View'"></span>
-                                </v-tooltip>
-                            </v-card-title>
+                            <v-img
+                                height="80px"
+                                class="placesDialogBanner"
+                                :src="placeDialog.images[0]"
+                            >
+                                <v-card-title>
+                                    <v-avatar
+                                        v-show="placeDialog.thumbnail"
+                                        class="mr-5"
+                                        @click="previewImage('Thumbnail', placeDialog.thumbnail)"
+                                    >
+                                        <img :src="placeDialog.thumbnail">
+                                    </v-avatar>
+                                    <span class="white--text">{{ placeDialog.name }}</span>
+                                    <v-divider
+                                        class="mx-4"
+                                        inset
+                                        vertical
+                                    ></v-divider>
+                                    {{ placeDialog.domainUsers }} users
+                                    <v-spacer></v-spacer>
+                                    <v-tooltip left>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-btn
+                                                v-bind="attrs"
+                                                v-on="on"
+                                                @click="togglePlaceEditMode"
+                                                color="primary"
+                                                small
+                                                fab
+                                                :disabled="!canEditPlace(placeDialog.accountID)"
+                                            >
+                                                <v-icon v-text="!placeEditMode ? 'mdi-home-edit' : 'mdi-image-text'"></v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span v-text="!placeEditMode ? 'Edit' : 'View'"></span>
+                                    </v-tooltip>
+                                </v-card-title>
+                            </v-img>
                             <v-scroll-x-transition
                                 :hide-on-leave="true"
                             >
@@ -218,6 +231,22 @@
                                         ></v-text-field>
                                     </v-form>
                                     <v-form
+                                        ref="editPlace.thumbnail"
+                                    >
+                                        <v-text-field
+                                            label="Thumbnail"
+                                            name="editPlace.thumbnail"
+                                            v-model="editPlace.thumbnail"
+                                            prepend-icon="mdi-image-size-select-small"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'thumbnail', editPlace.thumbnail)"
+                                            type="text"
+                                            :rules="editPlace.thumbnailRules"
+                                            :loading="editPlace.thumbnailLoading"
+                                            color="input"
+                                        ></v-text-field>
+                                    </v-form>
+                                    <v-form
                                         ref="editPlace.description"
                                     >
                                         <v-textarea
@@ -232,6 +261,25 @@
                                             :loading="editPlace.descriptionLoading"
                                             color="input"
                                         ></v-textarea>
+                                    </v-form>
+                                    <v-form
+                                        ref="editPlace.maturity"
+                                    >
+                                        <v-select
+                                            label="Maturity"
+                                            name="editPlace.maturity"
+                                            v-model="editPlace.maturity"
+                                            prepend-icon="mdi-alarm-light"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'maturity', editPlace.maturity)"
+                                            :rules="editPlace.maturityRules"
+                                            :loading="editPlace.maturityLoading"
+                                            :items="editPlace.possibleMaturityRatings"
+                                            mandatory
+                                            chips
+                                            outlined
+                                            color="input"
+                                        ></v-select>
                                     </v-form>
                                     <v-form
                                         ref="editPlace.address"
@@ -381,6 +429,14 @@
                     >
                 </v-avatar>
             </template>
+            <template v-slot:item.thumbnail="{ item }">
+                <v-avatar>
+                    <img
+                        v-show="item.thumbnail"
+                        :src="item.thumbnail"
+                    >
+                </v-avatar>
+            </template>
             <!-- <template v-slot:no-data>
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
             </template> -->
@@ -405,6 +461,24 @@
                 </v-edit-dialog>
             </template> -->
         </v-data-table>
+
+        <v-dialog
+            v-model="imagePreviewDialogShow"
+            width="500"
+            height="500"
+        >
+            <v-card>
+                <v-card-title class="headline">
+                    {{ imagePreviewDialogTitle }}
+                </v-card-title>
+                <v-card-text>
+                    <v-img
+                        :src="imagePreviewDialogSource"
+                        contain
+                    ></v-img>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
 
         <v-snackbar
             v-model="snackbarSuccessShow"
@@ -442,6 +516,7 @@ export default {
     data: () => ({
         dialog: false,
         headers: [
+            { text: 'Thumbnail', value: 'thumbnail' },
             {
                 text: 'Place Name',
                 align: 'start',
@@ -449,6 +524,7 @@ export default {
                 value: 'name'
             },
             { text: 'Users', value: 'domainUsers' },
+            { text: 'Maturity', value: 'maturity' },
             { text: 'Actions', value: 'actions', sortable: false }
         ],
         search: null,
@@ -462,7 +538,10 @@ export default {
             description: null,
             accountID: null,
             thumbnail: null,
-            images: null,
+            images: [],
+            tags: [],
+            maturity: null,
+            visibility: null,
             // Place's domain information
             domainID: null,
             domainName: null,
@@ -479,16 +558,26 @@ export default {
                 v => !!v || 'A place name is required.'
             ],
             nameLoading: false,
-            address: '',
-            addressRules: [
-                v => !!v || 'A place address is required.'
-            ],
-            addressLoading: false,
+            thumbnail: '',
+            thumbnailRules: [],
+            thumbnailLoading: false,
             description: '',
             descriptionRules: [
                 v => !!v || 'A place description is required.'
             ],
-            descriptionLoading: false
+            descriptionLoading: false,
+            maturity: '',
+            maturityRules: [
+                (v) => !!v || 'A maturity rating is required.',
+                (v) => v.length > 0 || 'A maturity rating is required.'
+            ],
+            maturityLoading: false,
+            possibleMaturityRatings: ['unrated', 'everyone', 'teen', 'mature', 'adult'],
+            address: '',
+            addressRules: [
+                v => !!v || 'A place address is required.'
+            ],
+            addressLoading: false
         },
         // Place Add Dialog
         addPlaceDialogShow: false,
@@ -510,6 +599,10 @@ export default {
                 v => !!v || 'A domain to assign this place to is required.'
             ]
         },
+        // Image Preview Dialog
+        imagePreviewDialogShow: false,
+        imagePreviewDialogTitle: null,
+        imagePreviewDialogSource: null,
         // Editing Place
         editingPlace: null,
         // Places List
@@ -576,7 +669,9 @@ export default {
 
             if (this.placeEditMode === true) {
                 this.editPlace.name = this.placeDialog.name;
+                this.editPlace.thumbnail = this.placeDialog.thumbnail;
                 this.editPlace.description = this.placeDialog.description;
+                this.editPlace.maturity = this.placeDialog.maturity;
                 this.editPlace.address = this.placeDialog.address;
             }
         },
@@ -593,19 +688,29 @@ export default {
         rowClicked (rowData) {
             this.placeEditMode = false; // We don't want the edit mode to still be on when you open the place info dialog.
             this.placeDialogShow = true;
+
             this.placeDialog.name = rowData.name;
             this.placeDialog.placeID = rowData.placeID;
             this.placeDialog.address = rowData.address;
             this.placeDialog.description = rowData.description;
             this.placeDialog.accountID = rowData.accountID;
-            this.placeDialog.thumbanil = rowData.thumbanil;
+            this.placeDialog.thumbnail = rowData.thumbnail;
             this.placeDialog.images = rowData.images;
+            this.placeDialog.tags = rowData.tags;
+            this.placeDialog.maturity = rowData.maturity;
+            this.placeDialog.visibility = rowData.visibility;
             this.placeDialog.domainID = rowData.domainID;
             this.placeDialog.domainName = rowData.domainName;
             this.placeDialog.domainNetworkAddress = rowData.domainNetworkAddress;
             this.placeDialog.domainIceServer = rowData.domainIceServer;
             this.placeDialog.domainLastSeen = rowData.domainLastSeen;
             this.placeDialog.domainUsers = rowData.domainUsers;
+        },
+
+        previewImage: function (title, source) {
+            this.imagePreviewDialogShow = true;
+            this.imagePreviewDialogTitle = title;
+            this.imagePreviewDialogSource = source;
         },
 
         // END Add Place Dialog
@@ -653,9 +758,16 @@ export default {
                             placeID: item.placeId,
                             address: item.address,
                             description: item.description,
-                            thumbnail: item.thumbanil,
-                            images: item.images
+                            thumbnail: item.thumbnail,
+                            images: item.images,
+                            tags: item.tags,
+                            maturity: item.maturity,
+                            visibility: item.visibility
                         };
+
+                        if (!item.images || (item.images && item.images.length === 0)) {
+                            objectToPush.images = ['../assets/1920_bar.png'];
+                        }
 
                         if (item.domain) {
                             objectToPush.domainID = item.domain.id;
