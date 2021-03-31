@@ -49,3 +49,9 @@
 .userProfileHero .v-image__image {
     filter: blur(1px) brightness(40%);
 }
+
+/* Placeslist.vue  */
+
+.placesDialogBanner .v-image__image {
+    filter: blur(1px) brightness(40%);
+}
