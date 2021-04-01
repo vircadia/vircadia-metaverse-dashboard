@@ -70,7 +70,7 @@
                             <v-img
                                 height="80px"
                                 class="placesDialogBanner"
-                                :src="placeDialog.images[0]"
+                                :src="getPlaceDialogBanner()"
                             >
                                 <v-card-title>
                                     <v-avatar
@@ -114,41 +114,40 @@
 
                                         <v-divider class="mt-2"></v-divider>
 
-                                        <v-sheet
-                                            class="mx-auto"
+                                        <!-- Known issue, unfixed... https://github.com/vuetifyjs/vuetify/issues/10455 -->
+                                        <v-slide-group
+                                            show-arrows="always"
+                                            v-show="placeDialog.images && placeDialog.images.length > 0"
+                                            ref="imageSlideGroup"
                                         >
-                                            <v-slide-group
-                                                show-arrows="always"
-                                                v-show="true"
+                                            <v-slide-item
+                                                v-for="(item, i) in placeDialog.images"
+                                                :key="i"
+                                                class="mx-0"
                                             >
-                                                <v-slide-item
-                                                    v-for="(item, i) in placeDialog.images"
-                                                    :key="i"
+                                                <v-img
+                                                    :src="item"
+                                                    @click="previewImage('Image', item)"
+                                                    max-width="250"
+                                                    max-height="150"
+                                                    min-width="1"
                                                     class="mx-0"
                                                 >
-                                                    <v-img
-                                                        :src="item"
-                                                        @click="previewImage('Image', item)"
-                                                        max-width="250"
-                                                        max-height="150"
-                                                        class="mx-0"
-                                                    >
-                                                        <template v-slot:placeholder>
-                                                            <v-row
-                                                                class="fill-height ma-0"
-                                                                align="center"
-                                                                justify="center"
-                                                            >
-                                                                <v-progress-circular
-                                                                    indeterminate
-                                                                    color="grey lighten-5"
-                                                                ></v-progress-circular>
-                                                            </v-row>
-                                                        </template>
-                                                    </v-img>
-                                                </v-slide-item>
-                                            </v-slide-group>
-                                        </v-sheet>
+                                                    <template v-slot:placeholder>
+                                                        <v-row
+                                                            class="fill-height ma-0"
+                                                            align="center"
+                                                            justify="center"
+                                                        >
+                                                            <v-progress-circular
+                                                                indeterminate
+                                                                color="grey lighten-5"
+                                                            ></v-progress-circular>
+                                                        </v-row>
+                                                    </template>
+                                                </v-img>
+                                            </v-slide-item>
+                                        </v-slide-group>
 
                                         <v-divider class="mb-2"></v-divider>
 
@@ -785,6 +784,14 @@ export default {
                    domainID.indexOf(searchText) > -1
         },
 
+        getPlaceDialogBanner () {
+            if (this.placeDialog.images && this.placeDialog.images.length > 0) {
+                return this.placeDialog.images[0];
+            } else {
+                return '../assets/1920_bar.png';
+            }
+        },
+
         rowClicked (rowData) {
             this.placeEditMode = false; // We don't want the edit mode to still be on when you open the place info dialog.
             this.placeDialogShow = true;
@@ -872,10 +879,6 @@ export default {
                             maturity: item.maturity,
                             visibility: item.visibility
                         };
-
-                        if (!item.images || (item.images && item.images.length === 0)) {
-                            objectToPush.images = ['../assets/1920_bar.png'];
-                        }
 
                         if (item.domain) {
                             objectToPush.domainID = item.domain.id;

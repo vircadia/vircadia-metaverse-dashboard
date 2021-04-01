@@ -20,9 +20,12 @@ export default new Vuex.Store({
             DASHBOARD_VERSION: process.env.VUE_APP_VERSION
         },
         router: {
-            debugging: true,
+            debugging: false,
             awaitingRouteOnLogin: false,
             routeOnLogin: ''
+        },
+        store: {
+            debugging: false
         },
         initialized: false,
         metaverseConfig: { // Prefilled with initial values
@@ -72,7 +75,8 @@ export default new Vuex.Store({
                     }
                 }
             }
-            console.info('Payload:', payload.property, 'with:', payload.with, 'state is now:', this.state);
+
+            if (state.debugging) console.info('Payload:', payload.property, 'with:', payload.with, 'state is now:', this.state);
         }
     },
     actions: {
