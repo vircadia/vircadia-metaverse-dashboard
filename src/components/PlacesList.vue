@@ -111,16 +111,47 @@
                             >
                                 <v-card-text v-show="!placeEditMode" transition="scroll-x-transition" class="text-left">
                                     <v-list class="transparent">
-                                        <v-list-item>
-                                            <v-list-item-content>
-                                                <v-list-item-title>
-                                                    Place Name
-                                                </v-list-item-title>
-                                                <v-list-item-subtitle>
-                                                    {{ placeDialog.name }}
-                                                </v-list-item-subtitle>
-                                            </v-list-item-content>
-                                        </v-list-item>
+
+                                        <v-divider class="mt-2"></v-divider>
+
+                                        <v-sheet
+                                            class="mx-auto"
+                                        >
+                                            <v-slide-group
+                                                show-arrows="always"
+                                                v-show="true"
+                                            >
+                                                <v-slide-item
+                                                    v-for="(item, i) in placeDialog.images"
+                                                    :key="i"
+                                                    class="mx-0"
+                                                >
+                                                    <v-img
+                                                        :src="item"
+                                                        @click="previewImage('Image', item)"
+                                                        max-width="250"
+                                                        max-height="150"
+                                                        class="mx-0"
+                                                    >
+                                                        <template v-slot:placeholder>
+                                                            <v-row
+                                                                class="fill-height ma-0"
+                                                                align="center"
+                                                                justify="center"
+                                                            >
+                                                                <v-progress-circular
+                                                                    indeterminate
+                                                                    color="grey lighten-5"
+                                                                ></v-progress-circular>
+                                                            </v-row>
+                                                        </template>
+                                                    </v-img>
+                                                </v-slide-item>
+                                            </v-slide-group>
+                                        </v-sheet>
+
+                                        <v-divider class="mb-2"></v-divider>
+
                                         <v-list-item>
                                             <v-list-item-content>
                                                 <v-list-item-title>
@@ -134,6 +165,26 @@
                                         <v-list-item>
                                             <v-list-item-content>
                                                 <v-list-item-title>
+                                                    Tags
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ displayJoinedTags(placeDialog.tags) }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    Maturity
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ placeDialog.maturity }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <v-list-item-title>
                                                     Address
                                                 </v-list-item-title>
                                                 <v-list-item-subtitle>
@@ -141,6 +192,9 @@
                                                 </v-list-item-subtitle>
                                             </v-list-item-content>
                                         </v-list-item>
+
+                                        <v-divider class="my-2"></v-divider>
+
                                         <v-list-item>
                                             <v-expansion-panels>
                                                 <v-expansion-panel>
@@ -263,6 +317,44 @@
                                         ></v-textarea>
                                     </v-form>
                                     <v-form
+                                        ref="editPlace.images"
+                                    >
+                                        <v-combobox
+                                            label="Images"
+                                            name="editPlace.images"
+                                            v-model="editPlace.images"
+                                            prepend-icon="mdi-image-multiple-outline"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'images', editPlace.images)"
+                                            :rules="editPlace.imagesRules"
+                                            :loading="editPlace.imagesLoading"
+                                            hint="Press enter to add an image URL"
+                                            multiple
+                                            small-chips
+                                            outlined
+                                            color="input"
+                                        ></v-combobox>
+                                    </v-form>
+                                    <v-form
+                                        ref="editPlace.tags"
+                                    >
+                                        <v-combobox
+                                            label="Tags"
+                                            name="editPlace.tags"
+                                            v-model="editPlace.tags"
+                                            prepend-icon="mdi-tag-multiple-outline"
+                                            append-icon="mdi-content-save-outline"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'tags', editPlace.tags)"
+                                            :rules="editPlace.tagsRules"
+                                            :loading="editPlace.tagsLoading"
+                                            hint="Press enter to create a tag"
+                                            multiple
+                                            small-chips
+                                            outlined
+                                            color="input"
+                                        ></v-combobox>
+                                    </v-form>
+                                    <v-form
                                         ref="editPlace.maturity"
                                     >
                                         <v-select
@@ -276,7 +368,7 @@
                                             :loading="editPlace.maturityLoading"
                                             :items="editPlace.possibleMaturityRatings"
                                             mandatory
-                                            chips
+                                            small-chips
                                             outlined
                                             color="input"
                                         ></v-select>
@@ -350,7 +442,7 @@
                                         prepend-icon="mdi-earth"
                                         :items="domains"
                                         filled
-                                        chips
+                                        small-chips
                                         label="Assign to Domain"
                                         item-text="name"
                                         item-value="domainID"
@@ -566,6 +658,12 @@ export default {
                 v => !!v || 'A place description is required.'
             ],
             descriptionLoading: false,
+            images: [],
+            imagesRules: [],
+            imagesLoading: false,
+            tags: [],
+            tagsRules: [],
+            tagsLoading: false,
             maturity: '',
             maturityRules: [
                 (v) => !!v || 'A maturity rating is required.',
@@ -671,6 +769,8 @@ export default {
                 this.editPlace.name = this.placeDialog.name;
                 this.editPlace.thumbnail = this.placeDialog.thumbnail;
                 this.editPlace.description = this.placeDialog.description;
+                this.editPlace.images = this.placeDialog.images;
+                this.editPlace.tags = this.placeDialog.tags;
                 this.editPlace.maturity = this.placeDialog.maturity;
                 this.editPlace.address = this.placeDialog.address;
             }
@@ -711,6 +811,14 @@ export default {
             this.imagePreviewDialogShow = true;
             this.imagePreviewDialogTitle = title;
             this.imagePreviewDialogSource = source;
+        },
+
+        displayJoinedTags: function (tags) {
+            if (!tags) {
+                return 'No tags found.';
+            } else {
+                return tags.join(', ');
+            }
         },
 
         // END Add Place Dialog
