@@ -146,12 +146,14 @@ EventBus.$on('open-dialog', data => {
 });
 
 import ErrorOccurred from './components/dialogs/ErrorOccurred'
+import Notice from './components/dialogs/Notice'
 
 export default {
     name: 'App',
     components: {
         // Dialogs
-        ErrorOccurred
+        ErrorOccurred,
+        Notice
     },
     computed: {
         updateAccountSession () {

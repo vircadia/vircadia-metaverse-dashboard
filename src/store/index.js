@@ -36,6 +36,12 @@ export default new Vuex.Store({
             iceServer: '',
             serverVersion: ''
         },
+        dialog: {
+            notice: {
+                title: '',
+                message: ''
+            }
+        },
         error: {
             title: '',
             code: '',

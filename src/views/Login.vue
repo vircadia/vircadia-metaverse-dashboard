@@ -298,6 +298,21 @@ export default {
                     console.info('Registration successful.');
                     vue_this.$refs.registrationForm.reset();
                     vue_this.currentTab = 0; // Login is 0, Register is 1, and so on... if we add tabs.
+
+                    if (result.data.accountWaitingVerification === true) {
+                        vue_this.$store.commit('mutate', {
+                            property: 'dialog',
+                            with: {
+                                notice: {
+                                    title: 'Complete Registration',
+                                    message: 'Please check your email inbox (and spam!) for an email verification link to complete your registration.'
+                                }
+                            },
+                            update: true
+                        });
+
+                        vue_this.sendEvent('open-dialog', { which: 'Notice', shouldShow: true });
+                    }
                 })
                 .fail(function (result) {
                     console.info('Failed to register:', result);
