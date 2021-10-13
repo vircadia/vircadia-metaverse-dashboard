@@ -373,18 +373,19 @@
                                         ></v-select>
                                     </v-form>
                                     <v-form
-                                        ref="editPlace.address"
+                                        ref="editPlace.path"
                                     >
                                         <v-text-field
-                                            label="Address ( /x,y,z/x,y,z,w )"
-                                            name="editPlace.address"
-                                            v-model="editPlace.address"
+                                            label="Location & Orientation ( /x,y,z/x,y,z,w )"
+                                            placeholder="/0,0,0/0,0,0,1"
+                                            name="editPlace.path"
+                                            v-model="editPlace.path"
                                             prepend-icon="mdi-compass-outline"
                                             append-icon="mdi-content-save-outline"
-                                            @click:append="postUpdatePlace(placeDialog.placeID, 'address', editPlace.address)"
+                                            @click:append="postUpdatePlace(placeDialog.placeID, 'path', editPlace.path)"
                                             type="text"
-                                            :rules="editPlace.addressRules"
-                                            :loading="editPlace.addressLoading"
+                                            :rules="editPlace.pathRules"
+                                            :loading="editPlace.pathLoading"
                                             color="input"
                                         ></v-text-field>
                                     </v-form>
@@ -633,6 +634,7 @@ export default {
             tags: [],
             maturity: null,
             visibility: null,
+            path: null,
             // Place's domain information
             domainID: null,
             domainName: null,
@@ -670,11 +672,16 @@ export default {
             ],
             maturityLoading: false,
             possibleMaturityRatings: ['unrated', 'everyone', 'teen', 'mature', 'adult'],
-            address: '',
-            addressRules: [
-                v => !!v || 'A place address is required.'
+            path: '',
+            pathRules: [
+                v => !!v || 'A place path is required.'
             ],
-            addressLoading: false
+            pathLoading: false,
+            domainID: null,
+            domainIDRules: [
+                v => !!v || 'A domain to assign this place to is required.'
+            ]
+
         },
         // Place Add Dialog
         addPlaceDialogShow: false,
@@ -772,6 +779,7 @@ export default {
                 this.editPlace.tags = this.placeDialog.tags;
                 this.editPlace.maturity = this.placeDialog.maturity;
                 this.editPlace.address = this.placeDialog.address;
+                this.editPlace.path = this.placeDialog.path;
             }
         },
 
@@ -806,6 +814,7 @@ export default {
             this.placeDialog.tags = rowData.tags;
             this.placeDialog.maturity = rowData.maturity;
             this.placeDialog.visibility = rowData.visibility;
+            this.placeDialog.path = rowData.path;
             this.placeDialog.domainID = rowData.domainID;
             this.placeDialog.domainName = rowData.domainName;
             this.placeDialog.domainNetworkAddress = rowData.domainNetworkAddress;
@@ -877,7 +886,8 @@ export default {
                             images: item.images,
                             tags: item.tags,
                             maturity: item.maturity,
-                            visibility: item.visibility
+                            visibility: item.visibility,
+                            path: item.path
                         };
 
                         if (item.domain) {
