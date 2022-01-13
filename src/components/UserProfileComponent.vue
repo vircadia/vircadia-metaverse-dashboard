@@ -443,17 +443,6 @@ export default {
             v => !!v || 'A username is required.'
         ],
         usernameLoading: false,
-        // password: '',
-        // passwordRules: [
-        //     v => !!v || 'A password is required.'
-        // ],
-        // confirmPassword: '',
-        // confirmPasswordRules: [
-        //     v => !!v || 'You must confirm your password.',
-        //     function (v) {
-        //         return v === vue_this.password || 'Your password must match.'
-        //     }
-        // ],
         email: '',
         emailRules: [
             v => !!v || 'An email is required.'
@@ -528,7 +517,7 @@ export default {
 
             // alert('this.$route.params.user' + this.$route.params.user);
 
-            this.retrieveAccount(this.accountToManage);
+            this.retrieveAccount(encodeURI(this.accountToManage));
         },
 
         previewImage: function (title, source) {
@@ -558,6 +547,8 @@ export default {
                 'asAdmin': store.account.useAsAdmin
             });
             parameters = '?' + parameters;
+
+            console.info('retrieving user:', userIdentifier);
 
             var apiToRequest = (store.account.isLoggedIn ? 'account' : 'profile');
 

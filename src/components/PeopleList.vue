@@ -10,7 +10,7 @@
 
 <template>
     <v-data-table
-        :headers="headers"
+        :headers="usingAsAdmin ? adminHeaders : headers"
         :items="people"
         :loading="peopleDataTableLoading"
         :search="search"
@@ -54,7 +54,7 @@
                         v-on:click.stop="deleteUser(item.accountID, item.username)"
                         v-bind="attrs"
                         v-on="on"
-                        :disabled="!canEditUser"
+                        :disabled="!usingAsAdmin"
                     >
                         mdi-delete-alert
                     </v-icon>
@@ -129,6 +129,22 @@ export default {
             // { text: 'Online', value: 'online' },
             { text: 'Actions', value: 'actions', sortable: false }
         ],
+        adminHeaders: [
+            { text: 'Thumbnail', value: 'thumbnail' },
+            {
+                text: 'Username',
+                align: 'start',
+                sortable: true,
+                value: 'username'
+            },
+            { text: 'Email', value: 'email' },
+            { text: 'Account ID', value: 'accountID' },
+            // { text: 'Connection', value: 'connection' },
+            // { text: 'Images', value: 'images', sortable: false },
+            { text: 'Status', value: 'status' },
+            // { text: 'Online', value: 'online' },
+            { text: 'Actions', value: 'actions', sortable: false }
+        ],
         search: null,
         peopleDataTableLoading: false,
         // User Dialog
@@ -152,6 +168,9 @@ export default {
     }),
 
     computed: {
+        usingAsAdmin: function () {
+            return store.account.useAsAdmin;
+        }
     },
 
     watch: {
@@ -180,10 +199,6 @@ export default {
             this.userDialog.username = rowData.username;
         },
 
-        canEditUser: function () {
-            return store.account.useAsAdmin;
-        },
-
         toggleUserEditMode () {
             this.userEditMode = !this.userEditMode;
 
@@ -208,37 +223,58 @@ export default {
         },
         // END Inline Editing Functionality
 
-        // BEGIN Handling requests to the API
+        pushToPeopleList (accounts) {
+            accounts.forEach(function (item, index) {
+                var isOnline = item.location.online ? 'Online' : 'Offline';
+                vue_this.people.push(
+                    {
+                        username: item.username,
+                        email: item.email,
+                        status: isOnline,
+                        locationData: item.location,
+                        accountID: item.accountId,
+                        thumbnail: item.images.thumbnail ? item.images.thumbnail : '',
+                        hero: item.images.hero ? item.images.hero : '../assets/1920_bar.png'
+                    }
+                );
+            });
+        },
 
-        retrieveAccountList: function (metaverseURL) {
+        // BEGIN Handling requests to the API
+        retrieveAccountList: function (metaverseURL, page) {
+            if (!page) {
+                page = 1;
+            }
+
             var parameters = window.$.param({
+                'page': page,
                 'asAdmin': vue_this.$store.state.account.useAsAdmin
             });
             parameters = '?' + parameters;
+
+            console.info('params', parameters);
+            console.info('page', page);
 
             this.peopleDataTableLoading = true;
 
             window.$.ajax({
                 type: 'GET',
-                url: metaverseURL + '/api/v1/users' + parameters
+                url: metaverseURL + '/api/v1/accounts' + parameters
             })
                 .done(function (result) {
+                    console.info(result);
+                    console.info('page found in func', page);
+
+                    if (page === 1) {
+                        vue_this.people = [];
+                    }
+
+                    vue_this.pushToPeopleList(result.data.accounts);
                     vue_this.peopleDataTableLoading = false;
 
-                    vue_this.people = [];
-                    result.data.users.forEach(function (item, index) {
-                        var isOnline = item.location.online ? 'Online' : 'Offline';
-                        vue_this.people.push(
-                            {
-                                username: item.username,
-                                status: isOnline,
-                                locationData: item.location,
-                                accountID: item.accountId,
-                                thumbnail: item.images.thumbnail ? item.images.thumbnail : '',
-                                hero: item.images.hero ? item.images.hero : '../assets/1920_bar.png'
-                            }
-                        );
-                    });
+                    if (result.total_entries > vue_this.people.length) {
+                        vue_this.retrieveAccountList(vue_this.$store.state.metaverseConfig.server, page + 1);
+                    }
                 })
                 .fail(function (result) {
                     vue_this.peopleDataTableLoading = false;
@@ -258,7 +294,6 @@ export default {
                 })
         },
 
-        // THESE REQUESTS USE THE ACCOUNT API WHILE THE LIST IS USING THE USERS API
         postUpdateAccount (userID, fieldToUpdate, dataToUpdate) {
             var parameters = window.$.param({
                 'asAdmin': store.account.useAsAdmin
