@@ -252,9 +252,6 @@ export default {
             });
             parameters = '?' + parameters;
 
-            console.info('params', parameters);
-            console.info('page', page);
-
             this.peopleDataTableLoading = true;
 
             window.$.ajax({
@@ -262,9 +259,6 @@ export default {
                 url: metaverseURL + '/api/v1/accounts' + parameters
             })
                 .done(function (result) {
-                    console.info(result);
-                    console.info('page found in func', page);
-
                     if (page === 1) {
                         vue_this.people = [];
                     }
