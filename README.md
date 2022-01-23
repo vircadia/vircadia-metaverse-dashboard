@@ -28,3 +28,19 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## Docker
+This creates a docker image `metaverse-dashboard` and it can be used as a part of docker-compose at vircadia-domain-server-docker. This image also can be used for dev purpose.
+
+### docker build
+In order to build, go to `docker` dir and execute the build script.
+```
+cd docker && docker-build.sh
+```
+
+### docker run
+In order to run a container based on the image, do to the `docker` dir and execute run script.
+```
+cd docker && run-metaverse-dashboard.sh
+```
+Port 8080 will be open and its log can be found at `log` dir.
