@@ -10,5 +10,5 @@ docker run -it \
     --name=metaverse-dashboard \
     --restart=unless-stopped \
     -p 8080:8080 \
-    --volume ${BASE}/log:/home/cadia/vircadia-metaverse-dashboard/log \
+    --volume ${BASE}/log:/home/cadia/metaverse-dashboard/log \
     metaverse-dashboard:${DVERSION}

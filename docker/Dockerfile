@@ -1,5 +1,8 @@
 FROM ubuntu:20.04
 
+# default is 'vircadia'
+ARG REPO=hasbegun
+# default is 'master'
 ARG BRANCH=master
 
 RUN apt update && apt install -y git curl
@@ -9,9 +12,16 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh && \
     rm ./nodesource_setup.sh
 
 RUN npm install -g @vue/cli@latest
+
+##########
+# dev only
+# RUN apt update && apt install -y sudo vim
+##########
+
+# checkout repo
 RUN mkdir -p /usr/local/src && \
     cd /usr/local/src && \
-    git clone --depth 1 --branch ${BRANCH} https://github.com/vircadia/metaverse-dashboard.git
+    git clone --depth 1 --branch ${BRANCH} https://github.com/${REPO}/metaverse-dashboard.git
 RUN cd /usr/local/src/metaverse-dashboard && \
     npm install && npm run build
 
