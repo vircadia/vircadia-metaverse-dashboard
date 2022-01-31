@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 # default is 'vircadia'
 ARG REPO=hasbegun
 # default is 'master'
-ARG BRANCH=master
+ARG BRANCH=dev
 
 RUN apt update && apt install -y git curl
 RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh && \
