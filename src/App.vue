@@ -129,7 +129,7 @@
             <span class="white--text">Iamus Dashboard {{ $store.state.globalConsts.DASHBOARD_VERSION }} | Vircadia | <a class="white--text" href="https://github.com/vircadia/project-iamus-dashboard/issues">Feedback</a></span>
             <v-spacer></v-spacer>
             <span class="white--text">Metaverse: <b>{{ $store.state.metaverseConfig.server }}</b></span>
-            <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["npm-package-version"] }}</span>
+            <span v-show="$store.state.metaverseConfig.serverVersion" class="white--text ml-4">Version: {{ $store.state.metaverseConfig.serverVersion["version_tag"] }}</span>
         </v-footer>
     </v-app>
 
