@@ -247,6 +247,7 @@ export default {
             }
 
             var parameters = window.$.param({
+                'per_page': 250,
                 'page': page,
                 'asAdmin': vue_this.$store.state.account.useAsAdmin
             });
@@ -280,7 +281,7 @@ export default {
                         with: {
                             title: 'Failed to retrieve people list.',
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 

@@ -913,7 +913,7 @@ export default {
                         with: {
                             title: 'Failed to retrieve places list.',
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -988,7 +988,7 @@ export default {
                         with: {
                             title: 'Failed to add place ' + vue_this.addPlaceDialog.name,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -1032,7 +1032,7 @@ export default {
                         with: {
                             title: 'Failed to update place:' + placeID,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -1065,7 +1065,7 @@ export default {
                         with: {
                             title: 'Failed to delete place:' + placeID,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 

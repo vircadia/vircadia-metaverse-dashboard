@@ -91,7 +91,7 @@ export default {
                 })
                 .fail(function (result) {
                     console.info('Failed to get metaverse stats:', result);
-                    vue_this.generatedToken = result.responseJSON.error;
+                    vue_this.generatedToken = result.responseJSON.message;
                     vue_this.generatedTokenText = '';
 
                     vue_this.$store.commit('mutate', {
@@ -99,7 +99,7 @@ export default {
                         with: {
                             title: 'Failed to get metaverse stats.',
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 

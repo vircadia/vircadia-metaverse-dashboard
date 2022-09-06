@@ -600,7 +600,7 @@ export default {
                         with: {
                             title: 'Failed to retrieve ' + apiToRequest + ' ' + userIdentifier,
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -643,7 +643,7 @@ export default {
                         with: {
                             title: 'Failed to update account ' + vue_this.accountToManage,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 

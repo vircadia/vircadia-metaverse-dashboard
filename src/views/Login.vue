@@ -270,7 +270,7 @@ export default {
                         with: {
                             title: 'Failed to log in to ' + vue_this.$store.state.metaverseConfig.server,
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -321,7 +321,7 @@ export default {
                         with: {
                             title: 'Failed to register for ' + vue_this.$store.state.metaverseConfig.server,
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 

@@ -360,7 +360,7 @@ export default {
                         with: {
                             title: 'Failed to retrieve domain list.',
                             code: '2',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -396,7 +396,7 @@ export default {
                         with: {
                             title: 'Failed to update domain:' + domainID,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
@@ -427,7 +427,7 @@ export default {
                         with: {
                             title: 'Failed to delete domain:' + domainID,
                             code: '3',
-                            full: result.responseJSON.error
+                            full: result.responseJSON.message
                         }
                     });
 
