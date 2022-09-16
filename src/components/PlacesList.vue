@@ -856,7 +856,8 @@ export default {
         // BEGIN Handling requests to the API
         retrievePlacesList: function (metaverseURL) {
             var parameters = window.$.param({
-                'asAdmin': store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin,
+                'per_page': 999
             });
             parameters = '?' + parameters;
 
@@ -874,7 +875,7 @@ export default {
             })
                 .done(function (result) {
                     vue_this.placesDataTableLoading = false;
-
+                    console.info('lol', result);
                     vue_this.places = [];
                     result.data.places.forEach(function (item, index) {
                         var objectToPush = {
@@ -916,6 +917,11 @@ export default {
                             full: result.responseJSON.message
                         }
                     });
+
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
@@ -992,6 +998,11 @@ export default {
                         }
                     });
 
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
+
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrievePlacesList(metaverseServer);
                 })
@@ -1036,6 +1047,11 @@ export default {
                         }
                     });
 
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
+
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrievePlacesList(metaverseServer);
                 })
@@ -1068,6 +1084,11 @@ export default {
                             full: result.responseJSON.message
                         }
                     });
+
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrievePlacesList(metaverseServer);

@@ -285,6 +285,11 @@ export default {
                         }
                     });
 
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
+
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },

@@ -320,7 +320,8 @@ export default {
         // BEGIN Handling requests to the API
         retrieveDomainList: function () {
             var parameters = window.$.param({
-                'asAdmin': store.account.useAsAdmin
+                'asAdmin': store.account.useAsAdmin,
+                'per_page': 999
             });
             parameters = '?' + parameters;
 
@@ -363,6 +364,11 @@ export default {
                             full: result.responseJSON.message
                         }
                     });
+
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })

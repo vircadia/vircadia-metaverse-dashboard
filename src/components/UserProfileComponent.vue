@@ -604,6 +604,11 @@ export default {
                         }
                     });
 
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
+
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                 })
         },
@@ -624,7 +629,7 @@ export default {
 
             window.$.ajax({
                 type: 'POST',
-                url: metaverseServer + '/api/v1/account/' + vue_this.accountToManage + '/field/' + fieldToUpdate + parameters,
+                url: metaverseServer + '/api/v1/account/' + vue_this.accountId + '/field/' + fieldToUpdate + parameters,
                 contentType: 'application/json',
                 data: JSON.stringify(objectToPost)
             })
@@ -646,6 +651,11 @@ export default {
                             full: result.responseJSON.message
                         }
                     });
+
+                    // TODO This is a temporary workaround, the token refresh in main.js should catch this, thus this should be removed later:
+                    if (result.responseJSON.message.toLowerCase() === 'Invalid token' || result.responseJSON.message.toLowerCase() === 'jwt malformed') {
+                        vue_this.logout();
+                    }
 
                     vue_this.sendEvent('open-dialog', { which: 'ErrorOccurred', shouldShow: true });
                     vue_this.retrieveAccount(vue_this.accountToManage);
